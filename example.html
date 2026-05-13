@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>tinyux demo</title>
+    <style>
+      body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 0; line-height: 1.4; }
+      header { padding: 24px; background: #0b1220; color: #e5e7eb; }
+      main { padding: 24px; max-width: 980px; margin: 0 auto; }
+      .cta { display: inline-flex; align-items: center; gap: 10px; padding: 12px 14px; border-radius: 12px; border: 1px solid #cbd5e1; background: #fff; cursor: pointer; }
+      section { padding: 20px 0; border-top: 1px solid #e2e8f0; }
+      .spacer { height: 60vh; }
+      code { background: #f1f5f9; padding: 2px 6px; border-radius: 8px; }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>tinyux</h1>
+      <p>Minimal UX telemetry + contextual micro-surveys.</p>
+    </header>
+
+    <main>
+      <p>
+        Open DevTools Network and watch POSTs to <code>/collect.php</code>. (Update <code>data-api-url</code> as needed.)
+      </p>
+
+      <!-- Declarative interaction trigger: click the button to show a survey -->
+      <button
+        class="cta"
+        data-product="premium"
+        data-tinyux-trigger="click"
+        data-tinyux-survey-id="post-cta"
+      >
+        Upgrade to Premium
+      </button>
+
+      <div class="spacer"></div>
+
+      <!-- Declarative section-scroll trigger (IntersectionObserver + cooldown/once options) -->
+      <section
+        id="pricing"
+        data-tinyux-trigger="section-scroll"
+        data-tinyux-once="session"
+        data-tinyux-cooldown-min="30"
+        data-tinyux-threshold="0.5"
+        data-tinyux-survey-id="pricing-survey"
+      >
+        <h2>Pricing</h2>
+        <p>Scroll here to trigger a section-view event + optional survey.</p>
+      </section>
+
+      <div class="spacer"></div>
+
+      <section>
+        <h2>Programmatic example</h2>
+        <button id="ask-now" class="cta">Ask a survey now</button>
+      </section>
+    </main>
+
+    <!-- Auto-init from data attributes + JSON config -->
+    <script
+      src="./tinyux.js"
+      data-app-id="myApp"
+      data-api-url="/collect.php"
+      data-config='{
+        "debug": true,
+        "ui": {"accentColor": "#22c55e"},
+        "exitIntent": {"enabled": true, "sensitivity": 10, "survey_id": "exit-survey"},
+        "surveys": {"maxPerSession": 2, "minIntervalMinutes": 3}
+      }'
+    ></script>
+
+    <script>
+      // Register surveys (programmatic)
+      const ux = window.tinyux.getInstance();
+
+      ux.registerSurvey({
+        id: 'post-cta',
+        type: 'rating',
+        title: 'Quick check',
+        question: 'How helpful was {{data-product}} info on this page?',
+        scale: 5,
+        oncePerSession: true,
+        cooldownMinutes: 60
+      });
+
+      ux.registerSurvey({
+        id: 'pricing-survey',
+        type: 'yesno',
+        title: 'Pricing clarity',
+        question: 'Did you find pricing clear?',
+        oncePerSession: true,
+        cooldownMinutes: 120
+      });
+
+      ux.registerSurvey({
+        id: 'exit-survey',
+        type: 'choice',
+        title: 'Before you go',
+        question: 'What stopped you today?',
+        choices: ['Just browsing', 'Pricing', 'Missing feature', 'Performance', 'Other'],
+        oncePerSession: true,
+        cooldownMinutes: 120
+      });
+
+      // Programmatic trigger
+      document.getElementById('ask-now').addEventListener('click', () => {
+        ux.showSurvey('post-cta');
+      });
+
+      // Programmatic interaction binding with telemetry + optional survey
+      ux.bind('.cta', 'click', { cooldownMinutes: 0.1, survey_id: 'post-cta' });
+
+      ux.on('send_error', (e) => console.log('tinyux send_error', e));
+      ux.on('sent', (e) => console.log('tinyux sent', e));
+    </script>
+  </body>
+</html>
+
