@@ -278,6 +278,17 @@
     }
   }
 
+  function safePath(cfg) {
+    try {
+      var u = new URL(window.location.href);
+      var out = u.pathname || '/';
+      if (cfg.includeQueryString) out += u.search;
+      return out;
+    } catch (e) {
+      return '/';
+    }
+  }
+
   function defaultConfig() {
     return {
       appId: '',
@@ -298,6 +309,7 @@
 
       captureInputs: false,
       mouseSampling: { enabled: false, rateHz: 5 },
+      heatmaps: { enabled: false, clicks: true, taps: true },
 
       exitIntent: { enabled: false, sensitivity: 12, oncePerSession: true, cooldownMinutes: 60 },
       sectionScroll: { threshold: 0.5 },
@@ -326,6 +338,71 @@
     return out;
   }
 
+  function clonePlainObject(obj) {
+    var out = {};
+    if (!isObject(obj)) return out;
+    for (var k in obj) {
+      if (!Object.prototype.hasOwnProperty.call(obj, k)) continue;
+      var v = obj[k];
+      if (v == null) continue;
+      if (typeof v === 'function') continue;
+      out[k] = v;
+    }
+    return out;
+  }
+
+  function normalizeUserIdentity(input, traits) {
+    var src = isObject(input) ? input : {};
+    var out = {};
+    var traitOut = {};
+
+    if (typeof input === 'string' || typeof input === 'number') out.id = String(input).slice(0, 160);
+    else if (src.id != null) out.id = String(src.id).slice(0, 160);
+    else if (src.user_id != null) out.id = String(src.user_id).slice(0, 160);
+
+    if (src.account_id != null) out.account_id = String(src.account_id).slice(0, 160);
+
+    var srcTraits = clonePlainObject(src.traits);
+    for (var st in srcTraits) if (Object.prototype.hasOwnProperty.call(srcTraits, st)) traitOut[st] = srcTraits[st];
+
+    for (var sk in src) {
+      if (!Object.prototype.hasOwnProperty.call(src, sk)) continue;
+      if (sk === 'id' || sk === 'user_id' || sk === 'account_id' || sk === 'traits') continue;
+      if (src[sk] == null || typeof src[sk] === 'function') continue;
+      traitOut[sk] = src[sk];
+    }
+
+    if (isObject(traits)) {
+      if (traits.account_id != null) out.account_id = String(traits.account_id).slice(0, 160);
+      for (var tk in traits) {
+        if (!Object.prototype.hasOwnProperty.call(traits, tk)) continue;
+        if (tk === 'account_id') continue;
+        if (traits[tk] == null || typeof traits[tk] === 'function') continue;
+        traitOut[tk] = traits[tk];
+      }
+    }
+
+    var hasTraits = false;
+    for (var k in traitOut) {
+      if (Object.prototype.hasOwnProperty.call(traitOut, k)) {
+        hasTraits = true;
+        break;
+      }
+    }
+    if (hasTraits) out.traits = traitOut;
+    if (!out.id && !out.account_id && !hasTraits) return null;
+    return out;
+  }
+
+  function cloneUserIdentity(user) {
+    if (!user) return null;
+    var out = {};
+    if (user.id != null) out.id = user.id;
+    if (user.account_id != null) out.account_id = user.account_id;
+    if (isObject(user.traits)) out.traits = clonePlainObject(user.traits);
+    return out;
+  }
+
   function TinyUXInstance(userCfg) {
     var cfg = mergeConfig(defaultConfig(), userCfg || {});
     var emitter = new Emitter();
@@ -349,6 +426,7 @@
 
     var lastSurveyShownAtMs = 0;
     var surveysShownThisSession = 0;
+    var userIdentity = normalizeUserIdentity(cfg.user);
 
     var STORAGE_CLIENT_ID = 'tinyux:client_id';
     var STORAGE_SESSION_ID = 'tinyux:session_id';
@@ -444,6 +522,9 @@
         v: TINYUX_VERSION
       };
 
+      var userSnap = cloneUserIdentity(userIdentity);
+      if (userSnap) meta.user = userSnap;
+
       if (cfg.computeScore) {
         try {
           meta.score = Number(cfg.computeScore(meta)) || 0;
@@ -455,7 +536,7 @@
     }
 
     function buildPayload(events, surveys) {
-      return {
+      var payload = {
         app_id: cfg.appId,
         client_id: clientId,
         session_id: sessionId,
@@ -464,6 +545,9 @@
         events: events || [],
         surveys: surveys || []
       };
+      var userSnap = cloneUserIdentity(userIdentity);
+      if (userSnap) payload.user = userSnap;
+      return payload;
     }
 
     function canUseBeacon() {
@@ -652,8 +736,14 @@
       /* Customize survey styles here (modal, buttons) and the accent color via `ui.accentColor`. */
       style.textContent =
         '.tinyux-root{position:fixed;inset:0;z-index:' + (cfg.ui && cfg.ui.zIndex ? cfg.ui.zIndex : 2147483647) + ';font-family:Inter,Helvetica Neue,Helvetica,Arial,system-ui,sans-serif;}' +
+        '.tinyux-root-corner{pointer-events:none;}' +
         '.tinyux-overlay{position:absolute;inset:0;background:rgba(10,10,10,.52);backdrop-filter:saturate(120%) blur(2px);}' +
         '.tinyux-modal{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(520px,calc(100vw - 32px));background:#f4f3ee;color:#0a0a0a;border:1px solid #0a0a0a;border-radius:0;box-shadow:none;}' +
+        '.tinyux-root-corner .tinyux-modal{position:fixed;transform:none;width:min(380px,calc(100vw - 28px));pointer-events:auto;}' +
+        '.tinyux-pos-bottom-right .tinyux-modal{right:14px;bottom:14px;left:auto;top:auto;}' +
+        '.tinyux-pos-bottom-left .tinyux-modal{left:14px;bottom:14px;top:auto;}' +
+        '.tinyux-pos-top-right .tinyux-modal{right:14px;top:14px;left:auto;}' +
+        '.tinyux-pos-top-left .tinyux-modal{left:14px;top:14px;}' +
         '.tinyux-header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px 0 16px;}' +
         '.tinyux-title{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#6b6b66}' +
         '.tinyux-close{appearance:none;border:1px solid transparent;background:transparent;color:#0a0a0a;font-size:20px;line-height:1;padding:4px 8px;border-radius:0;cursor:pointer;}' +
@@ -715,8 +805,13 @@
         placeholder: s.placeholder ? String(s.placeholder) : 'Optional',
         oncePerSession: !!s.oncePerSession,
         cooldownMinutes: typeof s.cooldownMinutes === 'number' ? s.cooldownMinutes : 0,
-        maxPerDay: typeof s.maxPerDay === 'number' ? s.maxPerDay : 0
+        maxPerDay: typeof s.maxPerDay === 'number' ? s.maxPerDay : 0,
+        ui: isObject(s.ui) ? clonePlainObject(s.ui) : {}
       };
+      model.ui.mode = model.ui.mode === 'corner' ? 'corner' : 'modal';
+      if (['bottom-right', 'bottom-left', 'top-right', 'top-left'].indexOf(model.ui.position) === -1) {
+        model.ui.position = 'bottom-right';
+      }
       if (!model.survey_id) return null;
       var ds = ctxEl && ctxEl.dataset ? ctxEl.dataset : null;
       model.question = templateWithDataset(model.question, ds);
@@ -733,9 +828,10 @@
       markSurveyShown(survey);
 
       var root = document.createElement('div');
-      root.className = 'tinyux-root';
+      var isCorner = survey.ui && survey.ui.mode === 'corner';
+      root.className = 'tinyux-root' + (isCorner ? ' tinyux-root-corner tinyux-pos-' + survey.ui.position : '');
       root.setAttribute('role', 'dialog');
-      root.setAttribute('aria-modal', 'true');
+      root.setAttribute('aria-modal', isCorner ? 'false' : 'true');
       root.setAttribute('aria-label', survey.title);
 
       var overlay = document.createElement('div');
@@ -792,7 +888,7 @@
       modal.appendChild(header);
       modal.appendChild(body);
       modal.appendChild(footer);
-      root.appendChild(overlay);
+      if (!isCorner) root.appendChild(overlay);
       root.appendChild(modal);
       document.body.appendChild(root);
 
@@ -1136,6 +1232,68 @@
       window.addEventListener('mousemove', onMove, { passive: true });
     }
 
+    function pagePointFromEvent(e) {
+      if (!e) return null;
+      var point = e;
+      if (e.changedTouches && e.changedTouches.length) point = e.changedTouches[0];
+      var doc = document.documentElement || {};
+      var body = document.body || {};
+      var scrollLeft = window.pageXOffset || doc.scrollLeft || body.scrollLeft || 0;
+      var scrollTop = window.pageYOffset || doc.scrollTop || body.scrollTop || 0;
+      var pageX = typeof point.pageX === 'number' ? point.pageX : ((point.clientX || 0) + scrollLeft);
+      var pageY = typeof point.pageY === 'number' ? point.pageY : ((point.clientY || 0) + scrollTop);
+      var viewportW = doc.clientWidth || window.innerWidth || 0;
+      var viewportH = doc.clientHeight || window.innerHeight || 0;
+      var pageW = Math.max(1, doc.scrollWidth || 0, body.scrollWidth || 0, viewportW);
+      var pageH = Math.max(1, doc.scrollHeight || 0, body.scrollHeight || 0, viewportH);
+      return {
+        x_pct: clamp(Math.round((pageX / pageW) * 100), 0, 100),
+        y_pct: clamp(Math.round((pageY / pageH) * 100), 0, 100)
+      };
+    }
+
+    function viewportBucket() {
+      var doc = document.documentElement || {};
+      var w = doc.clientWidth || window.innerWidth || 0;
+      var h = doc.clientHeight || window.innerHeight || 0;
+      return Math.round(w) + 'x' + Math.round(h);
+    }
+
+    function enqueueHeatmapPoint(e, inputType) {
+      var pt = pagePointFromEvent(e);
+      if (!pt) return;
+      enqueueEvent('heatmap_point', {
+        x_pct: pt.x_pct,
+        y_pct: pt.y_pct,
+        viewport: viewportBucket(),
+        path: safePath(cfg),
+        input: inputType,
+        element: elementMeta(e && e.target, cfg) || undefined
+      });
+    }
+
+    var heatmapsArmed = false;
+    function armHeatmaps() {
+      if (!cfg.heatmaps || !cfg.heatmaps.enabled || heatmapsArmed) return;
+      heatmapsArmed = true;
+
+      if (cfg.heatmaps.clicks !== false) {
+        var onClick = function (e) {
+          enqueueHeatmapPoint(e, 'click');
+        };
+        document.addEventListener('click', onClick, true);
+        bindings.push({ event: 'click', handler: onClick });
+      }
+
+      if (cfg.heatmaps.taps !== false) {
+        var onTouch = function (e) {
+          enqueueHeatmapPoint(e, 'touch');
+        };
+        document.addEventListener('touchend', onTouch, true);
+        bindings.push({ event: 'touchend', handler: onTouch });
+      }
+    }
+
     function startCoreTracking() {
       document.addEventListener('visibilitychange', function () {
         enqueueEvent('visibility', { state: document.visibilityState });
@@ -1239,6 +1397,7 @@
       startCoreTracking();
       startHeartbeat();
       armExitIntent();
+      armHeatmaps();
       scanDeclarative();
       startMutationObserver();
       replayQueueSoon();
@@ -1250,6 +1409,7 @@
       version: TINYUX_VERSION,
       init: function (c) {
         cfg = mergeConfig(cfg, c || {});
+        if (c && Object.prototype.hasOwnProperty.call(c, 'user')) userIdentity = normalizeUserIdentity(c.user);
         return this;
       },
       on: emitter.on.bind(emitter),
@@ -1258,6 +1418,17 @@
       },
       getClientId: function () { return clientId; },
       getSessionId: function () { return sessionId; },
+      identify: function (idOrUser, traits) {
+        userIdentity = normalizeUserIdentity(idOrUser, traits);
+        return cloneUserIdentity(userIdentity);
+      },
+      clearIdentity: function () {
+        userIdentity = null;
+        return true;
+      },
+      getIdentity: function () {
+        return cloneUserIdentity(userIdentity);
+      },
       track: function (type, meta) {
         enqueueEvent(type, meta || {});
       },

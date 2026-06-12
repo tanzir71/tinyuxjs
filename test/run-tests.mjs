@@ -297,6 +297,30 @@ await test('survey styles use the Volt accent and square modal/button corners', 
   assert.match(style, /#2540ff/i)
   assert.match(style, /\.tinyux-modal\{[^}]*border-radius:0/)
   assert.match(style, /\.tinyux-btn\{[^}]*border-radius:0/)
+  assert.equal(win.document.querySelectorAll('.tinyux-overlay').length, 1)
+  assert.equal(win.document.querySelector('.tinyux-root').getAttribute('aria-modal'), 'true')
+  win.tinyux.destroy()
+})
+
+await test('corner surveys render without a blocking overlay in the configured corner', async () => {
+  const { win } = makeWindow()
+  installScript(win, 'data-app-id="demo" data-api-url="/collect"')
+  const ux = win.tinyux.getInstance()
+  ux.registerSurvey({
+    id: 'corner-check',
+    type: 'yesno',
+    title: 'Quick check',
+    question: 'Was this clear?',
+    ui: { mode: 'corner', position: 'bottom-left' }
+  })
+  assert.equal(ux.showSurvey('corner-check'), true)
+  const root = win.document.querySelector('.tinyux-root')
+  const style = win.document.getElementById('tinyux-style').textContent
+  assert.equal(root.getAttribute('aria-modal'), 'false')
+  assert.equal(win.document.querySelectorAll('.tinyux-overlay').length, 0)
+  assert.ok(root.classList.includes('tinyux-root-corner'))
+  assert.ok(root.classList.includes('tinyux-pos-bottom-left'))
+  assert.match(style, /\.tinyux-root-corner/)
   win.tinyux.destroy()
 })
 
@@ -350,6 +374,113 @@ await test('failed sends are retried from localStorage on the next flush', async
   fail = false
   await ux.flush()
   assert.equal(JSON.parse(win.localStorage.getItem('tinyux:failed_queue:demo')).length, 0)
+  win.tinyux.destroy()
+})
+
+await test('config user identity is included in payload user and metadata', async () => {
+  const { win, sent } = makeWindow()
+  installScript(win, 'data-app-id="demo" data-api-url="/collect"')
+  win.tinyux.destroy()
+  const ux = win.tinyux.init({
+    appId: 'demo',
+    apiUrl: '/collect',
+    user: {
+      id: 'user_123',
+      account_id: 'acct_456',
+      traits: { plan: 'team', role: 'owner' }
+    }
+  })
+  ux.track('custom_event', { source: 'identity-test' })
+  await ux.flush()
+  const latest = sent.at(-1).body
+  assert.deepEqual(latest.user, {
+    id: 'user_123',
+    account_id: 'acct_456',
+    traits: { plan: 'team', role: 'owner' }
+  })
+  assert.deepEqual(latest.meta.user, latest.user)
+  win.tinyux.destroy()
+})
+
+await test('identify updates payload identity for subsequent events', async () => {
+  const { win, sent } = makeWindow()
+  installScript(win, 'data-app-id="demo" data-api-url="/collect"')
+  const ux = win.tinyux.getInstance()
+  assert.equal(typeof ux.identify, 'function')
+  assert.equal(typeof ux.clearIdentity, 'function')
+  assert.equal(typeof ux.getIdentity, 'function')
+
+  ux.identify('user_999', { account_id: 'acct_999', plan: 'scale', role: 'admin' })
+  const identity = JSON.parse(JSON.stringify(ux.getIdentity()))
+  assert.deepEqual(identity, {
+    id: 'user_999',
+    account_id: 'acct_999',
+    traits: { plan: 'scale', role: 'admin' }
+  })
+  ux.track('custom_event', { source: 'identify-test' })
+  await ux.flush()
+  assert.deepEqual(sent.at(-1).body.user, identity)
+
+  ux.clearIdentity()
+  ux.track('anonymous_event', {})
+  await ux.flush()
+  assert.equal(Object.prototype.hasOwnProperty.call(sent.at(-1).body, 'user'), false)
+  win.tinyux.destroy()
+})
+
+await test('heatmap points are not captured unless heatmaps are enabled', async () => {
+  const { win, document, sent } = makeWindow()
+  installScript(win, 'data-app-id="demo" data-api-url="/collect"')
+  const ux = win.tinyux.getInstance()
+  document.dispatchEvent({ type: 'click', target: document.body, pageX: 120, pageY: 160, clientX: 120, clientY: 160 })
+  await ux.flush()
+  assert.ok(sent.length >= 1)
+  const events = sent.flatMap((item) => item.body.events || [])
+  assert.equal(events.some((event) => event.type === 'heatmap_point'), false)
+  win.tinyux.destroy()
+})
+
+await test('enabled heatmaps capture coarse click density without text or form values', async () => {
+  const { win, document, sent } = makeWindow()
+  document.documentElement.scrollWidth = 1000
+  document.documentElement.scrollHeight = 2000
+  document.documentElement.clientWidth = 500
+  document.documentElement.clientHeight = 500
+  document.body.scrollWidth = 1000
+  document.body.scrollHeight = 2000
+
+  const button = document.createElement('button')
+  button.setAttribute('id', 'buy')
+  button.setAttribute('data-plan', 'team')
+  button.setAttribute('data-email', 'private@example.test')
+  button.textContent = 'Private checkout text'
+  document.body.appendChild(button)
+
+  installScript(win, 'data-app-id="demo" data-api-url="/collect"')
+  win.tinyux.destroy()
+  const ux = win.tinyux.init({
+    appId: 'demo',
+    apiUrl: '/collect',
+    heatmaps: { enabled: true },
+    heartbeatMs: 60000
+  })
+
+  document.dispatchEvent({ type: 'click', target: button, pageX: 250, pageY: 500, clientX: 250, clientY: 500 })
+  await ux.flush()
+
+  const events = sent.flatMap((item) => item.body.events || [])
+  const point = events.find((event) => event.type === 'heatmap_point')
+  assert.ok(point)
+  assert.equal(point.meta.x_pct, 25)
+  assert.equal(point.meta.y_pct, 25)
+  assert.equal(point.meta.viewport, '500x500')
+  assert.equal(point.meta.path, '/pricing')
+  assert.equal(point.meta.input, 'click')
+  assert.equal(point.meta.element.id, 'buy')
+  assert.equal(point.meta.element.dataset.plan, 'team')
+  assert.equal(Object.prototype.hasOwnProperty.call(point.meta.element.dataset, 'email'), false)
+  assert.doesNotMatch(JSON.stringify(point.meta), /Private checkout text/)
+  assert.doesNotMatch(JSON.stringify(point.meta), /private@example\.test/)
   win.tinyux.destroy()
 })
 

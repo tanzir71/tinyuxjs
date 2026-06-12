@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>UX Analytics Tool Comparison - tinyux vs Hotjar, FullStory, LogRocket, PostHog</title>
-  <meta name="description" content="Honest comparison of tinyux against Hotjar, FullStory, LogRocket, and PostHog: telemetry model, session replay, surveys, hosting, privacy, and best-fit use cases.">
+  <meta name="description" content="Honest comparison of tinyux against Hotjar, FullStory, LogRocket, and PostHog: telemetry model, aggregate heatmaps, session replay, surveys, hosting, privacy, and best-fit use cases.">
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://tanzir71.github.io/tinyuxjs/compare.html">
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%20100%20100%27%3E%3Ctext%20y%3D%27.9em%27%20font-size%3D%2790%27%3E%F0%9F%A5%B7%3C%2Ftext%3E%3C%2Fsvg%3E">
@@ -34,7 +34,7 @@
       <div class="container hero-inner">
         <span class="eyebrow">comparison - 2026</span>
         <h1>tinyux compared with Hotjar, FullStory, LogRocket, and PostHog.</h1>
-        <p class="lead">Those tools are broad behavior analytics platforms. tinyux is a deliberately small self-hosted script for targeted UX events and contextual surveys.</p>
+        <p class="lead">Those tools are broad behavior analytics platforms. tinyux is a deliberately small self-hosted script for targeted UX events, optional aggregate heatmaps, and contextual surveys.</p>
         <div class="cta-row">
           <a class="btn btn-primary" href="./demo/product.html">Try the demo</a>
           <a class="btn" href="./docs.html">Read the docs</a>
@@ -81,7 +81,7 @@
                 </tr>
                 <tr>
                   <td><strong>Heatmaps</strong></td>
-                  <td><strong>No</strong></td>
+                  <td>Optional aggregate click/tap heatmaps; no screenshots, DOM snapshots, or replay</td>
                   <td>Yes</td>
                   <td>Yes / behavior visualization features</td>
                   <td>No traditional heatmap focus</td>
@@ -121,7 +121,7 @@
                 </tr>
                 <tr>
                   <td><strong>Not fit for</strong></td>
-                  <td>Replay, heatmaps, analytics warehouses, account-based dashboards</td>
+                  <td>Replay, screenshot-based heatmap suites, analytics warehouses, account-based dashboards</td>
                   <td>Teams unwilling to use a vendor platform</td>
                   <td>Tiny self-hosted instrumentation needs</td>
                   <td>Teams that only need small survey prompts and event metadata</td>
@@ -143,7 +143,7 @@
           <p class="sub">Each page is written for teams deciding whether they need the full platform or only the small self-hosted layer.</p>
         </div>
         <div class="grid grid-2 grid-4">
-          <div class="cell"><h3>vs Hotjar</h3><p>Heatmaps and replays versus self-hosted event prompts.</p><a class="link" href="./hotjar-alternative.html">Read comparison</a></div>
+          <div class="cell"><h3>vs Hotjar</h3><p>Managed heatmap/replay workflows versus self-hosted aggregate heatmap points and prompts.</p><a class="link" href="./hotjar-alternative.html">Read comparison</a></div>
           <div class="cell"><h3>vs FullStory</h3><p>Digital experience analytics versus tiny contextual telemetry.</p><a class="link" href="./fullstory-alternative.html">Read comparison</a></div>
           <div class="cell"><h3>vs LogRocket</h3><p>Developer replay and debug context versus small UX feedback loops.</p><a class="link" href="./logrocket-alternative.html">Read comparison</a></div>
           <div class="cell"><h3>vs PostHog</h3><p>Product OS versus one script and your database.</p><a class="link" href="./posthog-alternative.html">Read comparison</a></div>
@@ -165,7 +165,7 @@
           </div>
           <div class="cell">
             <h3>Choose a platform if...</h3>
-            <p>You need replay search, heatmaps, funnels, account analytics, feature flagging, long-term product metrics, team permissions, or vendor-managed reporting.</p>
+            <p>You need replay search, screenshot-backed heatmap suites, funnels, account analytics, feature flagging, long-term product metrics, team permissions, or vendor-managed reporting.</p>
           </div>
         </div>
       </div>

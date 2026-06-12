@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>tinyux - Self-Hosted UX Telemetry And Micro-Surveys</title>
-  <meta name="description" content="A tiny self-hosted UX telemetry and contextual micro-survey library. One script tag records useful interaction signals and sends events to your own PHP/SQLite collector.">
+  <title>tinyux - Self-Hosted UX Telemetry, Heatmaps, And Micro-Surveys</title>
+  <meta name="description" content="A tiny self-hosted UX telemetry, optional aggregate heatmap, and contextual micro-survey library. One script tag sends events to your own PHP/SQLite collector.">
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://tanzir71.github.io/tinyuxjs/">
   <meta property="og:title" content="tinyux - Self-Hosted UX Telemetry">
-  <meta property="og:description" content="One script tag for product interaction signals and contextual micro-surveys, posted to your own server.">
+  <meta property="og:description" content="One script tag for product interaction signals, optional aggregate heatmaps, and contextual micro-surveys, posted to your own server.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://tanzir71.github.io/tinyuxjs/">
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%20100%20100%27%3E%3Ctext%20y%3D%27.9em%27%20font-size%3D%2790%27%3E%F0%9F%A5%B7%3C%2Ftext%3E%3C%2Fsvg%3E">
@@ -39,11 +39,11 @@
         <div class="hero-grid">
           <div>
             <span class="eyebrow">v0.1 - free - open source - no vendor cloud</span>
-            <h1>UX telemetry and micro-surveys in one script tag.</h1>
+            <h1>UX telemetry, heatmaps, and micro-surveys in one script tag.</h1>
             <p class="lead">
               Track the moments that explain friction: clicks, scroll depth, section views, focus loss,
-              exit intent, heartbeats, and contextual survey responses. tinyux posts batched events to
-              <em>your</em> collector, not a replay vendor.
+              exit intent, heartbeats, optional aggregate heatmap points, and contextual survey responses.
+              tinyux posts batched events to <em>your</em> collector, not a replay vendor.
             </p>
             <div class="cta-row">
               <a class="btn btn-primary" href="./demo/product.html">Try the live demo</a>
@@ -53,7 +53,7 @@
               <div class="stat"><div class="num">1 file</div><div class="lbl">0 deps</div></div>
               <div class="stat"><div class="num">4</div><div class="lbl">survey types</div></div>
               <div class="stat"><div class="num">$0</div><div class="lbl">MIT friendly</div></div>
-              <div class="stat"><div class="num">0</div><div class="lbl">recorded sessions</div></div>
+              <div class="stat"><div class="num">0</div><div class="lbl">replay sessions</div></div>
             </div>
           </div>
           <div>
@@ -65,10 +65,10 @@
               <div class="snippet-body" id="snippet">&lt;script src="/js/tinyux.js"
   <span class="a">data-app-id</span>=<span class="v">"acme-app"</span>
   <span class="a">data-api-url</span>=<span class="v">"https://your-site.com/collect.php"</span>
-  <span class="a">data-config</span>=<span class="v">'{"exitIntent":{"enabled":true}}'</span>&gt;
+  <span class="a">data-config</span>=<span class="v">'{"exitIntent":{"enabled":true},"heatmaps":{"enabled":true}}'</span>&gt;
 &lt;/script&gt;
 
-<span class="c">// Clicks, sections, surveys, heartbeats
+<span class="c">// Clicks, heatmap points, surveys
 // -> batched with sendBeacon/fetch
 // -> stored in your SQLite database.</span></div>
             </div>
@@ -113,7 +113,7 @@
               <circle cx="45" cy="82" r="20" fill="#2540ff"></circle>
               <circle cx="85" cy="82" r="20" fill="#cfcdc4" stroke="#0a0a0a"></circle>
               <circle cx="125" cy="82" r="20" fill="#f4f3ee" stroke="#0a0a0a"></circle>
-              <text x="18" y="126" fill="#6b6b66" font-family="JetBrains Mono, monospace" font-size="10" letter-spacing="1">CLICK / SCROLL / FOCUS</text>
+              <text x="18" y="126" fill="#6b6b66" font-family="JetBrains Mono, monospace" font-size="10" letter-spacing="1">CLICK / HEAT / FOCUS</text>
             </g>
             <path d="M532 193 H616" stroke="#0a0a0a" stroke-width="2" marker-end="url(#arr)"></path>
             <g transform="translate(630 118)">
@@ -140,7 +140,7 @@
         </div>
         <div class="diagram-steps">
           <div class="dstep"><div class="n">01 / embed</div><div class="t">One static file</div><p>No framework, package manager, extension, or vendor account required.</p></div>
-          <div class="dstep"><div class="n">02 / observe</div><div class="t">Behavioral signals</div><p>Page views, clicks, scroll depth, focus changes, section views, and heartbeats.</p></div>
+          <div class="dstep"><div class="n">02 / observe</div><div class="t">Behavioral signals</div><p>Page views, clicks, aggregate heatmap points, scroll depth, focus changes, section views, and heartbeats.</p></div>
           <div class="dstep"><div class="n">03 / ask</div><div class="t">Micro-surveys</div><p>Rating, yes/no, choices, and optional text prompts with cooldown rules.</p></div>
           <div class="dstep"><div class="n">04 / report</div><div class="t">Batched delivery</div><p>sendBeacon and keepalive fetch, plus local retry for failed sends.</p></div>
           <div class="dstep"><div class="n">05 / own</div><div class="t">Your database</div><p>PHP/SQLite collector stores clients, sessions, events, surveys, and failures.</p></div>
@@ -199,13 +199,16 @@ sqlite3 tinyux.db &lt; schema.sql<button class="pre-copy" data-copy-target="prom
         <div class="section-head">
           <span class="idx">SYS - 03</span>
           <h2>Signals small enough to trust</h2>
-          <p class="sub">tinyux records metadata about interaction context. It does not replay a user's screen, record typed content, or ship private product data to a third-party workspace.</p>
+          <p class="sub">tinyux records metadata about interaction context. It can collect aggregate click/tap heatmap points, but it does not replay a user's screen, record typed content, or ship private product data to a third-party workspace.</p>
         </div>
         <div class="grid grid-2 grid-4">
           <div class="cell"><h3>Page views</h3><p>Initial URL, referrer, viewport, scroll depth, focus time, and client/session IDs.</p><span class="k">page_view</span></div>
           <div class="cell"><h3>Interactions</h3><p>Bind selectors or add attributes to key CTAs, forms, and controls.</p><span class="k">interaction</span></div>
           <div class="cell"><h3>Section views</h3><p>IntersectionObserver-powered section visibility, with cooldown and once-per-session options.</p><span class="k">section_view</span></div>
           <div class="cell"><h3>Focus and blur</h3><p>Know whether a user left the page during a task or returned to continue.</p><span class="k">focus - blur</span></div>
+          <div class="cell"><h3>Aggregate heatmaps</h3><p>Optional click/tap density points with coarse coordinates and sanitized element metadata.</p><span class="k">heatmap_point</span></div>
+          <div class="cell"><h3>User association</h3><p>Attach your own user, account, plan, or role IDs when your app already knows them.</p><span class="k">identify</span></div>
+          <div class="cell"><h3>Corner prompts</h3><p>Use blocking modal surveys or subtle non-blocking prompts in any corner.</p><span class="k">ui.mode</span></div>
           <div class="cell"><h3>Exit intent</h3><p>Detect top-edge pointer movement and ask one last contextual question.</p><span class="k">exit_intent</span></div>
           <div class="cell"><h3>Heartbeats</h3><p>Periodic pulses make abandoned sessions and long-running tasks visible server-side.</p><span class="k">heartbeat</span></div>
           <div class="cell"><h3>Input metadata</h3><p>Optional lengths/types only. Values are never captured by default.</p><span class="k">input_meta</span></div>
@@ -227,7 +230,7 @@ sqlite3 tinyux.db &lt; schema.sql<button class="pre-copy" data-copy-target="prom
           <div class="cell"><h3>Small enough to audit</h3><p>One readable client file and one PHP collector. No black-box recorder and no account setup.</p></div>
         </div>
         <div class="grid grid-2 grid-4" style="margin-top:24px;">
-          <div class="cell"><h3>vs Hotjar</h3><p>No heatmaps or replay. Much smaller and fully self-hosted.</p><a class="link" href="./hotjar-alternative.html">Compare</a></div>
+          <div class="cell"><h3>vs Hotjar</h3><p>Optional aggregate heatmaps, but no replay, screenshots, or behavior suite.</p><a class="link" href="./hotjar-alternative.html">Compare</a></div>
           <div class="cell"><h3>vs FullStory</h3><p>No digital experience cloud or session reconstruction.</p><a class="link" href="./fullstory-alternative.html">Compare</a></div>
           <div class="cell"><h3>vs LogRocket</h3><p>No console/network replay stream. Better for tiny feedback loops.</p><a class="link" href="./logrocket-alternative.html">Compare</a></div>
           <div class="cell"><h3>vs PostHog</h3><p>No product OS. Just events, survey answers, and your endpoint.</p><a class="link" href="./posthog-alternative.html">Compare</a></div>
@@ -243,7 +246,7 @@ sqlite3 tinyux.db &lt; schema.sql<button class="pre-copy" data-copy-target="prom
           <p class="sub">Honest limits keep tinyux useful. If you need full product analytics, choose a real analytics platform. If you need session replay, choose a replay tool.</p>
         </div>
         <div class="grid grid-2">
-          <div class="cell"><h3>No replay theater</h3><p>No DOM playback, video-style recordings, heatmaps, console logs, network capture, or keystroke contents. tinyux stores events and survey context, not a reconstructed person.</p></div>
+          <div class="cell"><h3>No replay theater</h3><p>No DOM playback, video-style recordings, screenshots, console logs, network capture, or keystroke contents. Heatmaps are aggregate click/tap coordinates only.</p></div>
           <div class="cell"><h3>No false certainty</h3><p>Client-side telemetry is directional. Use it to find friction, prompt follow-up, and prioritize fixes, not to claim perfect behavioral truth.</p></div>
         </div>
       </div>

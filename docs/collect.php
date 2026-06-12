@@ -9,6 +9,7 @@ declare(strict_types=1);
   - $ALLOWED_ORIGINS: CORS allowlist
   - $API_KEY_ALLOWLIST: optional X-API-KEY allowlist (note: sendBeacon cannot set custom headers)
   - $RATE_LIMIT_PER_MINUTE: soft per-IP limit
+  - $CAPTURE_REQUEST_META: optional request metadata capture, disabled by default
 
   Payload mapping notes (client → DB):
   Expected payload shape (example):
@@ -47,6 +48,10 @@ $REQUIRE_API_KEY = false;
 
 $MAX_BODY_BYTES = 256 * 1024; // 256KB
 $RATE_LIMIT_PER_MINUTE = 120; // soft, per IP
+$CAPTURE_REQUEST_META = false;
+$HASH_IP_WITH_SALT = true;
+$IP_HASH_SALT = 'change-me';
+$CAPTURE_USER_AGENT = false;
 
 // --- Helpers ---
 function tinyux_log(string $path, string $level, string $msg, array $ctx = []): void {
@@ -156,6 +161,41 @@ function tinyux_store_failed(PDO $pdo, string $rawPayload, string $logPath, stri
   }
 }
 
+function tinyux_payload_meta(array $payload): ?array {
+  $meta = $payload['meta'] ?? null;
+  $out = is_array($meta) ? $meta : [];
+  $user = $payload['user'] ?? null;
+  if (is_array($user)) {
+    $out['user'] = $user;
+  }
+  return empty($out) ? null : $out;
+}
+
+function tinyux_request_meta(bool $capture, bool $hashIp, string $salt, bool $captureUserAgent): array {
+  if (!$capture) return [];
+  $out = [];
+  $ip = $_SERVER['REMOTE_ADDR'] ?? '';
+  if ($ip !== '') {
+    if ($hashIp) {
+      $out['ip_hash'] = hash_hmac('sha256', $ip, $salt);
+    } else {
+      $out['ip'] = $ip;
+    }
+  }
+  if ($captureUserAgent) {
+    $ua = $_SERVER['HTTP_USER_AGENT'] ?? '';
+    if ($ua !== '') $out['user_agent'] = substr((string)$ua, 0, 500);
+  }
+  return $out;
+}
+
+function tinyux_merge_request_meta(?array $meta, array $requestMeta): ?array {
+  if (empty($requestMeta)) return $meta;
+  $out = is_array($meta) ? $meta : [];
+  $out['request'] = $requestMeta;
+  return $out;
+}
+
 // --- CLI retry worker (optional) ---
 // Usage: php collect.php --retry
 if (PHP_SAPI === 'cli' && isset($argv[1]) && $argv[1] === '--retry') {
@@ -184,7 +224,7 @@ if (PHP_SAPI === 'cli' && isset($argv[1]) && $argv[1] === '--retry') {
       $appId = (string)($payload['app_id'] ?? '');
       $clientUid = (string)($payload['client_id'] ?? '');
       $sessionUid = (string)($payload['session_id'] ?? '');
-      $meta = $payload['meta'] ?? null;
+      $meta = tinyux_payload_meta($payload);
 
       if (!tinyux_is_valid_id($appId, 120) || !tinyux_is_valid_id($clientUid, 120) || ($sessionUid !== '' && !tinyux_is_valid_id($sessionUid, 120))) {
         throw new RuntimeException('invalid ids');
@@ -317,7 +357,11 @@ if (!tinyux_is_valid_id($appId, 120) || !tinyux_is_valid_id($clientUid, 120) || 
 
 $events = $payload['events'] ?? [];
 $surveys = $payload['surveys'] ?? [];
-$meta = $payload['meta'] ?? null;
+$meta = tinyux_payload_meta($payload);
+$meta = tinyux_merge_request_meta(
+  $meta,
+  tinyux_request_meta($CAPTURE_REQUEST_META, $HASH_IP_WITH_SALT, $IP_HASH_SALT, $CAPTURE_USER_AGENT)
+);
 
 if (!is_array($events)) $events = [];
 if (!is_array($surveys)) $surveys = [];

@@ -1,6 +1,6 @@
 # tinyux
 
-> Self-hosted UX telemetry and contextual micro-surveys.
+> Self-hosted UX telemetry, optional aggregate heatmaps, and contextual micro-surveys.
 > One static JS file + one collector endpoint. MIT license. v0.1.0.
 
 This file is the implementation contract for AI agents integrating tinyux.
@@ -52,7 +52,8 @@ ux.registerSurvey({
   type: 'yesno',
   title: 'Pricing clarity',
   question: 'Did this section answer your question?',
-  oncePerSession: true
+  oncePerSession: true,
+  ui: { mode: 'corner', position: 'bottom-right' }
 })
 ```
 
@@ -67,6 +68,11 @@ Request body:
   "app_id": "acme-app",
   "client_id": "uuid",
   "session_id": "uuid",
+  "user": {
+    "id": "user_123",
+    "account_id": "acct_456",
+    "traits": {"plan": "team"}
+  },
   "ts": 1781230000,
   "meta": {
     "url": "https://app.example.com/page",
@@ -78,10 +84,16 @@ Request body:
     "click_count": 2,
     "scroll_pct_max": 80,
     "v": "0.1.0",
-    "score": 10
+    "score": 10,
+    "user": {
+      "id": "user_123",
+      "account_id": "acct_456",
+      "traits": {"plan": "team"}
+    }
   },
   "events": [
-    {"id": "e-...", "type": "interaction", "ts": 1781230001, "meta": {}}
+    {"id": "e-...", "type": "interaction", "ts": 1781230001, "meta": {}},
+    {"id": "e-...", "type": "heatmap_point", "ts": 1781230001, "meta": {"x_pct": 52, "y_pct": 34, "viewport": "1366x768", "path": "/pricing", "input": "click"}}
   ],
   "surveys": [
     {"survey_id": "pricing-clarity", "type": "yesno", "response": {"value": true}, "ts": 1781230002, "context": {}}
@@ -103,6 +115,9 @@ Respond with any 2xx status to acknowledge. Non-2xx or network failures are retr
 - `instance.showSurvey(idOrConfig)` - show a survey immediately.
 - `instance.flush()` - force send.
 - `instance.stop()` - stop timers and bindings.
+- `instance.identify(id, traits)` - associate later payloads with an explicit user/account identity from the host app.
+- `instance.clearIdentity()` - remove explicit identity from later payloads.
+- `instance.getIdentity()` - read the current explicit identity.
 - `instance.on(event, handler)` - subscribe to lifecycle events.
 
 Events: `sent`, `send_error`, `interaction`, `survey_shown`, `survey_submitted`, `survey_closed`, `exit_intent`.
@@ -114,6 +129,39 @@ Events: `sent`, `send_error`, `interaction`, `survey_shown`, `survey_submitted`,
 - `choice`: choices array.
 - `text`: textarea. Use sparingly because users can type personal data.
 
+Survey UI:
+- Default: blocking center modal.
+- Corner: set `ui: { mode: 'corner', position: 'bottom-right' }`.
+- Positions: `bottom-right`, `bottom-left`, `top-right`, `top-left`.
+
+## Identity
+
+tinyux uses anonymous `client_id` and `session_id` by default. Integrators can attach known user/account data:
+
+```js
+const ux = window.tinyux.getInstance()
+ux.identify('user_123', {
+  account_id: 'acct_456',
+  plan: 'team',
+  role: 'admin'
+})
+```
+
+Payloads include top-level `user` and `meta.user`. Do not fingerprint browsers or devices to infer identity.
+
+## Optional aggregate heatmaps
+
+Heatmaps are disabled by default. Enable them only when the host app wants aggregate click/tap density:
+
+```html
+<script src="/js/tinyux.js"
+  data-app-id="APP_ID_HERE"
+  data-api-url="/collect.php"
+  data-config='{"heatmaps":{"enabled":true}}'></script>
+```
+
+Heatmap events are stored as normal `events` rows with `event_type = 'heatmap_point'`. Metadata contains coarse `x_pct` and `y_pct` page coordinates, a viewport bucket, URL path, input type, and sanitized element metadata. tinyux does not capture screenshots, DOM snapshots, mouse trails, or replayable sessions.
+
 ## Privacy
 
-By default tinyux does not capture screen contents, DOM snapshots, keystroke contents, clipboard contents, camera, microphone, console logs, network logs, or form values. Dataset metadata is filtered by denylist; use `datasetAllowlist` for strict deployments.
+By default tinyux does not capture screen contents, screenshots, DOM snapshots, keystroke contents, clipboard contents, camera, microphone, console logs, network logs, or form values. Dataset metadata is filtered by denylist; use `datasetAllowlist` for strict deployments.
