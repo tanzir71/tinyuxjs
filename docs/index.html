@@ -238,10 +238,25 @@ sqlite3 tinyux.db &lt; schema.sql<button class="pre-copy" data-copy-target="prom
       </div>
     </section>
 
-    <section id="limits" class="section">
+    <section id="compliance" class="section">
       <div class="container">
         <div class="section-head">
           <span class="idx">SYS - 05</span>
+          <h2>Compliance-friendly by design</h2>
+          <p class="sub">tinyux does not make your product compliant by itself. It gives privacy-sensitive teams a smaller, self-hosted telemetry surface for GDPR / UK GDPR, CCPA / CPRA, SOC 2, and internal data-governance workflows.</p>
+        </div>
+        <div class="grid grid-3">
+          <div class="cell"><h3>Data minimization</h3><p>No replay, screenshots, DOM snapshots, keystroke contents, form values, console logs, or network logs by default. Heatmaps are aggregate click and tap points only.</p></div>
+          <div class="cell"><h3>Processor control</h3><p>Events, survey answers, identities, and request metadata land on your endpoint and database, so retention, deletion, access, and export stay under your infrastructure controls.</p></div>
+          <div class="cell"><h3>Consent-aware setup</h3><p>Keep tinyux behind your consent gate, pass known user or account IDs explicitly, and leave optional request metadata disabled unless your policy allows it.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="limits" class="section">
+      <div class="container">
+        <div class="section-head">
+          <span class="idx">SYS - 06</span>
           <h2>What it deliberately does not do</h2>
           <p class="sub">Honest limits keep tinyux useful. If you need full product analytics, choose a real analytics platform. If you need session replay, choose a replay tool.</p>
         </div>

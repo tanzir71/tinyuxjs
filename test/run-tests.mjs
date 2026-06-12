@@ -523,4 +523,15 @@ await test('setup cards align code blocks and docs use reference-style article l
   assert.match(docsHtml, /<h1>Implementation guide<\/h1>/)
 })
 
+await test('landing page describes compliance posture without claiming blanket compliance', async () => {
+  const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8')
+  assert.match(html, /Compliance-friendly by design/)
+  assert.match(html, /GDPR \/ UK GDPR/)
+  assert.match(html, /CCPA \/ CPRA/)
+  assert.match(html, /SOC 2/)
+  assert.match(html, /does not make your product compliant by itself/)
+  assert.doesNotMatch(html, /GDPR compliant/i)
+  assert.doesNotMatch(html, /HIPAA compliant/i)
+})
+
 console.log(`\n${passed} tests passed`)
