@@ -1,0 +1,12 @@
+{
+  "name": "tinyux",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node test/run-tests.mjs",
+    "build:min": "node scripts/minify.mjs",
+    "serve": "node demo/server.mjs",
+    "sync:docs": "node scripts/sync-docs.mjs"
+  }
+}

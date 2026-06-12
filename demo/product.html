@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Live Demo - tinyux</title>
+  <meta name="description" content="Interactive demo of tinyux UX telemetry and contextual micro-surveys.">
+  <meta name="robots" content="index, follow">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%20100%20100%27%3E%3Ctext%20y%3D%27.9em%27%20font-size%3D%2790%27%3E%F0%9F%A5%B7%3C%2Ftext%3E%3C%2Fsvg%3E">
+  <link rel="stylesheet" href="../site.css">
+  <style>
+    .demo-shell { display: grid; grid-template-columns: 1fr; gap: 20px; align-items: start; }
+    @media (min-width: 980px) { .demo-shell { grid-template-columns: minmax(0, 7fr) minmax(320px, 5fr); } }
+    .demo-panel { border: 1px solid var(--border); background: var(--panel); padding: 20px; }
+    .demo-product { min-height: 520px; }
+    .mock-toolbar { display: flex; justify-content: space-between; gap: 12px; border-bottom: 1px solid var(--border); padding-bottom: 12px; margin-bottom: 20px; font-family: var(--f-mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+    .product-hero { display: grid; gap: 16px; padding: 30px 0; border-bottom: 1px solid var(--border); }
+    .product-hero h2 { margin: 0; font-size: clamp(32px, 6vw, 62px); }
+    .pricing-band { display: grid; grid-template-columns: 1fr; gap: 1px; background: var(--border); border: 1px solid var(--border); margin-top: 22px; }
+    @media (min-width: 720px) { .pricing-band { grid-template-columns: repeat(3, 1fr); } }
+    .price-cell { background: var(--bg); padding: 18px; min-height: 160px; }
+    .price { font-size: 32px; letter-spacing: -0.04em; font-weight: 700; margin-top: 12px; }
+    .log { max-height: 380px; overflow: auto; border: 1px solid var(--border); background: var(--bg); }
+    .log-row { display: grid; grid-template-columns: 80px 1fr; gap: 12px; padding: 9px 12px; border-bottom: 1px solid var(--border-soft); font-family: var(--f-mono); font-size: 12px; }
+    .log-row:last-child { border-bottom: 0; }
+    .log-time { color: var(--muted-2); }
+    .log-msg strong { color: var(--acc); }
+    .metric-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); margin: 16px 0; }
+    .metric { background: var(--bg); padding: 14px; }
+    .metric b { display: block; font-size: 24px; letter-spacing: -0.03em; }
+    .metric span { display: block; margin-top: 2px; color: var(--muted); font-family: var(--f-mono); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container header-inner">
+      <a class="brand" href="../index.html"><div class="logo"><span>TU</span></div><span class="brand-name">tinyux</span></a>
+      <nav>
+        <a class="nav-link" href="../index.html#features">Signals</a>
+        <a class="nav-link" href="../docs.html">Docs</a>
+        <a class="nav-link" href="../compare.html">Compare</a>
+        <a class="nav-link" href="./product.html" aria-current="page">Demo</a>
+        <a class="btn btn-primary" href="https://github.com/tanzir71/tinyuxjs" target="_blank" rel="noopener">GitHub</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="container hero-inner">
+        <span class="eyebrow">live demo - local collector</span>
+        <h1>Click around. tinyux will explain what happened.</h1>
+        <p class="lead">This page is instrumented with the same script tag you would use in production. Events POST to the local demo server at `/collect`.</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container demo-shell">
+        <div class="demo-panel demo-product">
+          <div class="mock-toolbar"><span>ACME CLOUD / CHECKOUT FLOW</span><span>DEMO PAGE</span></div>
+          <div class="product-hero">
+            <h2>Simple plans for teams that ship weekly.</h2>
+            <p class="sub">Try the buttons below. The upgrade click opens a contextual survey and records metadata from the button dataset.</p>
+            <div class="cta-row">
+              <button class="btn btn-primary" data-plan="team" data-tinyux-trigger="click" data-tinyux-survey-id="upgrade-clarity">Upgrade to Team</button>
+              <button class="btn" data-plan="trial" data-tinyux-trigger="click" data-tinyux-survey-id="trial-intent">Start trial</button>
+              <button class="btn" id="manual-survey">Ask feedback now</button>
+            </div>
+          </div>
+
+          <section id="pricing" style="padding-top:28px;" data-tinyux-trigger="section-scroll" data-tinyux-threshold="0.5" data-tinyux-once="session" data-tinyux-survey-id="pricing-clarity">
+            <div class="mock-toolbar"><span>PRICING SECTION</span><span>SECTION-SCROLL TRIGGER</span></div>
+            <div class="pricing-band">
+              <div class="price-cell"><h3>Starter</h3><div class="price">$19</div><p class="card-text">For tiny teams watching the first funnel.</p></div>
+              <div class="price-cell"><h3>Team</h3><div class="price">$49</div><p class="card-text">For teams that need better support signals.</p></div>
+              <div class="price-cell"><h3>Scale</h3><div class="price">$99</div><p class="card-text">For product teams with multiple flows.</p></div>
+            </div>
+          </section>
+
+          <div style="height: 70vh; display:grid; align-items:end;">
+            <p class="note">Scroll back to the pricing section if the section survey has not fired yet. Move your pointer to the top edge to test exit intent.</p>
+          </div>
+        </div>
+
+        <aside class="demo-panel">
+          <div class="section-head" style="margin-bottom:14px;">
+            <span class="idx">LIVE - 01</span>
+            <h2>Event console</h2>
+            <p class="sub">The left side is code-native UI. This log listens to tinyux lifecycle events and the local server payload store.</p>
+          </div>
+          <div class="metric-row">
+            <div class="metric"><b id="event-count">0</b><span>events</span></div>
+            <div class="metric"><b id="survey-count">0</b><span>surveys</span></div>
+            <div class="metric"><b id="send-count">0</b><span>sends</span></div>
+          </div>
+          <div class="cta-row" style="margin:0 0 14px;">
+            <button class="btn" id="refresh-events">Refresh server payloads</button>
+            <button class="btn" id="clear-log">Clear log</button>
+          </div>
+          <div class="log" id="log" aria-live="polite"></div>
+          <div class="code-card" style="margin-top:20px;">
+            <div class="code-head"><span class="code-title">demo script tag</span></div>
+            <pre class="pre-block">&lt;script src="../tinyux.js"
+  data-app-id="demo-store"
+  data-api-url="/collect"
+  data-config='{"exitIntent":{"enabled":true,"survey_id":"exit-survey"}}'&gt;
+&lt;/script&gt;</pre>
+          </div>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <script src="../tinyux.js"
+    data-app-id="demo-store"
+    data-api-url="/collect"
+    data-config='{"debug":false,"surveys":{"maxPerSession":4,"minIntervalMinutes":0},"exitIntent":{"enabled":true,"sensitivity":12,"survey_id":"exit-survey","cooldownMinutes":0}}'></script>
+  <script>
+    (function () {
+      'use strict'
+
+      var ux = window.tinyux.getInstance()
+      var log = document.getElementById('log')
+      var events = 0
+      var surveys = 0
+      var sends = 0
+
+      function time() {
+        var d = new Date()
+        return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })
+      }
+
+      function add(message) {
+        var row = document.createElement('div')
+        row.className = 'log-row'
+        row.innerHTML = '<div class="log-time">' + time() + '</div><div class="log-msg">' + message + '</div>'
+        log.insertBefore(row, log.firstChild)
+        while (log.children.length > 80) log.removeChild(log.lastChild)
+      }
+
+      function paint() {
+        document.getElementById('event-count').textContent = String(events)
+        document.getElementById('survey-count').textContent = String(surveys)
+        document.getElementById('send-count').textContent = String(sends)
+      }
+
+      ux.registerSurvey({
+        id: 'upgrade-clarity',
+        type: 'rating',
+        title: 'Quick check',
+        question: 'How clear was the {{data-plan}} upgrade message?',
+        scale: 5,
+        cooldownMinutes: 0
+      })
+      ux.registerSurvey({
+        id: 'trial-intent',
+        type: 'choice',
+        title: 'Trial intent',
+        question: 'What are you hoping to test first?',
+        choices: ['Setup speed', 'Team reporting', 'Pricing', 'Not sure'],
+        cooldownMinutes: 0
+      })
+      ux.registerSurvey({
+        id: 'pricing-clarity',
+        type: 'yesno',
+        title: 'Pricing clarity',
+        question: 'Did the pricing section answer your main question?',
+        oncePerSession: true
+      })
+      ux.registerSurvey({
+        id: 'exit-survey',
+        type: 'choice',
+        title: 'Before you go',
+        question: 'What stopped you from continuing?',
+        choices: ['Price', 'Missing proof', 'Need docs', 'Just browsing'],
+        cooldownMinutes: 0
+      })
+
+      ux.on('interaction', function (payload) {
+        events += 1
+        paint()
+        add('<strong>interaction</strong> ' + (payload.selector || 'element') + ' / ' + payload.event)
+      })
+      ux.on('survey_shown', function (payload) {
+        events += 1
+        paint()
+        add('<strong>survey shown</strong> ' + payload.survey_id)
+      })
+      ux.on('survey_submitted', function (payload) {
+        surveys += 1
+        paint()
+        add('<strong>survey submitted</strong> ' + payload.survey_id + ' = ' + JSON.stringify(payload.response))
+      })
+      ux.on('exit_intent', function () {
+        events += 1
+        paint()
+        add('<strong>exit intent</strong> pointer reached top edge')
+      })
+      ux.on('sent', function (payload) {
+        sends += 1
+        paint()
+        add('<strong>sent</strong> status ' + payload.status + (payload.beacon ? ' via beacon' : ' via fetch'))
+      })
+      ux.on('send_error', function (payload) {
+        add('<strong>send error</strong> status ' + payload.status)
+      })
+
+      document.getElementById('manual-survey').addEventListener('click', function () {
+        ux.showSurvey('exit-survey')
+      })
+      document.getElementById('clear-log').addEventListener('click', function () {
+        log.innerHTML = ''
+      })
+      document.getElementById('refresh-events').addEventListener('click', function () {
+        fetch('/events').then(function (res) { return res.json() }).then(function (data) {
+          add('<strong>server payloads</strong> ' + data.count + ' stored POST batches')
+        }).catch(function () {
+          add('<strong>server payloads</strong> unavailable outside local demo server')
+        })
+      })
+
+      add('<strong>ready</strong> click buttons, scroll pricing, or submit a survey')
+      paint()
+    })()
+  </script>
+</body>
+</html>

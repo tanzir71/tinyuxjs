@@ -1,0 +1,119 @@
+# tinyux
+
+> Self-hosted UX telemetry and contextual micro-surveys.
+> One static JS file + one collector endpoint. MIT license. v0.1.0.
+
+This file is the implementation contract for AI agents integrating tinyux.
+
+## Files
+
+- Library: https://tanzir71.github.io/tinyuxjs/tinyux.js
+- Minified library: https://tanzir71.github.io/tinyuxjs/tinyux.min.js
+- Collector: https://tanzir71.github.io/tinyuxjs/collect.php
+- Schema: https://tanzir71.github.io/tinyuxjs/schema.sql
+- Human docs: https://tanzir71.github.io/tinyuxjs/docs.html
+
+## Integration steps
+
+1. Download `tinyux.js` and serve it from the project's static assets.
+2. Add the script tag to product pages:
+
+```html
+<script src="/js/tinyux.js"
+  data-app-id="APP_ID_HERE"
+  data-api-url="/collect.php"
+  data-config='{"surveys":{"maxPerSession":2}}'></script>
+```
+
+3. Create the SQLite DB:
+
+```bash
+sqlite3 tinyux.db < schema.sql
+```
+
+4. Deploy `collect.php`, `tinyux.js`, and `tinyux.db` together. The DB must be writable by PHP.
+5. Add declarative triggers:
+
+```html
+<button data-tinyux-trigger="click" data-tinyux-survey-id="upgrade-clarity">
+  Upgrade
+</button>
+
+<section id="pricing" data-tinyux-trigger="section-scroll" data-tinyux-threshold="0.5" data-tinyux-once="session" data-tinyux-survey-id="pricing-clarity">
+</section>
+```
+
+6. Register surveys:
+
+```js
+const ux = window.tinyux.getInstance()
+ux.registerSurvey({
+  id: 'pricing-clarity',
+  type: 'yesno',
+  title: 'Pricing clarity',
+  question: 'Did this section answer your question?',
+  oncePerSession: true
+})
+```
+
+## Collector contract
+
+The client POSTs JSON batches. Accept `Content-Type: application/json`; also accept bodies sent by `navigator.sendBeacon`.
+
+Request body:
+
+```json
+{
+  "app_id": "acme-app",
+  "client_id": "uuid",
+  "session_id": "uuid",
+  "ts": 1781230000,
+  "meta": {
+    "url": "https://app.example.com/page",
+    "referrer": "",
+    "viewport": {"w": 1366, "h": 768},
+    "scroll_pct": 45,
+    "focus_ms": 12000,
+    "interaction_count": 2,
+    "click_count": 2,
+    "scroll_pct_max": 80,
+    "v": "0.1.0",
+    "score": 10
+  },
+  "events": [
+    {"id": "e-...", "type": "interaction", "ts": 1781230001, "meta": {}}
+  ],
+  "surveys": [
+    {"survey_id": "pricing-clarity", "type": "yesno", "response": {"value": true}, "ts": 1781230002, "context": {}}
+  ]
+}
+```
+
+Respond with any 2xx status to acknowledge. Non-2xx or network failures are retried from localStorage with exponential backoff.
+
+## JavaScript API
+
+- `tinyux.init(config)` - create a new instance.
+- `tinyux.getInstance()` - active singleton.
+- `tinyux.autoInit()` - read current script attributes and initialize.
+- `tinyux.destroy()` - stop timers/bindings and clear the singleton.
+- `instance.track(type, meta)` - queue a custom event.
+- `instance.bind(selector, eventName, opts)` - delegated interaction binding.
+- `instance.registerSurvey(config)` - register survey by `id` or `survey_id`.
+- `instance.showSurvey(idOrConfig)` - show a survey immediately.
+- `instance.flush()` - force send.
+- `instance.stop()` - stop timers and bindings.
+- `instance.on(event, handler)` - subscribe to lifecycle events.
+
+Events: `sent`, `send_error`, `interaction`, `survey_shown`, `survey_submitted`, `survey_closed`, `exit_intent`.
+
+## Survey types
+
+- `rating`: numeric buttons, default scale 5.
+- `yesno`: Yes/No buttons.
+- `choice`: choices array.
+- `text`: textarea. Use sparingly because users can type personal data.
+
+## Privacy
+
+By default tinyux does not capture screen contents, DOM snapshots, keystroke contents, clipboard contents, camera, microphone, console logs, network logs, or form values. Dataset metadata is filtered by denylist; use `datasetAllowlist` for strict deployments.

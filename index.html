@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>tinyux - Self-Hosted UX Telemetry And Micro-Surveys</title>
+  <meta name="description" content="A tiny self-hosted UX telemetry and contextual micro-survey library. One script tag records useful interaction signals and sends events to your own PHP/SQLite collector.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://tanzir71.github.io/tinyuxjs/">
+  <meta property="og:title" content="tinyux - Self-Hosted UX Telemetry">
+  <meta property="og:description" content="One script tag for product interaction signals and contextual micro-surveys, posted to your own server.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://tanzir71.github.io/tinyuxjs/">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%20100%20100%27%3E%3Ctext%20y%3D%27.9em%27%20font-size%3D%2790%27%3E%F0%9F%A5%B7%3C%2Ftext%3E%3C%2Fsvg%3E">
+  <link rel="stylesheet" href="./site.css">
+</head>
+<body>
+  <a href="#content" class="sr-only skip">Skip to content</a>
+  <header>
+    <div class="container header-inner">
+      <a class="brand" href="./index.html">
+        <div class="logo"><span>TU</span></div>
+        <span class="brand-name">tinyux</span>
+      </a>
+      <nav>
+        <a class="nav-link" href="#features">Signals</a>
+        <a class="nav-link" href="#setup">Setup</a>
+        <a class="nav-link" href="./docs.html">Docs</a>
+        <a class="nav-link" href="./compare.html">Compare</a>
+        <a class="nav-link" href="./demo/product.html">Demo</a>
+        <a class="btn btn-primary" href="https://github.com/tanzir71/tinyuxjs" target="_blank" rel="noopener">GitHub</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="content">
+    <section class="hero">
+      <div class="container hero-inner">
+        <div class="hero-grid">
+          <div>
+            <span class="eyebrow">v0.1 - free - open source - no vendor cloud</span>
+            <h1>UX telemetry and micro-surveys in one script tag.</h1>
+            <p class="lead">
+              Track the moments that explain friction: clicks, scroll depth, section views, focus loss,
+              exit intent, heartbeats, and contextual survey responses. tinyux posts batched events to
+              <em>your</em> collector, not a replay vendor.
+            </p>
+            <div class="cta-row">
+              <a class="btn btn-primary" href="./demo/product.html">Try the live demo</a>
+              <a class="btn" href="#setup">Set it up</a>
+            </div>
+            <div class="stats">
+              <div class="stat"><div class="num">1 file</div><div class="lbl">0 deps</div></div>
+              <div class="stat"><div class="num">4</div><div class="lbl">survey types</div></div>
+              <div class="stat"><div class="num">$0</div><div class="lbl">MIT friendly</div></div>
+              <div class="stat"><div class="num">0</div><div class="lbl">recorded sessions</div></div>
+            </div>
+          </div>
+          <div>
+            <div class="snippet-card">
+              <div class="snippet-head">
+                <span class="snippet-title">product-page.html</span>
+                <button class="copy-btn" data-copy-target="snippet" type="button">COPY</button>
+              </div>
+              <div class="snippet-body" id="snippet">&lt;script src="/js/tinyux.js"
+  <span class="a">data-app-id</span>=<span class="v">"acme-app"</span>
+  <span class="a">data-api-url</span>=<span class="v">"https://your-site.com/collect.php"</span>
+  <span class="a">data-config</span>=<span class="v">'{"exitIntent":{"enabled":true}}'</span>&gt;
+&lt;/script&gt;
+
+<span class="c">// Clicks, sections, surveys, heartbeats
+// -> batched with sendBeacon/fetch
+// -> stored in your SQLite database.</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="system">
+      <div class="container">
+        <div class="section-head">
+          <span class="idx">SYS - 01</span>
+          <h2>The whole loop, on one sheet</h2>
+          <p class="sub">tinyux keeps the data path intentionally boring: browser events, optional survey prompts, one collector endpoint, and tables you own.</p>
+        </div>
+        <div class="diagram-wrap">
+          <svg viewBox="0 0 1200 430" role="img" aria-labelledby="diagram-title diagram-desc" xmlns="http://www.w3.org/2000/svg">
+            <title id="diagram-title">tinyux data flow</title>
+            <desc id="diagram-desc">Embed script, observe UX signals, ask contextual surveys, send batched payloads, inspect data on your server.</desc>
+            <defs>
+              <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="#0a0a0a"></path>
+              </marker>
+            </defs>
+            <rect width="1200" height="430" fill="#fbfaf6"></rect>
+            <g font-family="JetBrains Mono, SF Mono, monospace" font-size="11" letter-spacing="1.4" fill="#6b6b66">
+              <text x="52" y="56">TINYUX / SIGNAL PIPELINE</text>
+            </g>
+            <g transform="translate(70 118)">
+              <rect width="170" height="150" fill="#f4f3ee" stroke="#0a0a0a" stroke-width="2"></rect>
+              <rect width="170" height="30" fill="#0a0a0a"></rect>
+              <text x="16" y="20" fill="#f4f3ee" font-family="JetBrains Mono, monospace" font-size="10" letter-spacing="1.4">01 / EMBED</text>
+              <text x="18" y="74" fill="#0a0a0a" font-family="Helvetica, Arial, sans-serif" font-size="22" font-weight="650">One tag</text>
+              <text x="18" y="103" fill="#6b6b66" font-family="JetBrains Mono, monospace" font-size="10" letter-spacing="1">APP ID + ENDPOINT</text>
+              <text x="18" y="126" fill="#2540ff" font-family="JetBrains Mono, monospace" font-size="10" letter-spacing="1">AUTO INIT</text>
+            </g>
+            <path d="M252 193 H336" stroke="#0a0a0a" stroke-width="2" marker-end="url(#arr)"></path>
+            <g transform="translate(350 118)">
+              <rect width="170" height="150" fill="#f4f3ee" stroke="#0a0a0a" stroke-width="2"></rect>
+              <rect width="170" height="30" fill="#0a0a0a"></rect>
+              <text x="16" y="20" fill="#f4f3ee" font-family="JetBrains Mono, monospace" font-size="10" letter-spacing="1.4">02 / OBSERVE</text>
+              <circle cx="45" cy="82" r="20" fill="#2540ff"></circle>
+              <circle cx="85" cy="82" r="20" fill="#cfcdc4" stroke="#0a0a0a"></circle>
+              <circle cx="125" cy="82" r="20" fill="#f4f3ee" stroke="#0a0a0a"></circle>
+              <text x="18" y="126" fill="#6b6b66" font-family="JetBrains Mono, monospace" font-size="10" letter-spacing="1">CLICK / SCROLL / FOCUS</text>
+            </g>
+            <path d="M532 193 H616" stroke="#0a0a0a" stroke-width="2" marker-end="url(#arr)"></path>
+            <g transform="translate(630 118)">
+              <rect width="170" height="150" fill="#f4f3ee" stroke="#0a0a0a" stroke-width="2"></rect>
+              <rect width="170" height="30" fill="#0a0a0a"></rect>
+              <text x="16" y="20" fill="#f4f3ee" font-family="JetBrains Mono, monospace" font-size="10" letter-spacing="1.4">03 / ASK</text>
+              <rect x="25" y="58" width="120" height="58" fill="#fbfaf6" stroke="#0a0a0a"></rect>
+              <rect x="25" y="116" width="120" height="24" fill="#2540ff"></rect>
+              <text x="39" y="93" fill="#0a0a0a" font-family="Helvetica, Arial, sans-serif" font-size="17" font-weight="650">Why now?</text>
+              <text x="48" y="132" fill="#fff" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="1">SURVEY</text>
+            </g>
+            <path d="M812 193 H896" stroke="#0a0a0a" stroke-width="2" marker-end="url(#arr)"></path>
+            <g transform="translate(910 118)">
+              <rect width="220" height="150" fill="#f4f3ee" stroke="#0a0a0a" stroke-width="2"></rect>
+              <rect width="220" height="30" fill="#0a0a0a"></rect>
+              <text x="16" y="20" fill="#f4f3ee" font-family="JetBrains Mono, monospace" font-size="10" letter-spacing="1.4">04 / POST</text>
+              <rect x="28" y="58" width="164" height="28" fill="#2540ff"></rect>
+              <rect x="28" y="92" width="164" height="28" fill="#cfcdc4"></rect>
+              <rect x="28" y="126" width="164" height="10" fill="#0a0a0a"></rect>
+              <text x="34" y="79" fill="#fff" font-family="JetBrains Mono, monospace" font-size="10" letter-spacing="1">EVENTS[]</text>
+              <text x="34" y="113" fill="#0a0a0a" font-family="JetBrains Mono, monospace" font-size="10" letter-spacing="1">SURVEYS[]</text>
+            </g>
+          </svg>
+        </div>
+        <div class="diagram-steps">
+          <div class="dstep"><div class="n">01 / embed</div><div class="t">One static file</div><p>No framework, package manager, extension, or vendor account required.</p></div>
+          <div class="dstep"><div class="n">02 / observe</div><div class="t">Behavioral signals</div><p>Page views, clicks, scroll depth, focus changes, section views, and heartbeats.</p></div>
+          <div class="dstep"><div class="n">03 / ask</div><div class="t">Micro-surveys</div><p>Rating, yes/no, choices, and optional text prompts with cooldown rules.</p></div>
+          <div class="dstep"><div class="n">04 / report</div><div class="t">Batched delivery</div><p>sendBeacon and keepalive fetch, plus local retry for failed sends.</p></div>
+          <div class="dstep"><div class="n">05 / own</div><div class="t">Your database</div><p>PHP/SQLite collector stores clients, sessions, events, surveys, and failures.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="setup" class="section">
+      <div class="container">
+        <div class="section-head">
+          <span class="idx">SYS - 02</span>
+          <h2>Set up in the next five minutes</h2>
+          <p class="sub">Two files and one table schema. Use the AI-agent path if you want a coding assistant to place the script and wire the collector.</p>
+        </div>
+        <div class="paths">
+          <div class="path">
+            <span class="path-tag rec">Recommended</span>
+            <h3>Ask your AI agent</h3>
+            <p>Paste this into Codex, Claude, Cursor, or Copilot. The contract is written for agents.</p>
+            <pre class="pre-block" id="prompt-agent">Add tinyux UX telemetry to my project:
+1. Fetch https://tanzir71.github.io/tinyuxjs/tinyux.js into my static assets.
+2. Add the script tag to key product pages with data-api-url pointing at /collect.php.
+3. Implement /collect using https://tanzir71.github.io/tinyuxjs/llms.txt.
+4. Add one click survey and one section-scroll survey.<button class="pre-copy" data-copy-target="prompt-agent" type="button">COPY</button></pre>
+            <p class="path-note">The machine-readable guide lives at <a href="./llms.txt">/llms.txt</a>.</p>
+          </div>
+          <div class="path">
+            <span class="path-tag">One command</span>
+            <h3>Grab the files</h3>
+            <p>Download the client and collector pieces, then initialize SQLite with the schema.</p>
+            <pre class="pre-block" id="prompt-curl"><span class="c"># client library</span>
+curl -LO https://tanzir71.github.io/tinyuxjs/tinyux.js
+
+<span class="c"># collector schema</span>
+curl -LO https://tanzir71.github.io/tinyuxjs/schema.sql
+sqlite3 tinyux.db &lt; schema.sql<button class="pre-copy" data-copy-target="prompt-curl" type="button">COPY</button></pre>
+            <p class="path-note">Put `collect.php`, `tinyux.js`, and `tinyux.db` where PHP can read/write them.</p>
+          </div>
+          <div class="path">
+            <span class="path-tag">Manual</span>
+            <h3>Copy the tag</h3>
+            <p>Already have the file hosted? Drop the tag and add triggers where context matters.</p>
+            <pre class="pre-block" id="prompt-manual">&lt;script src="/js/tinyux.js"
+  data-app-id="acme-app"
+  data-api-url="/collect.php"
+  data-config='{"surveys":{"maxPerSession":2}}'&gt;
+&lt;/script&gt;<button class="pre-copy" data-copy-target="prompt-manual" type="button">COPY</button></pre>
+            <p class="path-note">See <a href="./docs.html#triggers">declarative triggers</a> for click, section, time, and exit-intent surveys.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="features" class="section">
+      <div class="container">
+        <div class="section-head">
+          <span class="idx">SYS - 03</span>
+          <h2>Signals small enough to trust</h2>
+          <p class="sub">tinyux records metadata about interaction context. It does not replay a user's screen, record typed content, or ship private product data to a third-party workspace.</p>
+        </div>
+        <div class="grid grid-2 grid-4">
+          <div class="cell"><h3>Page views</h3><p>Initial URL, referrer, viewport, scroll depth, focus time, and client/session IDs.</p><span class="k">page_view</span></div>
+          <div class="cell"><h3>Interactions</h3><p>Bind selectors or add attributes to key CTAs, forms, and controls.</p><span class="k">interaction</span></div>
+          <div class="cell"><h3>Section views</h3><p>IntersectionObserver-powered section visibility, with cooldown and once-per-session options.</p><span class="k">section_view</span></div>
+          <div class="cell"><h3>Focus and blur</h3><p>Know whether a user left the page during a task or returned to continue.</p><span class="k">focus - blur</span></div>
+          <div class="cell"><h3>Exit intent</h3><p>Detect top-edge pointer movement and ask one last contextual question.</p><span class="k">exit_intent</span></div>
+          <div class="cell"><h3>Heartbeats</h3><p>Periodic pulses make abandoned sessions and long-running tasks visible server-side.</p><span class="k">heartbeat</span></div>
+          <div class="cell"><h3>Input metadata</h3><p>Optional lengths/types only. Values are never captured by default.</p><span class="k">input_meta</span></div>
+          <div class="cell"><h3>Survey lifecycle</h3><p>Shown, closed, skipped, and submitted events tie answers to page context.</p><span class="k">survey_shown - survey_submitted</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="why" class="section">
+      <div class="container">
+        <div class="section-head">
+          <span class="idx">SYS - 04</span>
+          <h2>Why use tinyux instead of a behavior suite?</h2>
+          <p class="sub">Hotjar, FullStory, LogRocket, and PostHog are far larger systems. tinyux is for the narrower job: collect useful UX context without buying a platform.</p>
+        </div>
+        <div class="grid grid-3">
+          <div class="cell"><h3>Self-hosted by default</h3><p>Your events and survey responses land in your own SQLite database. No replay vendor owns the raw trail.</p></div>
+          <div class="cell"><h3>Friction at the source</h3><p>Ask right after a confusing click, a pricing section view, or an exit intent moment.</p></div>
+          <div class="cell"><h3>Small enough to audit</h3><p>One readable client file and one PHP collector. No black-box recorder and no account setup.</p></div>
+        </div>
+        <div class="grid grid-2 grid-4" style="margin-top:24px;">
+          <div class="cell"><h3>vs Hotjar</h3><p>No heatmaps or replay. Much smaller and fully self-hosted.</p><a class="link" href="./hotjar-alternative.html">Compare</a></div>
+          <div class="cell"><h3>vs FullStory</h3><p>No digital experience cloud or session reconstruction.</p><a class="link" href="./fullstory-alternative.html">Compare</a></div>
+          <div class="cell"><h3>vs LogRocket</h3><p>No console/network replay stream. Better for tiny feedback loops.</p><a class="link" href="./logrocket-alternative.html">Compare</a></div>
+          <div class="cell"><h3>vs PostHog</h3><p>No product OS. Just events, survey answers, and your endpoint.</p><a class="link" href="./posthog-alternative.html">Compare</a></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="limits" class="section">
+      <div class="container">
+        <div class="section-head">
+          <span class="idx">SYS - 05</span>
+          <h2>What it deliberately does not do</h2>
+          <p class="sub">Honest limits keep tinyux useful. If you need full product analytics, choose a real analytics platform. If you need session replay, choose a replay tool.</p>
+        </div>
+        <div class="grid grid-2">
+          <div class="cell"><h3>No replay theater</h3><p>No DOM playback, video-style recordings, heatmaps, console logs, network capture, or keystroke contents. tinyux stores events and survey context, not a reconstructed person.</p></div>
+          <div class="cell"><h3>No false certainty</h3><p>Client-side telemetry is directional. Use it to find friction, prompt follow-up, and prioritize fixes, not to claim perfect behavioral truth.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="support">
+      <div class="container support-inner">
+        <div>
+          <span class="eyebrow">support - open source</span>
+          <h2>Small tools survive when people use them.</h2>
+          <p>tinyux is MIT-licensed and built for teams that need an honest feedback layer without a procurement loop. Issues, stars, and coffee all help.</p>
+        </div>
+        <a class="btn" href="https://buymeacoffee.com/tanzir" target="_blank" rel="noopener">Support the project</a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container footer-inner">
+      <div class="footer-note">tinyux - built by <a href="https://tanziro.com" target="_blank" rel="noopener">tanziro.com</a></div>
+      <div class="footer-links">
+        <a href="./docs.html">docs</a>
+        <a href="./compare.html">compare</a>
+        <a href="./demo/product.html">demo</a>
+        <a href="./hotjar-alternative.html">vs hotjar</a>
+        <a href="./fullstory-alternative.html">vs fullstory</a>
+        <a href="./logrocket-alternative.html">vs logrocket</a>
+        <a href="./posthog-alternative.html">vs posthog</a>
+        <a href="https://github.com/tanzir71/tinyuxjs" target="_blank" rel="noopener">github</a>
+      </div>
+    </div>
+  </footer>
+  <script src="./site.js"></script>
+</body>
+</html>

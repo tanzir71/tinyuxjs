@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UX Analytics Tool Comparison - tinyux vs Hotjar, FullStory, LogRocket, PostHog</title>
+  <meta name="description" content="Honest comparison of tinyux against Hotjar, FullStory, LogRocket, and PostHog: telemetry model, session replay, surveys, hosting, privacy, and best-fit use cases.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://tanzir71.github.io/tinyuxjs/compare.html">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%20100%20100%27%3E%3Ctext%20y%3D%27.9em%27%20font-size%3D%2790%27%3E%F0%9F%A5%B7%3C%2Ftext%3E%3C%2Fsvg%3E">
+  <link rel="stylesheet" href="./site.css">
+</head>
+<body>
+  <a href="#content" class="sr-only skip">Skip to content</a>
+  <header>
+    <div class="container header-inner">
+      <a class="brand" href="./index.html">
+        <div class="logo"><span>TU</span></div>
+        <span class="brand-name">tinyux</span>
+      </a>
+      <nav>
+        <a class="nav-link" href="./index.html#features">Signals</a>
+        <a class="nav-link" href="./index.html#setup">Setup</a>
+        <a class="nav-link" href="./docs.html">Docs</a>
+        <a class="nav-link" href="./compare.html" aria-current="page">Compare</a>
+        <a class="nav-link" href="./demo/product.html">Demo</a>
+        <a class="btn btn-primary" href="https://github.com/tanzir71/tinyuxjs" target="_blank" rel="noopener">GitHub</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="content">
+    <section class="hero">
+      <div class="container hero-inner">
+        <span class="eyebrow">comparison - 2026</span>
+        <h1>tinyux compared with Hotjar, FullStory, LogRocket, and PostHog.</h1>
+        <p class="lead">Those tools are broad behavior analytics platforms. tinyux is a deliberately small self-hosted script for targeted UX events and contextual surveys.</p>
+        <div class="cta-row">
+          <a class="btn btn-primary" href="./demo/product.html">Try the demo</a>
+          <a class="btn" href="./docs.html">Read the docs</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container wide">
+        <div class="section-head">
+          <span class="idx">CMP - 01</span>
+          <h2>Comparison matrix</h2>
+          <p class="sub">Use this as a product-shape comparison, not a procurement document. Vendor features and pricing change; verify final details with each vendor.</p>
+        </div>
+        <div class="table">
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Dimension</th>
+                  <th>tinyux</th>
+                  <th>Hotjar / Contentsquare</th>
+                  <th>FullStory</th>
+                  <th>LogRocket</th>
+                  <th>PostHog</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Core model</strong></td>
+                  <td>Self-hosted event telemetry plus contextual micro-surveys</td>
+                  <td>Heatmaps, session replay, surveys, feedback, funnels, experience analytics</td>
+                  <td>Digital experience analytics with session replay and behavior analysis</td>
+                  <td>Session replay, product analytics, error and network/debug context</td>
+                  <td>Product analytics suite with replay, flags, experiments, surveys, warehouse/CDP features</td>
+                </tr>
+                <tr>
+                  <td><strong>Session replay</strong></td>
+                  <td><strong>No</strong> - no DOM or video-style playback</td>
+                  <td>Yes</td>
+                  <td>Yes</td>
+                  <td>Yes, developer-focused replay</td>
+                  <td>Yes</td>
+                </tr>
+                <tr>
+                  <td><strong>Heatmaps</strong></td>
+                  <td><strong>No</strong></td>
+                  <td>Yes</td>
+                  <td>Yes / behavior visualization features</td>
+                  <td>No traditional heatmap focus</td>
+                  <td>Product analytics and web analytics, not primarily a heatmap tool</td>
+                </tr>
+                <tr>
+                  <td><strong>Surveys</strong></td>
+                  <td>Rating, yes/no, choice, text prompts in-page</td>
+                  <td>Yes</td>
+                  <td>Sentiment and feedback signals depending on product/package</td>
+                  <td>Not the core use case</td>
+                  <td>Yes</td>
+                </tr>
+                <tr>
+                  <td><strong>Hosting</strong></td>
+                  <td><strong>Your server and SQLite database</strong></td>
+                  <td>Vendor platform</td>
+                  <td>Vendor platform</td>
+                  <td>Vendor platform</td>
+                  <td>Cloud or self-hosted options depending on deployment</td>
+                </tr>
+                <tr>
+                  <td><strong>Setup size</strong></td>
+                  <td>One JS file plus one collector endpoint</td>
+                  <td>Vendor project setup and tracking script</td>
+                  <td>Vendor workspace and instrumentation</td>
+                  <td>SDK plus configuration for replay/debug data</td>
+                  <td>Product analytics project and event taxonomy</td>
+                </tr>
+                <tr>
+                  <td><strong>Best fit</strong></td>
+                  <td>Small teams, privacy-sensitive feedback loops, custom apps, quick UX questions</td>
+                  <td>Marketing sites and teams that want heatmaps, replay, and survey workflows</td>
+                  <td>Organizations needing deep digital experience analytics</td>
+                  <td>Product and engineering teams debugging user issues with replay context</td>
+                  <td>Product engineering teams that want analytics, flags, experiments, and data tooling</td>
+                </tr>
+                <tr>
+                  <td><strong>Not fit for</strong></td>
+                  <td>Replay, heatmaps, analytics warehouses, account-based dashboards</td>
+                  <td>Teams unwilling to use a vendor platform</td>
+                  <td>Tiny self-hosted instrumentation needs</td>
+                  <td>Teams that only need small survey prompts and event metadata</td>
+                  <td>Teams that want the smallest possible script-plus-collector setup</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <p class="note">Sources checked: official Hotjar/Contentsquare, FullStory, LogRocket, and PostHog product pages in June 2026.</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="section-head">
+          <span class="idx">CMP - 02</span>
+          <h2>Detailed head-to-head pages</h2>
+          <p class="sub">Each page is written for teams deciding whether they need the full platform or only the small self-hosted layer.</p>
+        </div>
+        <div class="grid grid-2 grid-4">
+          <div class="cell"><h3>vs Hotjar</h3><p>Heatmaps and replays versus self-hosted event prompts.</p><a class="link" href="./hotjar-alternative.html">Read comparison</a></div>
+          <div class="cell"><h3>vs FullStory</h3><p>Digital experience analytics versus tiny contextual telemetry.</p><a class="link" href="./fullstory-alternative.html">Read comparison</a></div>
+          <div class="cell"><h3>vs LogRocket</h3><p>Developer replay and debug context versus small UX feedback loops.</p><a class="link" href="./logrocket-alternative.html">Read comparison</a></div>
+          <div class="cell"><h3>vs PostHog</h3><p>Product OS versus one script and your database.</p><a class="link" href="./posthog-alternative.html">Read comparison</a></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="section-head">
+          <span class="idx">CMP - 03</span>
+          <h2>Choose the smaller thing only when it is enough</h2>
+          <p class="sub">tinyux is intentionally incomplete. That is the point.</p>
+        </div>
+        <div class="grid grid-2">
+          <div class="cell">
+            <h3>Choose tinyux if...</h3>
+            <p>You need a quick self-hosted answer to "what did people click, where did they stall, and what did they say right then?" You can inspect JSON rows or build your own dashboard later.</p>
+          </div>
+          <div class="cell">
+            <h3>Choose a platform if...</h3>
+            <p>You need replay search, heatmaps, funnels, account analytics, feature flagging, long-term product metrics, team permissions, or vendor-managed reporting.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container footer-inner">
+      <div class="footer-note">tinyux - built by <a href="https://tanziro.com" target="_blank" rel="noopener">tanziro.com</a></div>
+      <div class="footer-links">
+        <a href="./index.html">home</a>
+        <a href="./docs.html">docs</a>
+        <a href="./demo/product.html">demo</a>
+        <a href="https://github.com/tanzir71/tinyuxjs" target="_blank" rel="noopener">github</a>
+      </div>
+    </div>
+  </footer>
+  <script src="./site.js"></script>
+</body>
+</html>
