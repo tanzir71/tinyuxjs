@@ -508,6 +508,26 @@ await test('site chrome keeps setup code blocks dark, nav GitHub compact, and ni
   }
 })
 
+await test('landing page has mobile guards for hero clipping and cramped navigation', async () => {
+  const css = fs.readFileSync(path.join(root, 'site.css'), 'utf8')
+  assert.match(css, /\.hero-grid > \*\s*\{[^}]*min-width:\s*0/)
+  assert.match(css, /\.eyebrow\s*\{[^}]*max-width:\s*100%/)
+  assert.match(css, /\.eyebrow\s*\{[^}]*overflow-wrap:\s*anywhere/)
+  assert.match(css, /\.hero-inner\s*\{[^}]*padding:\s*84px 20px 72px/)
+  assert.match(css, /\.section\s*\{[^}]*scroll-margin-top:\s*88px/)
+  assert.match(css, /@media\s*\(max-width:\s*720px\)\s*\{[\s\S]*nav\s*\{[^}]*flex-wrap:\s*nowrap/)
+  assert.match(css, /@media\s*\(max-width:\s*720px\)\s*\{[\s\S]*nav\s*\{[^}]*overflow-x:\s*auto/)
+  assert.match(css, /@media\s*\(max-width:\s*720px\)\s*\{[\s\S]*\.hero-inner\s*\{[^}]*padding:\s*56px 16px 48px/)
+  assert.match(css, /@media\s*\(max-width:\s*520px\)\s*\{[\s\S]*\.header-inner\s*\{[^}]*flex-wrap:\s*wrap/)
+  assert.match(css, /@media\s*\(max-width:\s*520px\)\s*\{[\s\S]*nav\s*\{[^}]*flex-basis:\s*100%/)
+  assert.match(css, /@media\s*\(max-width:\s*520px\)\s*\{[\s\S]*nav\s*\{[^}]*overflow-x:\s*visible/)
+  assert.match(css, /@media\s*\(max-width:\s*520px\)\s*\{[\s\S]*\.nav-link\s*\{[^}]*font-size:\s*12px/)
+  assert.match(css, /@media\s*\(max-width:\s*520px\)\s*\{[\s\S]*\.hero-inner\s*\{[^}]*padding:\s*44px 16px 42px/)
+  assert.match(css, /@media\s*\(max-width:\s*520px\)\s*\{[\s\S]*\.section\s*\{[^}]*scroll-margin-top:\s*108px/)
+  assert.match(css, /@media\s*\(max-width:\s*520px\)\s*\{[\s\S]*h1\s*\{[^}]*font-size:\s*34px/)
+  assert.match(css, /@media\s*\(max-width:\s*520px\)\s*\{[\s\S]*\.snippet-body\s*\{[^}]*font-size:\s*12px/)
+})
+
 await test('setup cards align code blocks and docs use reference-style article layout', async () => {
   const css = fs.readFileSync(path.join(root, 'site.css'), 'utf8')
   assert.match(css, /@supports\s*\(grid-template-rows:\s*subgrid\)/)
