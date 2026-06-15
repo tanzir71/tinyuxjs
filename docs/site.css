@@ -42,6 +42,12 @@ nav { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex
 .nav-link { display: inline-flex; height: 36px; align-items: center; padding: 0 10px; color: var(--muted); transition: background-color 120ms ease, color 120ms ease; }
 .nav-link:hover, .nav-link[aria-current="page"] { background: var(--bg-alt); color: var(--fg); }
 header .btn { min-height: 36px; height: 36px; padding: 0 12px; font-size: 14px; }
+.menu-toggle { display: none; width: 40px; height: 40px; flex: none; flex-direction: column; align-items: center; justify-content: center; gap: 5px; padding: 0; border: 1px solid var(--border); background: var(--panel); color: var(--fg); cursor: pointer; transition: background-color 120ms ease, border-color 120ms ease; }
+.menu-toggle:hover { border-color: var(--fg); background: var(--bg-alt); }
+.menu-toggle span { display: block; width: 18px; height: 2px; background: currentColor; transition: opacity 120ms ease, transform 140ms ease; }
+.menu-toggle[aria-expanded="true"] span:first-child { transform: translateY(7px) rotate(45deg); }
+.menu-toggle[aria-expanded="true"] span:nth-child(2) { opacity: 0; }
+.menu-toggle[aria-expanded="true"] span:last-child { transform: translateY(-7px) rotate(-45deg); }
 
 .btn { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 18px; border: 1px solid var(--fg); background: transparent; color: var(--fg); font-size: 14px; font-weight: 600; cursor: pointer; font-family: var(--f-sans); transition: background-color 120ms ease, color 120ms ease, border-color 120ms ease; }
 .btn:hover { background: var(--fg); color: var(--bg); }
@@ -184,12 +190,13 @@ footer { padding: 40px 0 48px; }
 
 @media (max-width: 720px) {
   .container { padding: 0 16px; }
-  .header-inner { align-items: center; }
+  .header-inner { align-items: center; flex-wrap: wrap; gap: 10px 12px; padding: 10px 0; }
   .brand { flex: none; }
-  nav { flex: 1 1 auto; min-width: 0; flex-wrap: nowrap; justify-content: flex-start; gap: 4px; overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
-  nav::-webkit-scrollbar { display: none; }
-  .nav-link { height: 32px; padding: 0 7px; font-size: 13px; }
-  .nav-link, header .btn { flex: 0 0 auto; }
+  .menu-toggle { display: inline-flex; margin-left: auto; }
+  .site-nav { display: none; flex-basis: 100%; width: 100%; flex-direction: column; align-items: stretch; gap: 2px; padding: 10px 0 4px; border-top: 1px solid var(--border); overflow: visible; font-size: 14px; }
+  .header-inner.is-menu-open .site-nav { display: flex; }
+  .site-nav .nav-link { height: 40px; justify-content: flex-start; padding: 0 10px; font-size: 14px; }
+  header .site-nav .btn { width: 100%; min-height: 40px; height: 40px; margin-top: 4px; padding: 0 12px; font-size: 14px; }
   .hero-inner { padding: 56px 16px 48px; }
   h1 { font-size: 40px; }
   .section { padding: 52px 0; }
@@ -198,10 +205,11 @@ footer { padding: 40px 0 48px; }
 }
 
 @media (max-width: 520px) {
-  .header-inner { flex-wrap: wrap; gap: 8px 12px; padding: 10px 0; }
-  nav { flex-basis: 100%; width: 100%; overflow-x: visible; font-size: 12px; }
-  .nav-link { height: 30px; padding: 0 6px; font-size: 12px; }
-  header .btn { min-height: 30px; height: 30px; padding: 0 9px; font-size: 12px; }
+  .header-inner { gap: 8px 12px; }
+  .menu-toggle { width: 38px; height: 38px; }
+  .site-nav { padding-top: 8px; font-size: 13px; }
+  .site-nav .nav-link { height: 38px; padding: 0 10px; font-size: 13px; }
+  header .site-nav .btn { min-height: 38px; height: 38px; font-size: 13px; }
   .eyebrow { gap: 8px; font-size: 10.5px; letter-spacing: 0.12em; }
   .eyebrow::before { width: 10px; height: 10px; }
   .hero-inner { padding: 44px 16px 42px; }

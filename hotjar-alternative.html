@@ -14,7 +14,12 @@
   <header>
     <div class="container header-inner">
       <a class="brand" href="./index.html"><div class="logo"><span>TU</span></div><span class="brand-name">tinyux</span></a>
-      <nav>
+      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="primary-navigation" aria-label="Open navigation menu" data-menu-toggle>
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+      <nav id="primary-navigation" class="site-nav" aria-label="Primary">
         <a class="nav-link" href="./index.html#features">Signals</a>
         <a class="nav-link" href="./docs.html">Docs</a>
         <a class="nav-link" href="./compare.html">Compare</a>
@@ -79,5 +84,6 @@
       </div>
     </div>
   </footer>
+  <script src="./site.js"></script>
 </body>
 </html>

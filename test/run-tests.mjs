@@ -508,24 +508,33 @@ await test('site chrome keeps setup code blocks dark, nav GitHub compact, and ni
   }
 })
 
-await test('landing page has mobile guards for hero clipping and cramped navigation', async () => {
+await test('landing page has mobile guards for hero clipping and hamburger navigation', async () => {
   const css = fs.readFileSync(path.join(root, 'site.css'), 'utf8')
+  const js = fs.readFileSync(path.join(root, 'site.js'), 'utf8')
+  const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8')
+
   assert.match(css, /\.hero-grid > \*\s*\{[^}]*min-width:\s*0/)
   assert.match(css, /\.eyebrow\s*\{[^}]*max-width:\s*100%/)
   assert.match(css, /\.eyebrow\s*\{[^}]*overflow-wrap:\s*anywhere/)
   assert.match(css, /\.hero-inner\s*\{[^}]*padding:\s*84px 20px 72px/)
   assert.match(css, /\.section\s*\{[^}]*scroll-margin-top:\s*88px/)
-  assert.match(css, /@media\s*\(max-width:\s*720px\)\s*\{[\s\S]*nav\s*\{[^}]*flex-wrap:\s*nowrap/)
-  assert.match(css, /@media\s*\(max-width:\s*720px\)\s*\{[\s\S]*nav\s*\{[^}]*overflow-x:\s*auto/)
+  assert.match(css, /\.menu-toggle\s*\{[^}]*display:\s*none/)
+  assert.match(css, /@media\s*\(max-width:\s*720px\)\s*\{[\s\S]*\.menu-toggle\s*\{[^}]*display:\s*inline-flex/)
+  assert.match(css, /@media\s*\(max-width:\s*720px\)\s*\{[\s\S]*\.site-nav\s*\{[^}]*display:\s*none/)
+  assert.match(css, /@media\s*\(max-width:\s*720px\)\s*\{[\s\S]*\.header-inner\.is-menu-open \.site-nav\s*\{[^}]*display:\s*flex/)
   assert.match(css, /@media\s*\(max-width:\s*720px\)\s*\{[\s\S]*\.hero-inner\s*\{[^}]*padding:\s*56px 16px 48px/)
-  assert.match(css, /@media\s*\(max-width:\s*520px\)\s*\{[\s\S]*\.header-inner\s*\{[^}]*flex-wrap:\s*wrap/)
-  assert.match(css, /@media\s*\(max-width:\s*520px\)\s*\{[\s\S]*nav\s*\{[^}]*flex-basis:\s*100%/)
-  assert.match(css, /@media\s*\(max-width:\s*520px\)\s*\{[\s\S]*nav\s*\{[^}]*overflow-x:\s*visible/)
-  assert.match(css, /@media\s*\(max-width:\s*520px\)\s*\{[\s\S]*\.nav-link\s*\{[^}]*font-size:\s*12px/)
+  assert.match(css, /@media\s*\(max-width:\s*520px\)\s*\{[\s\S]*\.menu-toggle\s*\{[^}]*width:\s*38px/)
+  assert.match(css, /@media\s*\(max-width:\s*520px\)\s*\{[\s\S]*\.site-nav \.nav-link\s*\{[^}]*font-size:\s*13px/)
   assert.match(css, /@media\s*\(max-width:\s*520px\)\s*\{[\s\S]*\.hero-inner\s*\{[^}]*padding:\s*44px 16px 42px/)
   assert.match(css, /@media\s*\(max-width:\s*520px\)\s*\{[\s\S]*\.section\s*\{[^}]*scroll-margin-top:\s*108px/)
   assert.match(css, /@media\s*\(max-width:\s*520px\)\s*\{[\s\S]*h1\s*\{[^}]*font-size:\s*34px/)
   assert.match(css, /@media\s*\(max-width:\s*520px\)\s*\{[\s\S]*\.snippet-body\s*\{[^}]*font-size:\s*12px/)
+  assert.match(html, /data-menu-toggle/)
+  assert.match(html, /aria-controls="primary-navigation"/)
+  assert.match(html, /<nav id="primary-navigation" class="site-nav" aria-label="Primary">/)
+  assert.match(js, /querySelectorAll\('\[data-menu-toggle\]'\)/)
+  assert.match(js, /aria-expanded/)
+  assert.match(js, /is-menu-open/)
 })
 
 await test('setup cards align code blocks and docs use reference-style article layout', async () => {
