@@ -514,6 +514,8 @@ await test('landing page has mobile guards for hero clipping and hamburger navig
   const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8')
 
   assert.match(css, /\.hero-grid > \*\s*\{[^}]*min-width:\s*0/)
+  assert.match(css, /\.header-inner\s*\{[^}]*padding-top:\s*12px/)
+  assert.match(css, /\.header-inner\s*\{[^}]*padding-bottom:\s*12px/)
   assert.match(css, /\.eyebrow\s*\{[^}]*max-width:\s*100%/)
   assert.match(css, /\.eyebrow\s*\{[^}]*overflow-wrap:\s*anywhere/)
   assert.match(css, /\.hero-inner\s*\{[^}]*padding:\s*84px 20px 72px/)
@@ -522,6 +524,8 @@ await test('landing page has mobile guards for hero clipping and hamburger navig
   assert.match(css, /@media\s*\(max-width:\s*720px\)\s*\{[\s\S]*\.menu-toggle\s*\{[^}]*display:\s*inline-flex/)
   assert.match(css, /@media\s*\(max-width:\s*720px\)\s*\{[\s\S]*\.site-nav\s*\{[^}]*display:\s*none/)
   assert.match(css, /@media\s*\(max-width:\s*720px\)\s*\{[\s\S]*\.header-inner\.is-menu-open \.site-nav\s*\{[^}]*display:\s*flex/)
+  assert.match(css, /@media\s*\(max-width:\s*720px\)\s*\{[\s\S]*\.header-inner\s*\{[^}]*padding-top:\s*10px/)
+  assert.match(css, /@media\s*\(max-width:\s*720px\)\s*\{[\s\S]*\.header-inner\s*\{[^}]*padding-bottom:\s*10px/)
   assert.match(css, /@media\s*\(max-width:\s*720px\)\s*\{[\s\S]*\.hero-inner\s*\{[^}]*padding:\s*56px 16px 48px/)
   assert.match(css, /@media\s*\(max-width:\s*520px\)\s*\{[\s\S]*\.menu-toggle\s*\{[^}]*width:\s*38px/)
   assert.match(css, /@media\s*\(max-width:\s*520px\)\s*\{[\s\S]*\.site-nav \.nav-link\s*\{[^}]*font-size:\s*13px/)
