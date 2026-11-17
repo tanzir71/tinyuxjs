@@ -48,7 +48,8 @@ Removed
 
 - Collector tests run the real PHP endpoint (`npm run test:php`).
 - GitHub Actions runs the build, both test suites, and checks the `docs/` mirror is in sync.
-- New logo mark.
+- New logo mark and favicon: a heatmap point with its glow.
+- One shared stylesheet (`site.css`) for every page. The docs, compare, demo, alternative and example pages are redesigned to match the landing page; the docs get a sidebar table of contents, and the demo shows each batch it would send and works without a server.
 
 ### Upgrading from 0.1
 

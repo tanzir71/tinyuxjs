@@ -485,77 +485,81 @@ await test('enabled heatmaps capture coarse click density without text or form v
   win.tinyux.destroy()
 })
 
-await test('site chrome keeps setup code blocks dark, nav GitHub compact, and heat-point logo and favicon present', async () => {
-  const css = fs.readFileSync(path.join(root, 'site.css'), 'utf8')
-  assert.match(css, /\.pre-block\s*\{[^}]*background:\s*var\(--dk-bg\)/)
-  assert.match(css, /header \.btn\s*\{[^}]*min-height:\s*36px/)
-  assert.match(css, /header \.btn\s*\{[^}]*padding:\s*0 12px/)
+const SITE_PAGES = [
+  'index.html',
+  'docs.html',
+  'compare.html',
+  'example.html',
+  'hotjar-alternative.html',
+  'fullstory-alternative.html',
+  'logrocket-alternative.html',
+  'posthog-alternative.html',
+  path.join('demo', 'product.html')
+]
 
-  const htmlFiles = [
-    'index.html',
-    'docs.html',
-    'compare.html',
-    'example.html',
-    'hotjar-alternative.html',
-    'fullstory-alternative.html',
-    'logrocket-alternative.html',
-    'posthog-alternative.html',
-    path.join('demo', 'product.html')
-  ]
-  for (const file of htmlFiles) {
+await test('every page shares the site header, footer, stylesheet, heat-point logo and favicon', async () => {
+  const css = fs.readFileSync(path.join(root, 'site.css'), 'utf8')
+  assert.match(css, /\.block\s*\{[^}]*background:\s*var\(--code\)/)
+  assert.match(css, /\.site-nav \.nav-gh\s*\{[^}]*border:\s*1px solid var\(--line-2\)/)
+  for (const file of SITE_PAGES) {
     const html = fs.readFileSync(path.join(root, file), 'utf8')
-    assert.match(html, /rel="icon"/, `${file} missing favicon`)
+    assert.match(html, /<link rel="stylesheet" href="(\.\.\/|\.\/)site\.css">/, `${file} missing site.css`)
+    assert.match(html, /<header class="site-header">/, `${file} missing site header`)
+    assert.match(html, /<div class="foot">/, `${file} missing site footer`)
     assert.match(html, /rel="icon" type="image\/svg\+xml" href="data:image\/svg\+xml,[^"]*%232540FF/, `${file} missing heat-point favicon`)
     assert.match(html, /<svg class="logo-mark"[^>]*><circle cx="16" cy="16" r="14.5"/, `${file} missing heat-point logo mark`)
+    assert.doesNotMatch(html, /class="container/, `${file} still uses the old layout classes`)
   }
 })
 
-await test('landing page has mobile guards for hero clipping and hamburger navigation', async () => {
+await test('every page has the mobile hamburger navigation', async () => {
   const css = fs.readFileSync(path.join(root, 'site.css'), 'utf8')
   const js = fs.readFileSync(path.join(root, 'site.js'), 'utf8')
-  const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8')
-
-  assert.match(css, /\.hero-grid > \*\s*\{[^}]*min-width:\s*0/)
-  assert.match(css, /\.header-inner\s*\{[^}]*padding-top:\s*12px/)
-  assert.match(css, /\.header-inner\s*\{[^}]*padding-bottom:\s*12px/)
-  assert.match(css, /\.eyebrow\s*\{[^}]*max-width:\s*100%/)
-  assert.match(css, /\.eyebrow\s*\{[^}]*overflow-wrap:\s*anywhere/)
-  assert.match(css, /\.hero-inner\s*\{[^}]*padding:\s*84px 20px 72px/)
-  assert.match(css, /\.section\s*\{[^}]*scroll-margin-top:\s*88px/)
   assert.match(css, /\.menu-toggle\s*\{[^}]*display:\s*none/)
   assert.match(css, /@media\s*\(max-width:\s*720px\)\s*\{[\s\S]*\.menu-toggle\s*\{[^}]*display:\s*inline-flex/)
   assert.match(css, /@media\s*\(max-width:\s*720px\)\s*\{[\s\S]*\.site-nav\s*\{[^}]*display:\s*none/)
   assert.match(css, /@media\s*\(max-width:\s*720px\)\s*\{[\s\S]*\.header-inner\.is-menu-open \.site-nav\s*\{[^}]*display:\s*flex/)
-  assert.match(css, /@media\s*\(max-width:\s*720px\)\s*\{[\s\S]*\.header-inner\s*\{[^}]*padding-top:\s*10px/)
-  assert.match(css, /@media\s*\(max-width:\s*720px\)\s*\{[\s\S]*\.header-inner\s*\{[^}]*padding-bottom:\s*10px/)
-  assert.match(css, /@media\s*\(max-width:\s*720px\)\s*\{[\s\S]*\.hero-inner\s*\{[^}]*padding:\s*56px 16px 48px/)
-  assert.match(css, /@media\s*\(max-width:\s*520px\)\s*\{[\s\S]*\.menu-toggle\s*\{[^}]*width:\s*38px/)
-  assert.match(css, /@media\s*\(max-width:\s*520px\)\s*\{[\s\S]*\.site-nav \.nav-link\s*\{[^}]*font-size:\s*13px/)
-  assert.match(css, /@media\s*\(max-width:\s*520px\)\s*\{[\s\S]*\.hero-inner\s*\{[^}]*padding:\s*44px 16px 42px/)
-  assert.match(css, /@media\s*\(max-width:\s*520px\)\s*\{[\s\S]*\.section\s*\{[^}]*scroll-margin-top:\s*108px/)
-  assert.match(css, /@media\s*\(max-width:\s*520px\)\s*\{[\s\S]*h1\s*\{[^}]*font-size:\s*34px/)
-  assert.match(css, /@media\s*\(max-width:\s*520px\)\s*\{[\s\S]*\.snippet-body\s*\{[^}]*font-size:\s*12px/)
-  assert.match(html, /data-menu-toggle/)
-  assert.match(html, /aria-controls="primary-navigation"/)
-  assert.match(html, /<nav id="primary-navigation" class="site-nav" aria-label="Primary">/)
+  assert.match(css, /\.section\s*\{[^}]*scroll-margin-top:\s*64px/)
+  for (const file of SITE_PAGES) {
+    const html = fs.readFileSync(path.join(root, file), 'utf8')
+    assert.match(html, /data-menu-toggle/, `${file} missing menu toggle`)
+    assert.match(html, /aria-controls="primary-navigation"/, `${file} menu toggle not wired`)
+    assert.match(html, /<nav id="primary-navigation" class="site-nav" aria-label="Primary">/, `${file} missing primary nav`)
+  }
   assert.match(js, /querySelectorAll\('\[data-menu-toggle\]'\)/)
   assert.match(js, /aria-expanded/)
   assert.match(js, /is-menu-open/)
 })
 
-await test('setup cards align code blocks and docs use reference-style article layout', async () => {
+await test('landing setup cards align code blocks and docs use a sidebar article layout', async () => {
+  const landing = fs.readFileSync(path.join(root, 'landing.css'), 'utf8')
+  assert.match(landing, /\.paths\s*\{[^}]*grid-template-rows:\s*repeat\(5,\s*auto\)/)
+  assert.match(landing, /\.path\s*\{[^}]*grid-template-rows:\s*subgrid/)
+  assert.match(landing, /\.hero-grid\s*\{[^}]*grid-template-columns:\s*minmax\(0, 1fr\) minmax\(0, 1fr\)/)
   const css = fs.readFileSync(path.join(root, 'site.css'), 'utf8')
-  assert.match(css, /@supports\s*\(grid-template-rows:\s*subgrid\)/)
-  assert.match(css, /\.paths\s*\{[^}]*grid-template-rows:\s*repeat\(5,\s*auto\)/)
-  assert.match(css, /\.path\s*\{[^}]*grid-template-rows:\s*subgrid/)
-  assert.match(css, /\.docs-main\s*\{[^}]*padding:\s*44px 0 72px/)
-  assert.match(css, /\.docs-intro\s*\{[^}]*border-bottom:\s*1px solid var\(--border\)/)
+  assert.match(css, /\.docs-intro\s*\{[^}]*border-bottom:\s*1px solid var\(--line\)/)
+  assert.match(css, /\.toc\s*\{[^}]*position:\s*sticky/)
 
   const docsHtml = fs.readFileSync(path.join(root, 'docs.html'), 'utf8')
   assert.doesNotMatch(docsHtml, /<section class="hero"/)
   assert.match(docsHtml, /<main id="content" class="docs-main">/)
   assert.match(docsHtml, /class="docs-intro"/)
   assert.match(docsHtml, /<h1>Implementation guide<\/h1>/)
+  assert.match(docsHtml, /<nav data-toc>/)
+  const tocIds = [...docsHtml.matchAll(/<nav data-toc>([\s\S]*?)<\/nav>/g)][0][1].match(/href="#([^"]+)"/g).map((h) => h.slice(7, -1))
+  for (const id of tocIds) assert.match(docsHtml, new RegExp(`<section class="doc-section" id="${id}">`), `docs TOC links to missing section ${id}`)
+  for (const m of docsHtml.matchAll(/data-copy-target="([^"]+)"/g)) assert.match(docsHtml, new RegExp(`id="${m[1]}"`), `copy button target ${m[1]} missing`)
+})
+
+await test('demo page keeps every hook its script and the docs refer to', async () => {
+  const html = fs.readFileSync(path.join(root, 'demo', 'product.html'), 'utf8')
+  for (const id of ['event-count', 'survey-count', 'send-count', 'refresh-events', 'clear-log', 'log', 'payload', 'manual-survey', 'corner-survey', 'nps-survey', 'dead-button', 'rage-button', 'spa-route', 'pricing']) {
+    assert.match(html, new RegExp(`id="${id}"`), `demo missing #${id}`)
+  }
+  assert.match(html, /data-tinyux-survey-id="upgrade-clarity"/)
+  assert.match(html, /data-tinyux-trigger="section-scroll"/)
+  assert.match(html, /"frustration":true/)
+  assert.ok(html.indexOf('window.tinyuxDemo') < html.indexOf('<script src="../tinyux.js"'), 'collector shim must load before tinyux.js')
 })
 
 await test('landing page describes compliance posture without claiming blanket compliance', async () => {

@@ -7,31 +7,36 @@
   <meta name="description" content="tinyux is a self-hosted option for teams that need contextual UX events and surveys without adopting a full digital experience analytics platform.">
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://tanzir71.github.io/tinyuxjs/fullstory-alternative.html">
+  <meta name="theme-color" content="#ffffff">
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2032%2032%27%3E%3Ccircle%20cx%3D%2716%27%20cy%3D%2716%27%20r%3D%2715%27%20fill%3D%27%232540FF%27%20fill-opacity%3D%27.16%27%2F%3E%3Ccircle%20cx%3D%2716%27%20cy%3D%2716%27%20r%3D%2710.5%27%20fill%3D%27%232540FF%27%20fill-opacity%3D%27.36%27%2F%3E%3Ccircle%20cx%3D%2716%27%20cy%3D%2716%27%20r%3D%276.2%27%20fill%3D%27%232540FF%27%2F%3E%3C%2Fsvg%3E">
   <link rel="stylesheet" href="./site.css">
 </head>
 <body>
-  <header>
-    <div class="container header-inner">
-      <a class="brand" href="./index.html"><svg class="logo-mark" viewBox="0 0 32 32" width="32" height="32" aria-hidden="true" focusable="false"><circle cx="16" cy="16" r="14.5" fill="#2540FF" fill-opacity=".13"/><circle cx="16" cy="16" r="10" fill="#2540FF" fill-opacity=".3"/><circle cx="16" cy="16" r="5.6" fill="#2540FF"/></svg><span class="brand-name">tinyux</span></a>
-      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="primary-navigation" aria-label="Open navigation menu" data-menu-toggle>
-        <span></span>
-        <span></span>
-        <span></span>
-      </button>
+  <a href="#content" class="sr-only skip">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-inner">
+      <a class="brand" href="./index.html" aria-label="tinyux home"><svg class="logo-mark" viewBox="0 0 32 32" width="30" height="30" aria-hidden="true" focusable="false"><circle cx="16" cy="16" r="14.5" fill="#2540FF" fill-opacity=".13"/><circle cx="16" cy="16" r="10" fill="#2540FF" fill-opacity=".3"/><circle cx="16" cy="16" r="5.6" fill="#2540FF"/></svg>tinyux</a>
+      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="primary-navigation" aria-label="Open navigation menu" data-menu-toggle><span></span><span></span><span></span></button>
       <nav id="primary-navigation" class="site-nav" aria-label="Primary">
-        <a class="nav-link" href="./index.html#features">Signals</a>
-        <a class="nav-link" href="./docs.html">Docs</a>
-        <a class="nav-link" href="./compare.html">Compare</a>
-        <a class="nav-link" href="./demo/product.html">Demo</a>
-        <a class="btn btn-primary" href="https://github.com/tanzir71/tinyuxjs" target="_blank" rel="noopener">GitHub</a>
+        <a href="./index.html#whats-new">What's new</a>
+        <a href="./index.html#features">Signals</a>
+        <a href="./index.html#surveys">Surveys</a>
+        <a href="./index.html#setup">Setup</a>
+        <a href="./docs.html">Docs</a>
+        <a href="./compare.html" aria-current="page">Compare</a>
+        <a href="./demo/product.html">Demo</a>
+        <a class="nav-gh" href="https://github.com/tanzir71/tinyuxjs" target="_blank" rel="noopener">
+          <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          GitHub
+        </a>
       </nav>
     </div>
   </header>
-  <main>
-    <section class="hero">
-      <div class="container hero-inner">
-        <span class="eyebrow">comparison - tinyux vs FullStory</span>
+
+  <main id="content">
+    <section class="page-hero">
+      <div class="wrap">
+        <ol class="crumbs" aria-label="Breadcrumb"><li><a href="./compare.html">Compare</a></li><li aria-current="page">tinyux vs FullStory</li></ol>
         <h1>A minimal FullStory alternative when replay is too much</h1>
         <p class="lead">tinyux is a self-hosted option for teams that need contextual UX events and surveys without adopting a full digital experience analytics platform.</p>
         <div class="cta-row">
@@ -40,49 +45,74 @@
         </div>
       </div>
     </section>
+
     <section class="section">
-      <div class="container">
-        <div class="section-head"><span class="idx">ALT - 01</span><h2>What FullStory does</h2></div>
-        <div class="grid grid-2">
-          <div class="cell"><h3>FullStory</h3><p>FullStory is a digital experience analytics platform with session replay, behavioral search, journey analysis, and enterprise-oriented workflows for finding friction across products.</p></div>
-          <div class="cell"><h3>tinyux</h3><p>tinyux is intentionally narrower. It does not reconstruct sessions or provide a search UI. It records the events you choose, optional aggregate heatmap points, and the answers users submit, then leaves analysis to your database or internal tools.</p></div>
+      <div class="wrap">
+        <div class="section-head"><h2>What FullStory does</h2></div>
+        <div class="pair">
+          <div class="panel"><h3>FullStory</h3><p>FullStory is a digital experience analytics platform with session replay, behavioral search, journey analysis, and enterprise-oriented workflows for finding friction across products.</p></div>
+          <div class="panel pick"><h3>tinyux</h3><p>tinyux is intentionally narrower. It does not reconstruct sessions or provide a search UI. It records the events you choose, optional aggregate heatmap points, and the answers users submit, then leaves analysis to your database or internal tools.</p></div>
         </div>
       </div>
     </section>
-    <section class="section">
-      <div class="container">
-        <div class="section-head"><span class="idx">ALT - 02</span><h2>Side by side</h2></div>
-        <div class="table"><div class="table-wrap"><table>
-          <thead><tr><th>Dimension</th><th>tinyux</th><th>FullStory</th></tr></thead>
-          <tbody><tr><td><strong>Digital experience suite</strong></td><td>No</td><td>Yes</td></tr>
-<tr><td><strong>Session replay</strong></td><td>No</td><td>Yes</td></tr>
-<tr><td><strong>Heatmaps</strong></td><td>Optional aggregate click/tap points</td><td>Yes</td></tr>
-<tr><td><strong>Behavior search</strong></td><td>Use your DB or build your own</td><td>Built into platform</td></tr>
-<tr><td><strong>Surveys</strong></td><td>Contextual in-page prompts</td><td>Sentiment/feedback features depending on package</td></tr>
-<tr><td><strong>Data hosting</strong></td><td>Your server</td><td>Vendor platform</td></tr>
-<tr><td><strong>Best fit</strong></td><td>Targeted self-hosted telemetry</td><td>Deep experience analytics</td></tr></tbody>
-        </table></div></div>
+
+    <section class="section alt">
+      <div class="wrap">
+        <div class="section-head"><h2>Side by side</h2></div>
+        <div class="table-wrap">
+          <table class="matrix narrow">
+            <caption class="sr-only">tinyux compared with FullStory</caption>
+            <thead><tr><th scope="col">Dimension</th><th scope="col" class="col-us">tinyux</th><th scope="col">FullStory</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">Digital experience suite</th><td class="col-us">No</td><td>Yes</td></tr>
+              <tr><th scope="row">Session replay</th><td class="col-us">No</td><td>Yes</td></tr>
+              <tr><th scope="row">Heatmaps</th><td class="col-us">Optional aggregate click/tap points</td><td>Yes</td></tr>
+              <tr><th scope="row">Behavior search</th><td class="col-us">Use your DB or build your own</td><td>Built into platform</td></tr>
+              <tr><th scope="row">Surveys</th><td class="col-us">Contextual in-page prompts</td><td>Sentiment/feedback features depending on package</td></tr>
+              <tr><th scope="row">Data hosting</th><td class="col-us">Your server</td><td>Vendor platform</td></tr>
+              <tr><th scope="row">Best fit</th><td class="col-us">Targeted self-hosted telemetry</td><td>Deep experience analytics</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="note">A product-shape comparison, not a procurement document. Vendor features change; verify details with FullStory.</p>
       </div>
     </section>
+
     <section class="section">
-      <div class="container">
-        <div class="section-head"><span class="idx">ALT - 03</span><h2>Which should you choose?</h2></div>
-        <div class="grid grid-2">
-          <div class="cell"><h3>Choose FullStory if...</h3><p>you need high-fidelity session replay, deep behavioral analysis, team workflows, and managed analytics infrastructure.</p></div>
-          <div class="cell"><h3>Choose tinyux if...</h3><p>you want a readable script that captures just enough UX context for a small product or privacy-sensitive workflow.</p></div>
+      <div class="wrap">
+        <div class="section-head"><h2>Which should you choose?</h2></div>
+        <div class="pair">
+          <div class="panel"><h3>Choose FullStory if...</h3><p>you need high-fidelity session replay, deep behavioral analysis, team workflows, and managed analytics infrastructure.</p></div>
+          <div class="panel pick"><h3>Choose tinyux if...</h3><p>you want a readable script that captures just enough UX context for a small product or privacy-sensitive workflow.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section alt">
+      <div class="wrap">
+        <div class="section-head"><h2>Other comparisons</h2></div>
+        <div class="vs">
+          <a href="./hotjar-alternative.html"><h3>vs Hotjar</h3><p>Managed heatmap/replay workflows versus self-hosted aggregate heatmap points and prompts.</p><span>Read comparison</span></a>
+          <a href="./logrocket-alternative.html"><h3>vs LogRocket</h3><p>Developer replay and debug context versus small UX feedback loops.</p><span>Read comparison</span></a>
+          <a href="./posthog-alternative.html"><h3>vs PostHog</h3><p>Product OS versus one script and your database.</p><span>Read comparison</span></a>
+          <a href="./compare.html"><h3>All four at once</h3><p>One matrix with tinyux, Hotjar, FullStory, LogRocket, and PostHog side by side.</p><span>Open the matrix</span></a>
         </div>
       </div>
     </section>
   </main>
+
   <footer>
-    <div class="container footer-inner">
-      <div class="footer-note">tinyux - built by <a href="https://tanziro.com" target="_blank" rel="noopener">tanziro.com</a></div>
-      <div class="footer-links">
-        <a href="./index.html">home</a>
-        <a href="./docs.html">docs</a>
-        <a href="./compare.html">compare</a>
-        <a href="./demo/product.html">demo</a>
+    <div class="wrap">
+      <div class="foot">
+        <div>
+          <a class="brand" href="./index.html" aria-label="tinyux home"><svg class="logo-mark" viewBox="0 0 32 32" width="30" height="30" aria-hidden="true" focusable="false"><circle cx="16" cy="16" r="14.5" fill="#2540FF" fill-opacity=".13"/><circle cx="16" cy="16" r="10" fill="#2540FF" fill-opacity=".3"/><circle cx="16" cy="16" r="5.6" fill="#2540FF"/></svg>tinyux</a>
+          <p class="foot-note">Self-hosted UX telemetry and micro-surveys. Built by <a href="https://tanziro.com" target="_blank" rel="noopener">tanziro.com</a>.</p>
+        </div>
+        <div><h4>Product</h4><ul><li><a href="./demo/product.html">Demo</a></li><li><a href="./docs.html">Docs</a></li><li><a href="./compare.html">Compare</a></li><li><a href="./llms.txt">llms.txt</a></li></ul></div>
+        <div><h4>Alternatives</h4><ul><li><a href="./hotjar-alternative.html">vs Hotjar</a></li><li><a href="./fullstory-alternative.html">vs FullStory</a></li><li><a href="./logrocket-alternative.html">vs LogRocket</a></li><li><a href="./posthog-alternative.html">vs PostHog</a></li></ul></div>
+        <div><h4>Project</h4><ul><li><a href="https://github.com/tanzir71/tinyuxjs" target="_blank" rel="noopener">GitHub</a></li><li><a href="https://buymeacoffee.com/tanzir" target="_blank" rel="noopener">Support</a></li><li><a href="./README.md">README</a></li><li><a href="./CHANGELOG.md">Changelog</a></li></ul></div>
       </div>
+      <div class="legal"><span>MIT License.</span><span>v0.2.0</span></div>
     </div>
   </footer>
   <script src="./site.js"></script>

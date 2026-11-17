@@ -64,4 +64,38 @@
       if (window.matchMedia && window.matchMedia('(min-width: 721px)').matches) setMenu(false);
     });
   });
+  // Docs: highlight the section in view and close the mobile menu after a jump.
+  var toc = document.querySelector('[data-toc]');
+  if (toc && 'IntersectionObserver' in window) {
+    var links = {};
+    var ids = [];
+    Array.prototype.slice.call(toc.querySelectorAll('a[href^="#"]')).forEach(function (link) {
+      var id = link.getAttribute('href').slice(1);
+      links[id] = link;
+      ids.push(id);
+    });
+    var visible = {};
+    var setActive = function () {
+      var current = null;
+      for (var i = 0; i < ids.length; i++) {
+        if (visible[ids[i]]) { current = ids[i]; break; }
+      }
+      if (!current) return;
+      ids.forEach(function (id) { links[id].classList.toggle('is-active', id === current); });
+    };
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) { visible[entry.target.id] = entry.isIntersecting; });
+      setActive();
+    }, { rootMargin: '-88px 0px -55% 0px' });
+    ids.forEach(function (id) {
+      var section = document.getElementById(id);
+      if (section) io.observe(section);
+    });
+  }
+  Array.prototype.slice.call(document.querySelectorAll('.toc-mobile a')).forEach(function (link) {
+    link.addEventListener('click', function () {
+      var details = link.closest ? link.closest('details') : null;
+      if (details) details.open = false;
+    });
+  });
 })();

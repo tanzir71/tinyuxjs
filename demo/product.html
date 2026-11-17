@@ -4,123 +4,171 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Live Demo - tinyux</title>
-  <meta name="description" content="Interactive demo of tinyux UX telemetry and contextual micro-surveys.">
+  <meta name="description" content="Interactive demo of tinyux UX telemetry and contextual micro-surveys: click around and watch every event, survey answer, and batch.">
   <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://tanzir71.github.io/tinyuxjs/demo/product.html">
+  <meta name="theme-color" content="#ffffff">
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2032%2032%27%3E%3Ccircle%20cx%3D%2716%27%20cy%3D%2716%27%20r%3D%2715%27%20fill%3D%27%232540FF%27%20fill-opacity%3D%27.16%27%2F%3E%3Ccircle%20cx%3D%2716%27%20cy%3D%2716%27%20r%3D%2710.5%27%20fill%3D%27%232540FF%27%20fill-opacity%3D%27.36%27%2F%3E%3Ccircle%20cx%3D%2716%27%20cy%3D%2716%27%20r%3D%276.2%27%20fill%3D%27%232540FF%27%2F%3E%3C%2Fsvg%3E">
   <link rel="stylesheet" href="../site.css">
-  <style>
-    .demo-shell { display: grid; grid-template-columns: 1fr; gap: 20px; align-items: start; }
-    @media (min-width: 980px) { .demo-shell { grid-template-columns: minmax(0, 7fr) minmax(320px, 5fr); } }
-    .demo-panel { border: 1px solid var(--border); background: var(--panel); padding: 20px; }
-    .demo-product { min-height: 520px; }
-    .mock-toolbar { display: flex; justify-content: space-between; gap: 12px; border-bottom: 1px solid var(--border); padding-bottom: 12px; margin-bottom: 20px; font-family: var(--f-mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
-    .product-hero { display: grid; gap: 16px; padding: 30px 0; border-bottom: 1px solid var(--border); }
-    .product-hero h2 { margin: 0; font-size: clamp(32px, 6vw, 62px); }
-    .pricing-band { display: grid; grid-template-columns: 1fr; gap: 1px; background: var(--border); border: 1px solid var(--border); margin-top: 22px; }
-    @media (min-width: 720px) { .pricing-band { grid-template-columns: repeat(3, 1fr); } }
-    .price-cell { background: var(--bg); padding: 18px; min-height: 160px; }
-    .price { font-size: 32px; letter-spacing: -0.04em; font-weight: 700; margin-top: 12px; }
-    .log { max-height: 380px; overflow: auto; border: 1px solid var(--border); background: var(--bg); }
-    .log-row { display: grid; grid-template-columns: 80px 1fr; gap: 12px; padding: 9px 12px; border-bottom: 1px solid var(--border-soft); font-family: var(--f-mono); font-size: 12px; }
-    .log-row:last-child { border-bottom: 0; }
-    .log-time { color: var(--muted-2); }
-    .log-msg strong { color: var(--acc); }
-    .metric-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); margin: 16px 0; }
-    .metric { background: var(--bg); padding: 14px; }
-    .metric b { display: block; font-size: 24px; letter-spacing: -0.03em; }
-    .metric span { display: block; margin-top: 2px; color: var(--muted); font-family: var(--f-mono); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; }
-  </style>
 </head>
 <body>
-  <header>
-    <div class="container header-inner">
-      <a class="brand" href="../index.html"><svg class="logo-mark" viewBox="0 0 32 32" width="32" height="32" aria-hidden="true" focusable="false"><circle cx="16" cy="16" r="14.5" fill="#2540FF" fill-opacity=".13"/><circle cx="16" cy="16" r="10" fill="#2540FF" fill-opacity=".3"/><circle cx="16" cy="16" r="5.6" fill="#2540FF"/></svg><span class="brand-name">tinyux</span></a>
-      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="primary-navigation" aria-label="Open navigation menu" data-menu-toggle>
-        <span></span>
-        <span></span>
-        <span></span>
-      </button>
+  <a href="#content" class="sr-only skip">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-inner">
+      <a class="brand" href="../index.html" aria-label="tinyux home"><svg class="logo-mark" viewBox="0 0 32 32" width="30" height="30" aria-hidden="true" focusable="false"><circle cx="16" cy="16" r="14.5" fill="#2540FF" fill-opacity=".13"/><circle cx="16" cy="16" r="10" fill="#2540FF" fill-opacity=".3"/><circle cx="16" cy="16" r="5.6" fill="#2540FF"/></svg>tinyux</a>
+      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="primary-navigation" aria-label="Open navigation menu" data-menu-toggle><span></span><span></span><span></span></button>
       <nav id="primary-navigation" class="site-nav" aria-label="Primary">
-        <a class="nav-link" href="../index.html#features">Signals</a>
-        <a class="nav-link" href="../docs.html">Docs</a>
-        <a class="nav-link" href="../compare.html">Compare</a>
-        <a class="nav-link" href="./product.html" aria-current="page">Demo</a>
-        <a class="btn btn-primary" href="https://github.com/tanzir71/tinyuxjs" target="_blank" rel="noopener">GitHub</a>
+        <a href="../index.html#whats-new">What's new</a>
+        <a href="../index.html#features">Signals</a>
+        <a href="../index.html#surveys">Surveys</a>
+        <a href="../index.html#setup">Setup</a>
+        <a href="../docs.html">Docs</a>
+        <a href="../compare.html">Compare</a>
+        <a href="../demo/product.html" aria-current="page">Demo</a>
+        <a class="nav-gh" href="https://github.com/tanzir71/tinyuxjs" target="_blank" rel="noopener">
+          <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          GitHub
+        </a>
       </nav>
     </div>
   </header>
 
-  <main>
-    <section class="hero">
-      <div class="container hero-inner">
-        <span class="eyebrow">live demo - local collector</span>
+  <main id="content">
+    <section class="page-hero demo-hero">
+      <div class="wrap">
         <h1>Click around. tinyux will explain what happened.</h1>
-        <p class="lead">This page is instrumented with the same script tag you would use in production. Events and optional aggregate heatmap points POST to the local demo server at `/collect`.</p>
+        <p class="lead">This page runs the same script tag you would ship. Every event, survey answer, and batch shows up in the console as it happens.</p>
+        <p class="demo-mode" id="demo-mode"><i></i><span>Events post to <code>/collect</code></span></p>
       </div>
     </section>
 
-    <section class="section">
-      <div class="container demo-shell">
-        <div class="demo-panel demo-product">
-          <div class="mock-toolbar"><span>ACME CLOUD / CHECKOUT FLOW</span><span>DEMO PAGE</span></div>
-          <div class="product-hero">
-            <h2>Simple plans for teams that ship weekly.</h2>
-            <p class="sub">Try the buttons below. The upgrade click opens a contextual survey, the corner button opens a non-blocking prompt, and payloads include a demo user identity. New in v0.2: an NPS survey with a follow-up question, a button that does nothing (watch for a dead click), rapid clicks (rage click) and a client-side route change.</p>
-            <div class="cta-row">
-              <button class="btn btn-primary" data-plan="team" data-tinyux-trigger="click" data-tinyux-survey-id="upgrade-clarity">Upgrade to Team</button>
-              <button class="btn" data-plan="trial" data-tinyux-trigger="click" data-tinyux-survey-id="trial-intent">Start trial</button>
-              <button class="btn" id="corner-survey">Corner prompt</button>
-              <button class="btn" id="manual-survey">Ask feedback now</button>
-              <button class="btn" id="nps-survey">NPS + follow-up</button>
-              <button class="btn" id="dead-button">Broken button</button>
-              <button class="btn" id="spa-route">Go to step 2 (SPA)</button>
+    <div class="wrap demo-shell">
+      <div class="demo-left">
+        <section aria-labelledby="try-title">
+          <div class="section-head" style="margin-bottom:20px"><h2 id="try-title" style="font-size:24px">Try these</h2></div>
+          <div class="tries">
+            <div class="try"><div><h3>Blocking survey</h3><p>A choice question in a modal dialog.</p></div><button class="btn" id="manual-survey" type="button">Ask feedback now</button></div>
+            <div class="try"><div><h3>Corner prompt</h3><p>A yes/no question that does not block the page.</p></div><button class="btn" id="corner-survey" type="button">Corner prompt</button></div>
+            <div class="try"><div><h3>NPS with a follow-up</h3><p>Score 6 or lower to get the follow-up question.</p></div><button class="btn" id="nps-survey" type="button">NPS + follow-up</button></div>
+            <div class="try"><div><h3>Client-side route</h3><p>Changes the URL without a reload; tinyux records a page view.</p></div><button class="btn" id="spa-route" type="button">Go to step 2 (SPA)</button></div>
+            <div class="try"><div><h3>Dead click</h3><p>This button does nothing. tinyux notices after a second.</p></div><button class="btn" id="dead-button" type="button">Broken button</button></div>
+            <div class="try"><div><h3>Rage click</h3><p>Click this three times, fast.</p></div><button class="btn" id="rage-button" type="button">Click me fast</button></div>
+          </div>
+          <p class="note">Also try: the Upgrade and Start trial buttons in the product below open contextual surveys, scrolling the pricing cards into view fires a section survey once per session, and moving your pointer to the top edge of the window triggers exit intent.</p>
+        </section>
+
+        <section class="demo-product" aria-label="Example product page">
+          <div class="browser">
+            <div class="browser-bar"><span class="dots"><i></i><i></i><i></i></span><span class="url" id="demo-url">acme.app/pricing</span></div>
+            <div class="product">
+              <div class="product-nav"><b>ACME CLOUD</b><span><span>Product</span><span>Pricing</span><span>Docs</span></span></div>
+              <h2>Simple plans for teams that ship weekly.</h2>
+              <p class="sub">The upgrade click opens a contextual survey, and every payload carries a demo user identity.</p>
+              <div class="cta-row">
+                <button class="btn btn-primary" type="button" data-plan="team" data-tinyux-trigger="click" data-tinyux-survey-id="upgrade-clarity">Upgrade to Team</button>
+                <button class="btn" type="button" data-plan="trial" data-tinyux-trigger="click" data-tinyux-survey-id="trial-intent">Start trial</button>
+              </div>
+
+              <section id="pricing" class="pricing-block" data-tinyux-trigger="section-scroll" data-tinyux-threshold="0.5" data-tinyux-once="session" data-tinyux-survey-id="pricing-clarity">
+                <div class="trigger-label"><span>Pricing</span><span>Section-scroll trigger: <code>pricing-clarity</code></span></div>
+                <div class="plans">
+                  <div class="plan"><small>Starter</small><strong>$19</strong><p>For tiny teams watching the first funnel.</p></div>
+                  <div class="plan pop"><small>Team</small><strong>$49</strong><p>For teams that need better support signals.</p></div>
+                  <div class="plan"><small>Scale</small><strong>$99</strong><p>For product teams with multiple flows.</p></div>
+                </div>
+              </section>
+
+              <div class="scroll-room">
+                <p class="note">Scroll back to the pricing cards if the section survey has not appeared yet. Move your pointer to the top edge to test exit intent.</p>
+              </div>
             </div>
           </div>
+        </section>
+      </div>
 
-          <section id="pricing" style="padding-top:28px;" data-tinyux-trigger="section-scroll" data-tinyux-threshold="0.5" data-tinyux-once="session" data-tinyux-survey-id="pricing-clarity">
-            <div class="mock-toolbar"><span>PRICING SECTION</span><span>SECTION-SCROLL TRIGGER</span></div>
-            <div class="pricing-band">
-              <div class="price-cell"><h3>Starter</h3><div class="price">$19</div><p class="card-text">For tiny teams watching the first funnel.</p></div>
-              <div class="price-cell"><h3>Team</h3><div class="price">$49</div><p class="card-text">For teams that need better support signals.</p></div>
-              <div class="price-cell"><h3>Scale</h3><div class="price">$99</div><p class="card-text">For product teams with multiple flows.</p></div>
-            </div>
-          </section>
-
-          <div style="height: 70vh; display:grid; align-items:end;">
-            <p class="note">Scroll back to the pricing section if the section survey has not fired yet. Move your pointer to the top edge to test exit intent.</p>
+      <aside class="console" aria-label="Event console">
+        <div class="console-head">
+          <h2>Event console</h2>
+          <div class="console-actions">
+            <button class="copy" id="refresh-events" type="button">Server payloads</button>
+            <button class="copy" id="clear-log" type="button">Clear</button>
           </div>
         </div>
-
-        <aside class="demo-panel">
-          <div class="section-head" style="margin-bottom:14px;">
-            <span class="idx">LIVE - 01</span>
-            <h2>Event console</h2>
-            <p class="sub">The left side is code-native UI. This log listens to tinyux lifecycle events and the local server payload store.</p>
-          </div>
-          <div class="metric-row">
-            <div class="metric"><b id="event-count">0</b><span>events</span></div>
-            <div class="metric"><b id="survey-count">0</b><span>surveys</span></div>
-            <div class="metric"><b id="send-count">0</b><span>sends</span></div>
-          </div>
-          <div class="cta-row" style="margin:0 0 14px;">
-            <button class="btn" id="refresh-events">Refresh server payloads</button>
-            <button class="btn" id="clear-log">Clear log</button>
-          </div>
-          <div class="log" id="log" aria-live="polite"></div>
-          <div class="code-card" style="margin-top:20px;">
-            <div class="code-head"><span class="code-title">demo script tag</span></div>
-            <pre class="pre-block">&lt;script src="../tinyux.js"
+        <div class="counters">
+          <div><b id="event-count">0</b><span>events</span></div>
+          <div><b id="survey-count">0</b><span>answers</span></div>
+          <div><b id="send-count">0</b><span>batches sent</span></div>
+        </div>
+        <div class="tabs" role="tablist" aria-label="Console views">
+          <button class="tab" role="tab" id="tab-events" type="button" aria-selected="true" aria-controls="panel-events">Events</button>
+          <button class="tab" role="tab" id="tab-payload" type="button" aria-selected="false" aria-controls="panel-payload" tabindex="-1">Last batch</button>
+        </div>
+        <div class="tabpanel" id="panel-events" role="tabpanel" aria-labelledby="tab-events"><div class="console-log" id="log" aria-live="polite"></div></div>
+        <div class="tabpanel" id="panel-payload" role="tabpanel" aria-labelledby="tab-payload" hidden><pre class="payload" id="payload">No batch sent yet. Click something, then give it a moment.</pre></div>
+        <pre class="console-foot">&lt;script src="../tinyux.js"
   data-app-id="demo-store"
   data-api-url="/collect"
   data-config='{"heatmaps":true,"frustration":true,"spa":true,"exitIntent":{"enabled":true,"survey_id":"exit-survey"}}'&gt;
 &lt;/script&gt;</pre>
-          </div>
-        </aside>
-      </div>
-    </section>
+      </aside>
+    </div>
   </main>
 
+  <footer>
+    <div class="wrap">
+      <div class="foot">
+        <div>
+          <a class="brand" href="../index.html" aria-label="tinyux home"><svg class="logo-mark" viewBox="0 0 32 32" width="30" height="30" aria-hidden="true" focusable="false"><circle cx="16" cy="16" r="14.5" fill="#2540FF" fill-opacity=".13"/><circle cx="16" cy="16" r="10" fill="#2540FF" fill-opacity=".3"/><circle cx="16" cy="16" r="5.6" fill="#2540FF"/></svg>tinyux</a>
+          <p class="foot-note">Self-hosted UX telemetry and micro-surveys. Built by <a href="https://tanziro.com" target="_blank" rel="noopener">tanziro.com</a>.</p>
+        </div>
+        <div><h4>Product</h4><ul><li><a href="../demo/product.html">Demo</a></li><li><a href="../docs.html">Docs</a></li><li><a href="../compare.html">Compare</a></li><li><a href="../llms.txt">llms.txt</a></li></ul></div>
+        <div><h4>Alternatives</h4><ul><li><a href="../hotjar-alternative.html">vs Hotjar</a></li><li><a href="../fullstory-alternative.html">vs FullStory</a></li><li><a href="../logrocket-alternative.html">vs LogRocket</a></li><li><a href="../posthog-alternative.html">vs PostHog</a></li></ul></div>
+        <div><h4>Project</h4><ul><li><a href="https://github.com/tanzir71/tinyuxjs" target="_blank" rel="noopener">GitHub</a></li><li><a href="https://buymeacoffee.com/tanzir" target="_blank" rel="noopener">Support</a></li><li><a href="../README.md">README</a></li><li><a href="../CHANGELOG.md">Changelog</a></li></ul></div>
+      </div>
+      <div class="legal"><span>MIT License.</span><span>v0.2.0</span></div>
+    </div>
+  </footer>
   <script src="../site.js"></script>
+  <script>
+    // Without the local demo server (for example on GitHub Pages) there is no /collect endpoint.
+    // Keep a copy of every batch for the console and, when there is no server, answer 204 in-page.
+    (function () {
+      var local = /^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname)
+      window.tinyuxDemo = { local: local, batches: [] }
+      function isCollect(url) {
+        try { return new URL(url, location.href).pathname === '/collect' } catch (e) { return false }
+      }
+      function keep(body) {
+        try {
+          var batch = JSON.parse(body)
+          window.tinyuxDemo.batches.push(batch)
+          document.dispatchEvent(new CustomEvent('tinyux-demo-batch', { detail: batch }))
+        } catch (e) {}
+      }
+      if (window.fetch) {
+        var realFetch = window.fetch.bind(window)
+        window.fetch = function (input, init) {
+          var url = typeof input === 'string' ? input : input && input.url
+          if (isCollect(url)) {
+            keep(init && init.body)
+            if (!local) return Promise.resolve(new Response(null, { status: 204 }))
+          }
+          return realFetch(input, init)
+        }
+      }
+      if (navigator.sendBeacon) {
+        var realBeacon = navigator.sendBeacon.bind(navigator)
+        navigator.sendBeacon = function (url, data) {
+          if (isCollect(url)) {
+            if (typeof data === 'string') keep(data)
+            else if (data && typeof data.text === 'function') data.text().then(keep)
+            if (!local) return true
+          }
+          return realBeacon(url, data)
+        }
+      }
+    })()
+  </script>
   <script src="../tinyux.js"
     data-app-id="demo-store"
     data-api-url="/collect"
@@ -130,29 +178,42 @@
       'use strict'
 
       var ux = window.tinyux.getInstance()
+      var demo = window.tinyuxDemo
       var log = document.getElementById('log')
+      var payload = document.getElementById('payload')
       var events = 0
       var surveys = 0
       var sends = 0
 
       function time() {
-        var d = new Date()
-        return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })
+        return new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false })
       }
 
-      function add(message) {
+      function esc(s) {
+        return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c] })
+      }
+
+      function add(kind, detail, tone) {
         var row = document.createElement('div')
-        row.className = 'log-row'
-        row.innerHTML = '<div class="log-time">' + time() + '</div><div class="log-msg">' + message + '</div>'
+        row.className = 'console-row'
+        row.innerHTML = '<span>' + time() + '</span><span><b' + (tone ? ' class="' + tone + '"' : '') + '>' + esc(kind) + '</b> <em>' + esc(detail || '') + '</em></span>'
         log.insertBefore(row, log.firstChild)
         while (log.children.length > 80) log.removeChild(log.lastChild)
       }
 
-      function paint() {
+      function count(type) {
+        if (type === 'event') events += 1
+        if (type === 'survey') surveys += 1
+        if (type === 'send') sends += 1
         document.getElementById('event-count').textContent = String(events)
         document.getElementById('survey-count').textContent = String(surveys)
         document.getElementById('send-count').textContent = String(sends)
       }
+
+      var mode = document.getElementById('demo-mode').querySelector('span')
+      mode.textContent = demo.local
+        ? 'Sending to the local demo server at /collect'
+        : 'No server here: batches stay in this page, nothing leaves your browser'
 
       ux.registerSurvey({
         id: 'upgrade-clarity',
@@ -207,79 +268,68 @@
         role: 'admin'
       })
 
-      ux.on('interaction', function (payload) {
-        events += 1
-        paint()
-        add('<strong>interaction</strong> ' + (payload.selector || 'element') + ' / ' + payload.event)
+      ux.on('interaction', function (p) { count('event'); add('interaction', (p.selector || 'element') + ' / ' + p.event) })
+      ux.on('survey_shown', function (p) { count('event'); add('survey shown', p.survey_id) })
+      ux.on('survey_submitted', function (p) { count('survey'); add('survey answer', p.survey_id + ' = ' + JSON.stringify(p.response), 'ok') })
+      ux.on('survey_closed', function (p) { if (p.reason !== 'submit') add('survey closed', p.survey_id + ' (' + p.reason + ')') })
+      ux.on('exit_intent', function () { count('event'); add('exit intent', 'pointer reached the top edge') })
+      ux.on('rage_click', function (p) { count('event'); add('rage click', p.clicks + ' clicks at ' + p.x_pct + '% / ' + p.y_pct + '%', 'warn') })
+      ux.on('dead_click', function (p) { count('event'); add('dead click', ((p.element && (p.element.id || p.element.tag)) || 'element') + ' changed nothing', 'warn') })
+      ux.on('page_view', function (p) {
+        count('event')
+        add('page view', p.path + (p.spa ? ' (client-side route)' : p.restored ? ' (restored from back/forward cache)' : ''))
+        if (p.path) document.getElementById('demo-url').textContent = 'acme.app' + (p.path.indexOf('step-2') > -1 ? '/pricing/step-2' : '/pricing')
       })
-      ux.on('survey_shown', function (payload) {
-        events += 1
-        paint()
-        add('<strong>survey shown</strong> ' + payload.survey_id)
-      })
-      ux.on('survey_submitted', function (payload) {
-        surveys += 1
-        paint()
-        add('<strong>survey submitted</strong> ' + payload.survey_id + ' = ' + JSON.stringify(payload.response))
-      })
-      ux.on('exit_intent', function () {
-        events += 1
-        paint()
-        add('<strong>exit intent</strong> pointer reached top edge')
-      })
-      ux.on('sent', function (payload) {
-        sends += 1
-        paint()
-        add('<strong>sent</strong> status ' + payload.status + (payload.beacon ? ' via beacon' : ' via fetch'))
-      })
-      ux.on('rage_click', function (payload) {
-        events += 1
-        paint()
-        add('<strong>rage click</strong> ' + payload.clicks + ' clicks at ' + payload.x_pct + '% / ' + payload.y_pct + '%')
-      })
-      ux.on('dead_click', function (payload) {
-        events += 1
-        paint()
-        add('<strong>dead click</strong> ' + ((payload.element && (payload.element.id || payload.element.tag)) || 'element') + ' gave no feedback')
-      })
-      ux.on('page_view', function (payload) {
-        events += 1
-        paint()
-        add('<strong>page view</strong> ' + payload.path + (payload.spa ? ' (client-side route)' : payload.restored ? ' (restored from bfcache)' : ''))
-      })
-      ux.on('send_error', function (payload) {
-        add('<strong>send error</strong> status ' + payload.status)
+      ux.on('sent', function (p) { count('send'); add('batch sent', 'status ' + p.status + (p.beacon ? ' via sendBeacon' : ' via fetch'), 'ok') })
+      ux.on('send_error', function (p) { add('send error', 'status ' + p.status + ', kept for retry', 'warn') })
+
+      document.addEventListener('tinyux-demo-batch', function (e) {
+        var b = e.detail || {}
+        payload.textContent = '// batch ' + demo.batches.length + ': ' + ((b.events || []).length) + ' events, ' + ((b.surveys || []).length) + ' survey answers\n' + JSON.stringify(b, null, 2)
       })
 
-      document.getElementById('manual-survey').addEventListener('click', function () {
-        ux.showSurvey('exit-survey')
-      })
-      document.getElementById('corner-survey').addEventListener('click', function () {
-        ux.showSurvey('corner-check')
-      })
-      document.getElementById('nps-survey').addEventListener('click', function () {
-        ux.showSurvey('demo-nps')
-      })
+      document.getElementById('manual-survey').addEventListener('click', function () { ux.showSurvey('exit-survey') })
+      document.getElementById('corner-survey').addEventListener('click', function () { ux.showSurvey('corner-check') })
+      document.getElementById('nps-survey').addEventListener('click', function () { ux.showSurvey('demo-nps') })
       document.getElementById('dead-button').addEventListener('click', function () {
         // Intentionally does nothing: tinyux reports a dead_click after one second.
       })
       document.getElementById('spa-route').addEventListener('click', function () {
         var next = location.pathname.indexOf('/step-2') === -1 ? location.pathname.replace(/\/?$/, '') + '/step-2' : location.pathname.replace('/step-2', '')
         history.pushState({}, '', next)
+        this.textContent = next.indexOf('/step-2') === -1 ? 'Go to step 2 (SPA)' : 'Back to step 1 (SPA)'
       })
-      document.getElementById('clear-log').addEventListener('click', function () {
-        log.innerHTML = ''
-      })
+      document.getElementById('clear-log').addEventListener('click', function () { log.innerHTML = '' })
       document.getElementById('refresh-events').addEventListener('click', function () {
+        if (!demo.local) {
+          add('server payloads', 'no server here; ' + demo.batches.length + ' batches captured in this page (see Last batch)')
+          return
+        }
         fetch('/events').then(function (res) { return res.json() }).then(function (data) {
-          add('<strong>server payloads</strong> ' + data.count + ' stored POST batches')
+          add('server payloads', data.count + ' stored POST batches', 'ok')
         }).catch(function () {
-          add('<strong>server payloads</strong> unavailable outside local demo server')
+          add('server payloads', 'the local demo server did not answer', 'warn')
         })
       })
 
-      add('<strong>ready</strong> click buttons, scroll pricing, or submit a survey')
-      paint()
+      var tabs = [document.getElementById('tab-events'), document.getElementById('tab-payload')]
+      tabs.forEach(function (tab) {
+        tab.addEventListener('click', function () {
+          tabs.forEach(function (t) {
+            var on = t === tab
+            t.setAttribute('aria-selected', on ? 'true' : 'false')
+            t.tabIndex = on ? 0 : -1
+            document.getElementById(t.getAttribute('aria-controls')).hidden = !on
+          })
+        })
+        tab.addEventListener('keydown', function (e) {
+          if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return
+          var next = tabs[(tabs.indexOf(tab) + 1) % tabs.length]
+          next.focus(); next.click()
+        })
+      })
+
+      add('ready', 'click buttons, scroll to pricing, or answer a survey')
     })()
   </script>
 </body>

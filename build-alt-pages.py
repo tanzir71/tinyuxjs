@@ -12,6 +12,7 @@ VENDORS = [
     {
         "slug": "hotjar-alternative",
         "name": "Hotjar",
+        "blurb": "Managed heatmap/replay workflows versus self-hosted aggregate heatmap points and prompts.",
         "h1": "A tiny self-hosted Hotjar alternative for targeted feedback",
         "title": "Hotjar Alternative For Self-Hosted UX Feedback - tinyux",
         "desc": "tinyux is a small self-hosted alternative when you need targeted UX events, optional aggregate click heatmaps, and contextual surveys, not session replay.",
@@ -31,6 +32,7 @@ VENDORS = [
     {
         "slug": "fullstory-alternative",
         "name": "FullStory",
+        "blurb": "Digital experience analytics versus tiny contextual telemetry.",
         "h1": "A minimal FullStory alternative when replay is too much",
         "title": "FullStory Alternative For Tiny UX Telemetry - tinyux",
         "desc": "tinyux is a self-hosted option for teams that need contextual UX events and surveys without adopting a full digital experience analytics platform.",
@@ -51,6 +53,7 @@ VENDORS = [
     {
         "slug": "logrocket-alternative",
         "name": "LogRocket",
+        "blurb": "Developer replay and debug context versus small UX feedback loops.",
         "h1": "A tiny LogRocket alternative for feedback, not debugging replay",
         "title": "LogRocket Alternative For Self-Hosted UX Signals - tinyux",
         "desc": "tinyux captures lightweight interaction events and contextual surveys for your own backend. It is not a developer session replay or error-debugging platform.",
@@ -71,6 +74,7 @@ VENDORS = [
     {
         "slug": "posthog-alternative",
         "name": "PostHog",
+        "blurb": "Product OS versus one script and your database.",
         "h1": "A tiny PostHog alternative when you do not need a product OS",
         "title": "PostHog Alternative For Small Self-Hosted UX Feedback - tinyux",
         "desc": "tinyux is for teams that need one script, one collector, and contextual feedback. PostHog is a much broader product engineering platform.",
@@ -91,15 +95,42 @@ VENDORS = [
 ]
 
 
+LOGO = (
+    '<svg class="logo-mark" viewBox="0 0 32 32" width="30" height="30" aria-hidden="true" focusable="false">'
+    '<circle cx="16" cy="16" r="14.5" fill="#2540FF" fill-opacity=".13"/><circle cx="16" cy="16" r="10" fill="#2540FF" fill-opacity=".3"/>'
+    '<circle cx="16" cy="16" r="5.6" fill="#2540FF"/></svg>'
+)
+GITHUB_ICON = (
+    '<svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>'
+)
+
+
 def row_html(rows):
     return "\n".join(
-        f"<tr><td><strong>{escape(dim)}</strong></td><td>{escape(us)}</td><td>{escape(them)}</td></tr>"
+        f'              <tr><th scope="row">{escape(dim)}</th><td class="col-us">{escape(us)}</td><td>{escape(them)}</td></tr>'
         for dim, us, them in rows
     )
 
 
+def other_cards(v):
+    cards = []
+    for other in VENDORS:
+        if other["slug"] == v["slug"]:
+            continue
+        cards.append(
+            f'          <a href="./{other["slug"]}.html"><h3>vs {escape(other["name"])}</h3>'
+            f'<p>{escape(other["blurb"])}</p><span>Read comparison</span></a>'
+        )
+    cards.append(
+        '          <a href="./compare.html"><h3>All four at once</h3>'
+        '<p>One matrix with tinyux, Hotjar, FullStory, LogRocket, and PostHog side by side.</p><span>Open the matrix</span></a>'
+    )
+    return "\n".join(cards)
+
+
 def render(v):
     rows = row_html(v["rows"])
+    name = escape(v["name"])
     return f"""<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -109,31 +140,36 @@ def render(v):
   <meta name="description" content="{escape(v["desc"])}">
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="{BASE}/{v["slug"]}.html">
+  <meta name="theme-color" content="#ffffff">
   <link rel="icon" type="image/svg+xml" href="{FAVICON}">
   <link rel="stylesheet" href="./site.css">
 </head>
 <body>
-  <header>
-    <div class="container header-inner">
-      <a class="brand" href="./index.html"><svg class="logo-mark" viewBox="0 0 32 32" width="32" height="32" aria-hidden="true" focusable="false"><circle cx="16" cy="16" r="14.5" fill="#2540FF" fill-opacity=".13"/><circle cx="16" cy="16" r="10" fill="#2540FF" fill-opacity=".3"/><circle cx="16" cy="16" r="5.6" fill="#2540FF"/></svg><span class="brand-name">tinyux</span></a>
-      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="primary-navigation" aria-label="Open navigation menu" data-menu-toggle>
-        <span></span>
-        <span></span>
-        <span></span>
-      </button>
+  <a href="#content" class="sr-only skip">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-inner">
+      <a class="brand" href="./index.html" aria-label="tinyux home">{LOGO}tinyux</a>
+      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="primary-navigation" aria-label="Open navigation menu" data-menu-toggle><span></span><span></span><span></span></button>
       <nav id="primary-navigation" class="site-nav" aria-label="Primary">
-        <a class="nav-link" href="./index.html#features">Signals</a>
-        <a class="nav-link" href="./docs.html">Docs</a>
-        <a class="nav-link" href="./compare.html">Compare</a>
-        <a class="nav-link" href="./demo/product.html">Demo</a>
-        <a class="btn btn-primary" href="https://github.com/tanzir71/tinyuxjs" target="_blank" rel="noopener">GitHub</a>
+        <a href="./index.html#whats-new">What's new</a>
+        <a href="./index.html#features">Signals</a>
+        <a href="./index.html#surveys">Surveys</a>
+        <a href="./index.html#setup">Setup</a>
+        <a href="./docs.html">Docs</a>
+        <a href="./compare.html" aria-current="page">Compare</a>
+        <a href="./demo/product.html">Demo</a>
+        <a class="nav-gh" href="https://github.com/tanzir71/tinyuxjs" target="_blank" rel="noopener">
+          {GITHUB_ICON}
+          GitHub
+        </a>
       </nav>
     </div>
   </header>
-  <main>
-    <section class="hero">
-      <div class="container hero-inner">
-        <span class="eyebrow">comparison - tinyux vs {escape(v["name"])}</span>
+
+  <main id="content">
+    <section class="page-hero">
+      <div class="wrap">
+        <ol class="crumbs" aria-label="Breadcrumb"><li><a href="./compare.html">Compare</a></li><li aria-current="page">tinyux vs {name}</li></ol>
         <h1>{escape(v["h1"])}</h1>
         <p class="lead">{escape(v["desc"])}</p>
         <div class="cta-row">
@@ -142,43 +178,65 @@ def render(v):
         </div>
       </div>
     </section>
+
     <section class="section">
-      <div class="container">
-        <div class="section-head"><span class="idx">ALT - 01</span><h2>What {escape(v["name"])} does</h2></div>
-        <div class="grid grid-2">
-          <div class="cell"><h3>{escape(v["name"])}</h3><p>{escape(v["what"])}</p></div>
-          <div class="cell"><h3>tinyux</h3><p>{escape(v["differs"])}</p></div>
+      <div class="wrap">
+        <div class="section-head"><h2>What {name} does</h2></div>
+        <div class="pair">
+          <div class="panel"><h3>{name}</h3><p>{escape(v["what"])}</p></div>
+          <div class="panel pick"><h3>tinyux</h3><p>{escape(v["differs"])}</p></div>
         </div>
       </div>
     </section>
-    <section class="section">
-      <div class="container">
-        <div class="section-head"><span class="idx">ALT - 02</span><h2>Side by side</h2></div>
-        <div class="table"><div class="table-wrap"><table>
-          <thead><tr><th>Dimension</th><th>tinyux</th><th>{escape(v["name"])}</th></tr></thead>
-          <tbody>{rows}</tbody>
-        </table></div></div>
+
+    <section class="section alt">
+      <div class="wrap">
+        <div class="section-head"><h2>Side by side</h2></div>
+        <div class="table-wrap">
+          <table class="matrix narrow">
+            <caption class="sr-only">tinyux compared with {name}</caption>
+            <thead><tr><th scope="col">Dimension</th><th scope="col" class="col-us">tinyux</th><th scope="col">{name}</th></tr></thead>
+            <tbody>
+{rows}
+            </tbody>
+          </table>
+        </div>
+        <p class="note">A product-shape comparison, not a procurement document. Vendor features change; verify details with {name}.</p>
       </div>
     </section>
+
     <section class="section">
-      <div class="container">
-        <div class="section-head"><span class="idx">ALT - 03</span><h2>Which should you choose?</h2></div>
-        <div class="grid grid-2">
-          <div class="cell"><h3>Choose {escape(v["name"])} if...</h3><p>{escape(v["choose_them"])}</p></div>
-          <div class="cell"><h3>Choose tinyux if...</h3><p>{escape(v["choose_us"])}</p></div>
+      <div class="wrap">
+        <div class="section-head"><h2>Which should you choose?</h2></div>
+        <div class="pair">
+          <div class="panel"><h3>Choose {name} if...</h3><p>{escape(v["choose_them"])}</p></div>
+          <div class="panel pick"><h3>Choose tinyux if...</h3><p>{escape(v["choose_us"])}</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section alt">
+      <div class="wrap">
+        <div class="section-head"><h2>Other comparisons</h2></div>
+        <div class="vs">
+{other_cards(v)}
         </div>
       </div>
     </section>
   </main>
+
   <footer>
-    <div class="container footer-inner">
-      <div class="footer-note">tinyux - built by <a href="https://tanziro.com" target="_blank" rel="noopener">tanziro.com</a></div>
-      <div class="footer-links">
-        <a href="./index.html">home</a>
-        <a href="./docs.html">docs</a>
-        <a href="./compare.html">compare</a>
-        <a href="./demo/product.html">demo</a>
+    <div class="wrap">
+      <div class="foot">
+        <div>
+          <a class="brand" href="./index.html" aria-label="tinyux home"><svg class="logo-mark" viewBox="0 0 32 32" width="30" height="30" aria-hidden="true" focusable="false"><circle cx="16" cy="16" r="14.5" fill="#2540FF" fill-opacity=".13"/><circle cx="16" cy="16" r="10" fill="#2540FF" fill-opacity=".3"/><circle cx="16" cy="16" r="5.6" fill="#2540FF"/></svg>tinyux</a>
+          <p class="foot-note">Self-hosted UX telemetry and micro-surveys. Built by <a href="https://tanziro.com" target="_blank" rel="noopener">tanziro.com</a>.</p>
+        </div>
+        <div><h4>Product</h4><ul><li><a href="./demo/product.html">Demo</a></li><li><a href="./docs.html">Docs</a></li><li><a href="./compare.html">Compare</a></li><li><a href="./llms.txt">llms.txt</a></li></ul></div>
+        <div><h4>Alternatives</h4><ul><li><a href="./hotjar-alternative.html">vs Hotjar</a></li><li><a href="./fullstory-alternative.html">vs FullStory</a></li><li><a href="./logrocket-alternative.html">vs LogRocket</a></li><li><a href="./posthog-alternative.html">vs PostHog</a></li></ul></div>
+        <div><h4>Project</h4><ul><li><a href="https://github.com/tanzir71/tinyuxjs" target="_blank" rel="noopener">GitHub</a></li><li><a href="https://buymeacoffee.com/tanzir" target="_blank" rel="noopener">Support</a></li><li><a href="./README.md">README</a></li><li><a href="./CHANGELOG.md">Changelog</a></li></ul></div>
       </div>
+      <div class="legal"><span>MIT License.</span><span>v0.2.0</span></div>
     </div>
   </footer>
   <script src="./site.js"></script>
