@@ -485,7 +485,7 @@ await test('enabled heatmaps capture coarse click density without text or form v
   win.tinyux.destroy()
 })
 
-await test('site chrome keeps setup code blocks dark, nav GitHub compact, and ninja favicon present', async () => {
+await test('site chrome keeps setup code blocks dark, nav GitHub compact, and heat-point logo and favicon present', async () => {
   const css = fs.readFileSync(path.join(root, 'site.css'), 'utf8')
   assert.match(css, /\.pre-block\s*\{[^}]*background:\s*var\(--dk-bg\)/)
   assert.match(css, /header \.btn\s*\{[^}]*min-height:\s*36px/)
@@ -505,7 +505,8 @@ await test('site chrome keeps setup code blocks dark, nav GitHub compact, and ni
   for (const file of htmlFiles) {
     const html = fs.readFileSync(path.join(root, file), 'utf8')
     assert.match(html, /rel="icon"/, `${file} missing favicon`)
-    assert.match(html, /%F0%9F%A5%B7/, `${file} missing ninja emoji favicon`)
+    assert.match(html, /rel="icon" type="image\/svg\+xml" href="data:image\/svg\+xml,[^"]*%232540FF/, `${file} missing heat-point favicon`)
+    assert.match(html, /<svg class="logo-mark"[^>]*><circle cx="16" cy="16" r="14.5"/, `${file} missing heat-point logo mark`)
   }
 })
 

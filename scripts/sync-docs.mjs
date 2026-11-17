@@ -34,7 +34,7 @@ for (const file of files) {
 const nested = [
   path.join('demo', 'product.html'),
   path.join('assets', 'logo.svg'),
-  path.join('assets', 'logo-blue.svg')
+  path.join('assets', 'favicon.svg')
 ]
 for (const file of nested) {
   fs.mkdirSync(path.join(out, path.dirname(file)), { recursive: true })
