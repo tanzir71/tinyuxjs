@@ -13,7 +13,7 @@
   function copyText(text, btn) {
     function done() {
       var prev = btn.textContent;
-      btn.textContent = 'COPIED';
+      btn.textContent = prev === prev.toUpperCase() ? 'COPIED' : 'Copied';
       window.setTimeout(function () { btn.textContent = prev; }, 1200);
     }
     if (navigator.clipboard && navigator.clipboard.writeText) {
@@ -53,7 +53,7 @@
     });
 
     nav.addEventListener('click', function (event) {
-      if (event.target && event.target.tagName === 'A') setMenu(false);
+      if (event.target && event.target.closest && event.target.closest('a')) setMenu(false);
     });
 
     document.addEventListener('keydown', function (event) {

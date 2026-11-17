@@ -7,3 +7,4 @@ tinyux.log
 tinyux-dev-server*.log
 tinyux-dev-server.pid
 ref_*/
+tinyux-data/

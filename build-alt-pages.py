@@ -22,7 +22,7 @@ VENDORS = [
         "rows": [
             ("Heatmaps", "Optional aggregate click/tap points", "Yes, managed visual heatmaps"),
             ("Session replay", "No", "Yes"),
-            ("Surveys", "Rating, yes/no, choice, text", "Yes"),
+            ("Surveys", "Rating, NPS, yes/no, choice, text", "Yes"),
             ("Data hosting", "Your endpoint and SQLite database", "Vendor platform"),
             ("Setup", "One script tag plus collector", "Vendor project and tracking script"),
             ("Best fit", "Small self-hosted feedback loops", "Visual behavior analytics and website optimization"),
@@ -115,8 +115,13 @@ def render(v):
 <body>
   <header>
     <div class="container header-inner">
-      <a class="brand" href="./index.html"><div class="logo"><span>TU</span></div><span class="brand-name">tinyux</span></a>
-      <nav>
+      <a class="brand" href="./index.html"><svg class="logo-mark" viewBox="0 0 32 32" width="32" height="32" aria-hidden="true" focusable="false"><rect width="32" height="32" rx="7.5" fill="#0F1115"/><g fill="#fff" fill-opacity="0.22"><circle cx="9.6" cy="6.4" r="1"/><circle cx="22.4" cy="6.4" r="1"/><circle cx="9.6" cy="19.2" r="1"/><circle cx="22.4" cy="19.2" r="1"/><circle cx="9.6" cy="25.6" r="1"/></g><g fill="#fff"><circle cx="16" cy="6.4" r="2.9"/><circle cx="9.6" cy="12.8" r="2.9"/><circle cx="22.4" cy="12.8" r="2.9"/><circle cx="16" cy="19.2" r="2.9"/><circle cx="16" cy="25.6" r="2.9"/><circle cx="22.4" cy="25.6" r="2.9"/></g><circle cx="16" cy="12.8" r="3.7" fill="#2540FF"/></svg><span class="brand-name">tinyux</span></a>
+      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="primary-navigation" aria-label="Open navigation menu" data-menu-toggle>
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+      <nav id="primary-navigation" class="site-nav" aria-label="Primary">
         <a class="nav-link" href="./index.html#features">Signals</a>
         <a class="nav-link" href="./docs.html">Docs</a>
         <a class="nav-link" href="./compare.html">Compare</a>
@@ -176,6 +181,7 @@ def render(v):
       </div>
     </div>
   </footer>
+  <script src="./site.js"></script>
 </body>
 </html>
 """
