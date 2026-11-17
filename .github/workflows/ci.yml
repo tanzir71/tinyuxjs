@@ -1,0 +1,28 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: pdo_sqlite
+      - run: npm install
+      - name: Build and check the size budget
+        run: npm run build:min
+      - name: Client tests (fake DOM)
+        run: npm test
+      - name: Collector tests (php -S + SQLite)
+        run: npm run test:php
+      - name: docs/ mirror is in sync
+        run: npm run sync:docs && git diff --exit-code -- docs/

@@ -1,12 +1,19 @@
 {
   "name": "tinyux",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "type": "module",
   "scripts": {
     "test": "node test/run-tests.mjs",
+    "test:php": "node test/collector-test.mjs",
     "build:min": "node scripts/minify.mjs",
     "serve": "node demo/server.mjs",
     "sync:docs": "node scripts/sync-docs.mjs"
+  },
+  "sizeBudget": {
+    "gzipBytes": 14000
+  },
+  "devDependencies": {
+    "esbuild": "0.28.2"
   }
 }

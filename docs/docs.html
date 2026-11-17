@@ -4,10 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Documentation - tinyux Implementation Guide</title>
-  <meta name="description" content="Implementation guide for tinyux: script setup, declarative triggers, JavaScript API, payload schema, PHP/SQLite collector, CORS, privacy defaults, and FAQ.">
+  <meta name="description" content="Implementation guide for tinyux v0.2: script setup, declarative triggers, surveys, opt-in signals, consent controls, JavaScript API, payload schema, PHP/SQLite collector, privacy defaults, and FAQ.">
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://tanzir71.github.io/tinyuxjs/docs.html">
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%20100%20100%27%3E%3Ctext%20y%3D%27.9em%27%20font-size%3D%2790%27%3E%F0%9F%A5%B7%3C%2Ftext%3E%3C%2Fsvg%3E">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2032%2032%27%3E%3Ccircle%20cx%3D%2716%27%20cy%3D%2716%27%20r%3D%2715%27%20fill%3D%27%232540FF%27%20fill-opacity%3D%27.16%27%2F%3E%3Ccircle%20cx%3D%2716%27%20cy%3D%2716%27%20r%3D%2710.5%27%20fill%3D%27%232540FF%27%20fill-opacity%3D%27.36%27%2F%3E%3Ccircle%20cx%3D%2716%27%20cy%3D%2716%27%20r%3D%276.2%27%20fill%3D%27%232540FF%27%2F%3E%3C%2Fsvg%3E">
   <link rel="stylesheet" href="./site.css">
 </head>
 <body>
@@ -15,7 +15,7 @@
   <header>
     <div class="container header-inner">
       <a class="brand" href="./index.html">
-        <div class="logo"><span>TU</span></div>
+        <svg class="logo-mark" viewBox="0 0 32 32" width="32" height="32" aria-hidden="true" focusable="false"><circle cx="16" cy="16" r="14.5" fill="#2540FF" fill-opacity=".13"/><circle cx="16" cy="16" r="10" fill="#2540FF" fill-opacity=".3"/><circle cx="16" cy="16" r="5.6" fill="#2540FF"/></svg>
         <span class="brand-name">tinyux</span>
       </a>
       <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="primary-navigation" aria-label="Open navigation menu" data-menu-toggle>
@@ -44,10 +44,13 @@
         <a href="#api">JavaScript API</a>
         <a href="#identity">Identity</a>
         <a href="#config">Configuration</a>
+        <a href="#signals">Opt-in signals</a>
+        <a href="#consent">Consent and storage</a>
         <a href="#heatmaps">Heatmaps</a>
         <a href="#payload">Payload schema</a>
         <a href="#collector">Collector</a>
         <a href="#privacy">Privacy defaults</a>
+        <a href="#upgrade">Upgrading from v0.1</a>
         <a href="#faq">FAQ</a>
       </aside>
 
@@ -60,7 +63,7 @@
 
           <section class="doc-section" id="quick-start">
             <h2>Quick start</h2>
-            <p>Host `tinyux.js` on your own domain and point it at a collector endpoint. The client starts automatically when both `data-app-id` and `data-api-url` are present.</p>
+            <p>Host <code>tinyux.js</code> on your own domain and point it at a collector endpoint. The client starts automatically when both <code>data-app-id</code> and <code>data-api-url</code> are present.</p>
             <div class="code-card">
               <div class="code-head"><span class="code-title">product-page.html</span><button class="copy-btn" data-copy-target="quick-tag" type="button">COPY</button></div>
               <pre class="pre-block" id="quick-tag">&lt;script src="/js/tinyux.js"
@@ -72,8 +75,8 @@
   }'&gt;
 &lt;/script&gt;</pre>
             </div>
-            <p>Create the SQLite database with:</p>
-            <pre class="pre-block" id="quick-db">sqlite3 tinyux.db &lt; schema.sql<button class="pre-copy" data-copy-target="quick-db" type="button">COPY</button></pre>
+            <p>Upload <code>collect.php</code> next to the script. On the first request it creates its SQLite database in <code>tinyux-data/</code> and blocks that folder from the web with a deny-all <code>.htaccess</code>. To see where data will live before going live:</p>
+            <pre class="pre-block" id="quick-db">php collect.php --check<button class="pre-copy" data-copy-target="quick-db" type="button">COPY</button></pre>
           </section>
 
           <section class="doc-section" id="triggers">
@@ -83,10 +86,10 @@
               <table>
                 <thead><tr><th>Trigger</th><th>Attribute</th><th>Behavior</th></tr></thead>
                 <tbody>
-                  <tr><td><strong>Click</strong></td><td>`data-tinyux-trigger="click"`</td><td>Captures element metadata and optionally shows `data-tinyux-survey-id`.</td></tr>
-                  <tr><td><strong>Section scroll</strong></td><td>`data-tinyux-trigger="section-scroll"`</td><td>Records section visibility with threshold, cooldown, and once-per-session controls.</td></tr>
-                  <tr><td><strong>Time delay</strong></td><td>`data-tinyux-trigger="time"`</td><td>Shows a survey after `data-tinyux-after-ms`, defaulting to 5000 ms.</td></tr>
-                  <tr><td><strong>Exit intent</strong></td><td>`data-tinyux-trigger="exit-intent"`</td><td>Associates a survey with global exit-intent detection.</td></tr>
+                  <tr><td><strong>Click</strong></td><td><code>data-tinyux-trigger="click"</code></td><td>Captures element metadata and optionally shows <code>data-tinyux-survey-id</code>.</td></tr>
+                  <tr><td><strong>Section scroll</strong></td><td><code>data-tinyux-trigger="section-scroll"</code></td><td>Records section visibility with threshold, cooldown, and once-per-session controls.</td></tr>
+                  <tr><td><strong>Time delay</strong></td><td><code>data-tinyux-trigger="time"</code></td><td>Shows a survey after <code>data-tinyux-after-ms</code>, defaulting to 5000 ms.</td></tr>
+                  <tr><td><strong>Exit intent</strong></td><td><code>data-tinyux-trigger="exit-intent"</code></td><td>Associates a survey with global exit-intent detection.</td></tr>
                 </tbody>
               </table>
             </div></div>
@@ -108,7 +111,7 @@
 
           <section class="doc-section" id="surveys">
             <h2>Surveys</h2>
-            <p>Surveys can be registered programmatically or embedded as JSON in `data-tinyux-survey`. Supported types are `rating`, `yesno`, `choice`, and `text`.</p>
+            <p>Surveys can be registered programmatically or embedded as JSON in <code>data-tinyux-survey</code>. Supported types are <code>rating</code> (set <code>min</code> and <code>scale</code>), <code>nps</code> (0 to 10), <code>yesno</code>, <code>choice</code>, and <code>text</code>.</p>
             <pre class="pre-block" id="survey-example">const ux = window.tinyux.getInstance()
 
 ux.registerSurvey({
@@ -127,9 +130,18 @@ ux.registerSurvey({
   title: 'Before you go',
   question: 'What stopped you today?',
   choices: ['Pricing', 'Missing feature', 'Just browsing', 'Other']
+})
+
+ux.registerSurvey({
+  id: 'nps',
+  type: 'nps',
+  question: 'How likely are you to recommend us to a colleague?',
+  followUp: { when: '&lt;=6', question: 'What should we fix first?' }
 })<button class="pre-copy" data-copy-target="survey-example" type="button">COPY</button></pre>
-            <p>Questions can interpolate element dataset values with `{{data-name}}`, using safe dataset metadata only.</p>
-            <p>Survey UI defaults to a blocking center modal. Set `ui.mode` to `corner` for a non-blocking prompt, with `position` set to `bottom-right`, `bottom-left`, `top-right`, or `top-left`.</p>
+            <p>Questions can interpolate element dataset values with <code>{{data-name}}</code>, using safe dataset metadata only.</p>
+            <p>Survey UI defaults to a blocking center modal, rendered with the native <code>&lt;dialog&gt;</code> element where available so focus stays inside and returns to the trigger afterwards. Set <code>ui.mode</code> to <code>corner</code> for a non-blocking prompt, with <code>position</code> set to <code>bottom-right</code>, <code>bottom-left</code>, <code>top-right</code>, or <code>top-left</code>. Corner prompts never steal focus.</p>
+            <p><code>followUp</code> asks one more free-text question only when the first answer matches <code>when</code>: a comparison such as <code>'&lt;=6'</code>, a list of values such as <code>['Pricing', 'Other']</code>, or a single value such as <code>false</code>. The stored response becomes <code>{ "value": 3, "comment": "..." }</code>.</p>
+            <p>Theme prompts with <code>ui.theme</code> (<code>light</code>, <code>dark</code>, or <code>auto</code>) and override any <code>--tinyux-*</code> CSS variable (<code>--tinyux-bg</code>, <code>--tinyux-fg</code>, <code>--tinyux-accent</code>, <code>--tinyux-radius</code>, <code>--tinyux-font</code>) on <code>.tinyux-root</code> in your own stylesheet. Button text comes from <code>ui.labels</code>, so prompts can match your product's language.</p>
           </section>
 
           <section class="doc-section" id="api">
@@ -138,20 +150,23 @@ ux.registerSurvey({
               <table>
                 <thead><tr><th>Method</th><th>Use</th></tr></thead>
                 <tbody>
-                  <tr><td>`tinyux.init(config)`</td><td>Create a new instance manually.</td></tr>
-                  <tr><td>`tinyux.getInstance()`</td><td>Return the active singleton instance.</td></tr>
-                  <tr><td>`tinyux.autoInit()`</td><td>Read script tag attributes and initialize if possible.</td></tr>
-                  <tr><td>`tinyux.destroy()`</td><td>Stop heartbeat/bindings and clear the singleton.</td></tr>
-                  <tr><td>`instance.track(type, meta)`</td><td>Queue a custom event.</td></tr>
-                  <tr><td>`instance.bind(selector, event, opts)`</td><td>Bind delegated interaction telemetry to matching elements.</td></tr>
-                  <tr><td>`instance.registerSurvey(config)`</td><td>Register a survey by `id` or `survey_id`.</td></tr>
-                  <tr><td>`instance.showSurvey(idOrConfig)`</td><td>Show a registered or inline survey manually.</td></tr>
-                  <tr><td>`instance.flush()`</td><td>Force a send attempt.</td></tr>
-                  <tr><td>`instance.stop()`</td><td>Stop timers and bindings without clearing the singleton.</td></tr>
-                  <tr><td>`instance.identify(id, traits)`</td><td>Associate later payloads with an integrator-provided user/account identity.</td></tr>
-                  <tr><td>`instance.clearIdentity()`</td><td>Return later payloads to anonymous client/session identity only.</td></tr>
-                  <tr><td>`instance.getIdentity()`</td><td>Read the current explicit identity object.</td></tr>
-                  <tr><td>`instance.on(event, handler)`</td><td>Listen for `sent`, `send_error`, `interaction`, `survey_shown`, `survey_submitted`, `survey_closed`, and `exit_intent`.</td></tr>
+                  <tr><td><code>tinyux.init(config)</code></td><td>Create a new instance manually.</td></tr>
+                  <tr><td><code>tinyux.getInstance()</code></td><td>Return the active singleton instance.</td></tr>
+                  <tr><td><code>tinyux.autoInit()</code></td><td>Read script tag attributes and initialize if possible.</td></tr>
+                  <tr><td><code>tinyux.destroy()</code></td><td>Remove every listener, observer, and timer tinyux added, then clear the singleton.</td></tr>
+                  <tr><td><code>tinyux.consent(granted)</code></td><td>Shortcut for the active instance's <code>consent()</code>, handy inside a consent banner.</td></tr>
+                  <tr><td><code>instance.track(type, meta)</code></td><td>Queue a custom event.</td></tr>
+                  <tr><td><code>instance.bind(selector, event, opts)</code></td><td>Bind delegated interaction telemetry to matching elements.</td></tr>
+                  <tr><td><code>instance.registerSurvey(config)</code></td><td>Register a survey by <code>id</code> or <code>survey_id</code>.</td></tr>
+                  <tr><td><code>instance.showSurvey(idOrConfig)</code></td><td>Show a registered or inline survey manually.</td></tr>
+                  <tr><td><code>instance.flush()</code></td><td>Force a send attempt.</td></tr>
+                  <tr><td><code>instance.stop()</code></td><td>Stop everything without clearing the singleton.</td></tr>
+                  <tr><td><code>instance.consent(granted)</code></td><td><code>true</code> starts sending (and persisting ids). <code>false</code> discards buffered data, removes tinyux keys from storage, and stops tracking.</td></tr>
+                  <tr><td><code>instance.hasConsent()</code> / <code>instance.isActive()</code></td><td>Read the consent state, and whether this instance is tracking (sampling, GPC, and consent can turn it off).</td></tr>
+                  <tr><td><code>instance.identify(id, traits)</code></td><td>Associate later payloads with an integrator-provided user/account identity.</td></tr>
+                  <tr><td><code>instance.clearIdentity()</code></td><td>Return later payloads to anonymous client/session identity only.</td></tr>
+                  <tr><td><code>instance.getIdentity()</code></td><td>Read the current explicit identity object.</td></tr>
+                  <tr><td><code>instance.on(event, handler)</code></td><td>Listen for <code>sent</code>, <code>send_error</code>, <code>interaction</code>, <code>page_view</code>, <code>survey_shown</code>, <code>survey_submitted</code>, <code>survey_closed</code>, <code>exit_intent</code>, <code>rage_click</code>, <code>dead_click</code>, and <code>consent</code>.</td></tr>
                 </tbody>
               </table>
             </div></div>
@@ -159,7 +174,7 @@ ux.registerSurvey({
 
           <section class="doc-section" id="identity">
             <h2>Identity association</h2>
-            <p>tinyux keeps anonymous `client_id` and `session_id` by default. If your app already knows the signed-in user or account, pass that identity explicitly. tinyux does not fingerprint browsers or devices to guess identity.</p>
+            <p>tinyux keeps anonymous <code>client_id</code> and <code>session_id</code> by default. If your app already knows the signed-in user or account, pass that identity explicitly. tinyux does not fingerprint browsers or devices to guess identity.</p>
             <pre class="pre-block" id="identity-example">const ux = window.tinyux.getInstance()
 
 ux.identify('user_123', {
@@ -187,30 +202,88 @@ ux.track('checkout_started')<button class="pre-copy" data-copy-target="identity-
               <table>
                 <thead><tr><th>Key</th><th>Default</th><th>Notes</th></tr></thead>
                 <tbody>
-                  <tr><td>`appId`</td><td>empty</td><td>Required for sending. Usually from `data-app-id`.</td></tr>
-                  <tr><td>`apiUrl`</td><td>empty</td><td>Required collector URL. Usually from `data-api-url`.</td></tr>
-                  <tr><td>`apiKey`</td><td>empty</td><td>Sent as `X-API-KEY` during fetch sends. Not available to sendBeacon.</td></tr>
-                  <tr><td>`user`</td><td>null</td><td>Optional explicit user/account identity supplied by the host app.</td></tr>
-                  <tr><td>`batchSize`</td><td>10</td><td>Event count before scheduled flush.</td></tr>
-                  <tr><td>`heartbeatMs`</td><td>30000</td><td>Heartbeat interval, clamped to at least 5000 ms.</td></tr>
-                  <tr><td>`includeQueryString`</td><td>false</td><td>When false, URLs omit query parameters.</td></tr>
-                  <tr><td>`datasetDenylist`</td><td>email, name, phone, token, auth, password, session, ssn</td><td>Blocks sensitive dataset keys from metadata.</td></tr>
-                  <tr><td>`captureInputs`</td><td>false</td><td>When true, captures input lengths/types only, never values.</td></tr>
-                  <tr><td>`mouseSampling.enabled`</td><td>false</td><td>Optional coarse mouse percentage samples.</td></tr>
-                  <tr><td>`heatmaps.enabled`</td><td>false</td><td>Optional aggregate click/tap heatmap points. No screenshots, DOM snapshots, or replay.</td></tr>
-                  <tr><td>`heatmaps.clicks`</td><td>true</td><td>When heatmaps are enabled, records click density points.</td></tr>
-                  <tr><td>`heatmaps.taps`</td><td>true</td><td>When heatmaps are enabled, records touch density points.</td></tr>
-                  <tr><td>`exitIntent.enabled`</td><td>false</td><td>Top-edge pointer exit intent.</td></tr>
-                  <tr><td>`surveys.maxPerSession`</td><td>2</td><td>Global cap for surveys shown in one session.</td></tr>
-                  <tr><td>`ui.accentColor`</td><td>#2540ff</td><td>Survey button/focus accent.</td></tr>
+                  <tr><td><code>appId</code></td><td>empty</td><td>Required for sending. Usually from <code>data-app-id</code>.</td></tr>
+                  <tr><td><code>apiUrl</code></td><td>empty</td><td>Required collector URL. Usually from <code>data-api-url</code>.</td></tr>
+                  <tr><td><code>apiKey</code></td><td>empty</td><td>Sent as <code>X-API-KEY</code> during fetch sends. Not available to sendBeacon.</td></tr>
+                  <tr><td><code>user</code></td><td>null</td><td>Optional explicit user/account identity supplied by the host app.</td></tr>
+                  <tr><td><code>batchSize</code></td><td>10</td><td>Event count before scheduled flush.</td></tr>
+                  <tr><td><code>heartbeatMs</code></td><td>30000</td><td>Heartbeat interval, clamped to at least 5000 ms.</td></tr>
+                  <tr><td><code>includeQueryString</code></td><td>false</td><td>When false, URLs omit query parameters.</td></tr>
+                  <tr><td><code>datasetDenylist</code></td><td>email, name, phone, token, auth, password, session, ssn</td><td>Blocks sensitive dataset keys from metadata.</td></tr>
+                  <tr><td><code>captureInputs</code></td><td>false</td><td>When true, captures input lengths/types only, never values.</td></tr>
+                  <tr><td><code>spa</code></td><td>false</td><td>Records a <code>page_view</code> on client-side route changes (Navigation API, or a history fallback).</td></tr>
+                  <tr><td><code>frustration.enabled</code></td><td>false</td><td>Records <code>rage_click</code> and <code>dead_click</code> events. Tune with <code>rageClicks</code> (3), <code>rageWindowMs</code> (700), <code>rageRadiusPx</code> (24), and <code>deadClickMs</code> (1000). <code>frustration: true</code> is a shorthand.</td></tr>
+                  <tr><td><code>consent</code></td><td>'granted'</td><td><code>'pending'</code> holds events in memory, writes nothing to storage, and shows no surveys until <code>consent(true)</code>.</td></tr>
+                  <tr><td><code>storage</code></td><td>'local'</td><td><code>'session'</code> keeps ids per tab session; <code>'none'</code> keeps everything in memory (cookieless mode).</td></tr>
+                  <tr><td><code>clientIdTtlDays</code></td><td>395</td><td>Rotates the anonymous <code>client_id</code> after about 13 months.</td></tr>
+                  <tr><td><code>respectGPC</code></td><td>false</td><td><code>true</code> drops identity when the browser sends Global Privacy Control; <code>'all'</code> turns tinyux off for those visitors.</td></tr>
+                  <tr><td><code>sampleRate</code></td><td>1</td><td>Share of sessions to track, decided once per session.</td></tr>
+                  <tr><td><code>heatmaps.enabled</code></td><td>false</td><td>Optional aggregate click/tap heatmap points. No screenshots, DOM snapshots, or replay. <code>heatmaps: true</code> is a shorthand.</td></tr>
+                  <tr><td><code>heatmaps.clicks</code></td><td>true</td><td>When heatmaps are enabled, records click density points.</td></tr>
+                  <tr><td><code>heatmaps.taps</code></td><td>true</td><td>When heatmaps are enabled, records touch density points.</td></tr>
+                  <tr><td><code>exitIntent.enabled</code></td><td>false</td><td>Top-edge pointer exit intent.</td></tr>
+                  <tr><td><code>surveys.maxPerSession</code></td><td>2</td><td>Global cap for surveys shown in one session.</td></tr>
+                  <tr><td><code>ui.accentColor</code></td><td>#2540ff</td><td>Survey button/focus accent.</td></tr>
+                  <tr><td><code>ui.theme</code></td><td>'light'</td><td><code>'dark'</code> or <code>'auto'</code> (follows the visitor's system setting).</td></tr>
+                  <tr><td><code>ui.labels</code></td><td>English</td><td>Override <code>close</code>, <code>skip</code>, <code>submit</code>, <code>yes</code>, <code>no</code>, <code>thanksTitle</code>, <code>thanksMessage</code>, <code>npsLow</code>, <code>npsHigh</code>, <code>followUpPlaceholder</code>.</td></tr>
+                  <tr><td><code>ui.nonce</code></td><td>empty</td><td>CSP nonce for the injected <code>&lt;style&gt;</code>, so strict policies need no <code>'unsafe-inline'</code>.</td></tr>
                 </tbody>
               </table>
             </div></div>
           </section>
 
+          <section class="doc-section" id="signals">
+            <h2>Opt-in signals</h2>
+            <p>Each signal is off by default and changes nothing until you turn it on. They all ship in the same file: <code>tinyux.min.js</code> is about 13.6 KB gzipped with every option included.</p>
+            <h3>SPA page views</h3>
+            <p><code>spa: true</code> records a <code>page_view</code> with <code>path</code> and <code>from</code> whenever the URL path changes without a reload. It uses the Navigation API (Baseline since January 2026) and falls back to wrapping <code>history.pushState</code>/<code>replaceState</code> plus <code>popstate</code>. Pages restored from the back/forward cache also count as page views, with <code>restored: true</code>.</p>
+            <h3>Rage and dead clicks</h3>
+            <p><code>frustration: true</code> adds two events. A <code>rage_click</code> is three or more clicks within about 700 ms and 24 px of each other, recorded once per burst. A <code>dead_click</code> is a click on a button, link, summary, or button-like role that is followed by no DOM change, no URL change, and no page hide within one second. Both carry coarse <code>x_pct</code>/<code>y_pct</code>, <code>path</code>, <code>viewport</code>, and sanitized element metadata, so heatmap queries work for them too.</p>
+            <pre class="pre-block" id="frustration-sql">SELECT json_extract(event_meta, '$.path') AS path,
+       json_extract(event_meta, '$.element.id') AS element,
+       event_type, COUNT(*) AS n
+FROM events
+WHERE app_id = 'acme-app' AND event_type IN ('rage_click', 'dead_click')
+GROUP BY 1, 2, 3
+ORDER BY n DESC;<button class="pre-copy" data-copy-target="frustration-sql" type="button">COPY</button></pre>
+            <h3>Web Vitals (recipe)</h3>
+            <p>tinyux does not bundle performance metrics. If you want them, load Google's <code>web-vitals</code> library and forward its callbacks:</p>
+            <pre class="pre-block" id="vitals-recipe">import { onLCP, onINP, onCLS } from 'web-vitals'
+
+const ux = window.tinyux.getInstance()
+const send = (m) =&gt; ux.track('web_vital', { name: m.name, value: Math.round(m.value * 1000) / 1000, rating: m.rating })
+onLCP(send)
+onINP(send)
+onCLS(send)<button class="pre-copy" data-copy-target="vitals-recipe" type="button">COPY</button></pre>
+          </section>
+
+          <section class="doc-section" id="consent">
+            <h2>Consent and storage</h2>
+            <p>tinyux does not decide whether you need consent; your policy does. These options make either answer easy to implement.</p>
+            <pre class="pre-block" id="consent-example">&lt;script src="/js/tinyux.js"
+  data-app-id="acme-app"
+  data-api-url="/collect.php"
+  data-config='{"consent":"pending","respectGPC":true,"storage":"session"}'&gt;
+&lt;/script&gt;
+
+&lt;script&gt;
+  // In your consent banner:
+  acceptButton.onclick = () =&gt; tinyux.consent(true)
+  rejectButton.onclick = () =&gt; tinyux.consent(false)
+&lt;/script&gt;<button class="pre-copy" data-copy-target="consent-example" type="button">COPY</button></pre>
+            <ul>
+              <li><code>consent: 'pending'</code>: events wait in memory, nothing is written to <code>localStorage</code> or <code>sessionStorage</code>, nothing is sent, and no survey appears. <code>consent(true)</code> persists the ids and sends what was buffered; <code>consent(false)</code> discards it and stops tracking.</li>
+              <li><code>storage: 'none'</code> keeps ids, the retry queue, and survey cooldowns in memory only, so every page load gets a new anonymous id. <code>'session'</code> keeps them for the tab session.</li>
+              <li><code>clientIdTtlDays</code> (395 by default) rotates the persistent anonymous id after about 13 months.</li>
+              <li><code>respectGPC: true</code> drops <code>identify()</code> data when <code>navigator.globalPrivacyControl</code> is true and marks payloads with <code>meta.gpc</code>. <code>respectGPC: 'all'</code> turns tinyux off for those visitors.</li>
+              <li><code>sampleRate: 0.25</code> tracks a quarter of sessions; the decision is made once per session.</li>
+              <li>On the server, <code>php collect.php --prune --days=395</code> deletes rows older than the retention window. Run it from cron.</li>
+            </ul>
+          </section>
+
           <section class="doc-section" id="heatmaps">
             <h2>Aggregate heatmaps</h2>
-            <p>Heatmaps are opt-in and aggregate-only. tinyux records coarse click/tap coordinates as `heatmap_point` events so you can build a simple density overlay or export later. It does not capture screenshots, DOM snapshots, mouse trails, or replayable sessions.</p>
+            <p>Heatmaps are opt-in and aggregate-only. tinyux records coarse click/tap coordinates as <code>heatmap_point</code> events so you can build a simple density overlay or export later. It does not capture screenshots, DOM snapshots, mouse trails, or replayable sessions.</p>
             <pre class="pre-block" id="heatmap-config">&lt;script src="/js/tinyux.js"
   data-app-id="acme-app"
   data-api-url="/collect.php"
@@ -218,7 +291,7 @@ ux.track('checkout_started')<button class="pre-copy" data-copy-target="identity-
     "heatmaps": {"enabled": true, "clicks": true, "taps": true}
   }'&gt;
 &lt;/script&gt;<button class="pre-copy" data-copy-target="heatmap-config" type="button">COPY</button></pre>
-            <p>Heatmap event metadata includes `x_pct`, `y_pct`, `viewport`, `path`, `input`, and sanitized element metadata that respects `datasetAllowlist` and `datasetDenylist`.</p>
+            <p>Heatmap event metadata includes <code>x_pct</code>, <code>y_pct</code>, <code>viewport</code>, <code>path</code>, <code>input</code>, and sanitized element metadata that respects <code>datasetAllowlist</code> and <code>datasetDenylist</code>.</p>
             <pre class="pre-block" id="heatmap-sql">SELECT
   json_extract(event_meta, '$.path') AS path,
   json_extract(event_meta, '$.viewport') AS viewport,
@@ -233,7 +306,7 @@ ORDER BY points DESC;<button class="pre-copy" data-copy-target="heatmap-sql" typ
 
           <section class="doc-section" id="payload">
             <h2>Payload schema</h2>
-            <p>The client POSTs JSON batches. `sendBeacon` may deliver `text/plain`, so collectors should parse the body as JSON regardless of content type.</p>
+            <p>The client POSTs JSON batches. Unload beacons are sent as <code>text/plain</code> (a CORS-safelisted type, so cross-origin collectors need no preflight), so collectors should parse the body as JSON regardless of content type. Every event and survey answer carries a unique <code>id</code>: store it and ignore repeats, because retries can deliver the same batch twice.</p>
             <pre class="pre-block" id="payload-example">{
   "app_id": "acme-app",
   "client_id": "uuid",
@@ -259,34 +332,55 @@ ORDER BY points DESC;<button class="pre-copy" data-copy-target="heatmap-sql" typ
     }
   },
   "events": [
-    {"id": "e-...", "type": "interaction", "ts": 1781230001, "meta": {"selector": ".cta"}},
-    {"id": "e-...", "type": "heatmap_point", "ts": 1781230002, "meta": {"x_pct": 52, "y_pct": 34, "viewport": "1366x768", "path": "/pricing", "input": "click"}}
+    {"id": "3f6b2c1e-...", "type": "interaction", "ts": 1781230001, "meta": {"selector": ".cta"}},
+    {"id": "9a0d77c4-...", "type": "heatmap_point", "ts": 1781230002, "meta": {"x_pct": 52, "y_pct": 34, "viewport": "1366x768", "path": "/pricing", "input": "click"}}
   ],
   "surveys": [
-    {"survey_id": "pricing-clarity", "type": "yesno", "response": {"value": true}, "context": {}}
+    {"id": "c41e09b2-...", "survey_id": "pricing-clarity", "type": "yesno", "response": {"value": true}, "context": {}}
   ]
 }<button class="pre-copy" data-copy-target="payload-example" type="button">COPY</button></pre>
           </section>
 
           <section class="doc-section" id="collector">
             <h2>Collector</h2>
-            <p>`collect.php` is the reference collector. It uses PDO SQLite, WAL mode, soft rate limiting, CORS allowlists, optional API keys, failed payload storage, and a CLI retry worker.</p>
-            <p>Top-level `user` data is merged into stored client/session metadata. Optional request metadata is available through `$CAPTURE_REQUEST_META`, `$HASH_IP_WITH_SALT`, `$IP_HASH_SALT`, and `$CAPTURE_USER_AGENT`; it is disabled by default.</p>
+            <p><code>collect.php</code> is the reference collector: one PHP file using PDO SQLite in WAL mode. It creates its schema on the first request, upgrades v0.1 databases in place, and ignores duplicate events and survey answers by id.</p>
             <ul>
-              <li>`ux_apps` stores app IDs.</li>
-              <li>`clients` stores stable browser client IDs.</li>
-              <li>`sessions` stores session IDs per client.</li>
-              <li>`events` stores event type, timestamp, and JSON metadata.</li>
-              <li>`surveys` stores survey ID, type, response, and context JSON.</li>
-              <li>`failed_payloads` stores payloads that should be retried by cron.</li>
+              <li>Data lives in <code>tinyux-data/</code> next to the script, protected by a deny-all <code>.htaccess</code>. On nginx, block that folder or set <code>TINYUX_DB_PATH</code> (and <code>TINYUX_LOG_PATH</code>) to a path outside the web root.</li>
+              <li>Requests are same-origin only by default. Add cross-origin apps to <code>$ALLOWED_ORIGINS</code>.</li>
+              <li>The log records app id and counts only. IP addresses are never written to it, and the soft rate limiter keys on a salted hash.</li>
+              <li>Optional request metadata (<code>$CAPTURE_REQUEST_META</code>) stores a salted HMAC of the IP only once <code>TINYUX_IP_SALT</code> is set, plus the user agent if <code>$CAPTURE_USER_AGENT</code> is on.</li>
+              <li>Top-level <code>user</code> data is merged into stored client/session metadata.</li>
             </ul>
-            <pre class="pre-block" id="collector-cron">*/5 * * * * /usr/bin/php /path/to/collect.php --retry &gt;&gt; /path/to/tinyux.log 2&gt;&amp;1<button class="pre-copy" data-copy-target="collector-cron" type="button">COPY</button></pre>
+            <ul>
+              <li><code>ux_apps</code> stores app IDs.</li>
+              <li><code>clients</code> stores anonymous browser client IDs.</li>
+              <li><code>sessions</code> stores session IDs per client.</li>
+              <li><code>events</code> stores event id, type, timestamp, and JSON metadata.</li>
+              <li><code>surveys</code> stores answer id, survey ID, type, response, and context JSON.</li>
+              <li><code>failed_payloads</code> stores payloads that could not be written, for the retry worker.</li>
+            </ul>
+            <pre class="pre-block" id="collector-cron">php collect.php --check     # where data lives, plus warnings
+
+*/5 * * * * /usr/bin/php /path/to/collect.php --retry
+17 3 * * *  /usr/bin/php /path/to/collect.php --prune --days=395<button class="pre-copy" data-copy-target="collector-cron" type="button">COPY</button></pre>
           </section>
 
           <section class="doc-section" id="privacy">
             <h2>Privacy defaults</h2>
             <p>tinyux is not a recorder or fingerprinting library. It never captures screen contents, DOM snapshots, keystroke contents, clipboard contents, camera, microphone, console logs, network logs, or form values by default.</p>
-            <p>Dataset metadata can still identify people if you put sensitive data in `data-*` attributes. Use `datasetAllowlist` for strict deployments.</p>
+            <p>Dataset metadata can still identify people if you put sensitive data in <code>data-*</code> attributes. Use <code>datasetAllowlist</code> for strict deployments.</p>
+            <p>v0.2 removed the old <code>mouseSampling</code> option, so tinyux records no pointer trails. The collector no longer writes IP addresses to its log. See <a href="#consent">consent and storage</a> for consent gating, Global Privacy Control, cookieless mode, and retention.</p>
+          </section>
+
+          <section class="doc-section" id="upgrade">
+            <h2>Upgrading from v0.1</h2>
+            <ul>
+              <li>Replace <code>tinyux.js</code> (or <code>tinyux.min.js</code>) and <code>collect.php</code>. The script API and payload contract are backwards compatible.</li>
+              <li>On the first request the collector adds <code>event_uid</code> and <code>survey_uid</code> columns to your existing database. It keeps using <code>tinyux.db</code> next to <code>collect.php</code> until you move it; <code>php collect.php --check</code> explains how. Don't re-run <code>schema.sql</code> on an old database.</li>
+              <li>Cross-origin setups: list your app's origin in <code>$ALLOWED_ORIGINS</code>. v0.1 accepted every origin.</li>
+              <li><code>mouseSampling</code> is gone; remove it from your config if you set it.</li>
+              <li>Survey prompts now read their colors from <code>--tinyux-*</code> CSS variables. The default look is unchanged.</li>
+            </ul>
           </section>
 
           <section class="doc-section" id="faq">
@@ -294,11 +388,13 @@ ORDER BY points DESC;<button class="pre-copy" data-copy-target="heatmap-sql" typ
             <h3>Is this a Hotjar or FullStory replacement?</h3>
             <p>No. tinyux is for targeted telemetry, contextual feedback, and optional aggregate click/tap heatmaps. It is not a replay, screenshot, or visual behavior suite.</p>
             <h3>Does it work in SPAs?</h3>
-            <p>Yes. The mutation observer scans new declarative triggers. Call `track()` on route changes if your framework does not reload pages.</p>
+            <p>Yes. Set <code>spa: true</code> and tinyux records a <code>page_view</code> on every client-side route change. The mutation observer also picks up declarative triggers on new elements.</p>
             <h3>What happens when the network drops?</h3>
-            <p>Failed payloads are stored in localStorage with exponential backoff and retried on later flushes.</p>
+            <p>Failed payloads stay in storage with exponential backoff and are retried on later flushes or the next page load. When the page is hidden, everything still buffered is sent with <code>sendBeacon</code>, and anything the browser refuses is kept for next time. The collector ignores duplicates.</p>
+            <h3>Do I still need a consent banner?</h3>
+            <p>That depends on where you operate and how you configure tinyux. If you need consent, set <code>consent: 'pending'</code> and call <code>tinyux.consent(true)</code> from your banner: nothing is stored or sent before that.</p>
             <h3>Can I require an API key?</h3>
-            <p>Yes for normal fetch sends. `sendBeacon` cannot set custom headers, so strict API-key deployments may disable beacon reliance or validate origin/session instead.</p>
+            <p>Yes for normal fetch sends. <code>sendBeacon</code> cannot set custom headers, so strict API-key deployments may disable beacon reliance or validate origin/session instead.</p>
             <h3>Is text survey input safe?</h3>
             <p>Text surveys can collect personal data because users type free-form content. Use rating, yes/no, and choice surveys when possible.</p>
           </section>

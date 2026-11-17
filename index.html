@@ -4,301 +4,465 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>tinyux - Self-Hosted UX Telemetry, Heatmaps, And Micro-Surveys</title>
-  <meta name="description" content="A tiny self-hosted UX telemetry, optional aggregate heatmap, and contextual micro-survey library. One script tag sends events to your own PHP/SQLite collector.">
+  <meta name="description" content="A tiny self-hosted UX telemetry, optional aggregate heatmap, and contextual micro-survey library. One script tag sends events to your own PHP/SQLite collector. v0.2 adds consent mode, SPA page views, rage and dead clicks, and NPS surveys.">
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://tanzir71.github.io/tinyuxjs/">
   <meta property="og:title" content="tinyux - Self-Hosted UX Telemetry">
   <meta property="og:description" content="One script tag for product interaction signals, optional aggregate heatmaps, and contextual micro-surveys, posted to your own server.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://tanzir71.github.io/tinyuxjs/">
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%20100%20100%27%3E%3Ctext%20y%3D%27.9em%27%20font-size%3D%2790%27%3E%F0%9F%A5%B7%3C%2Ftext%3E%3C%2Fsvg%3E">
-  <link rel="stylesheet" href="./site.css">
+  <meta name="theme-color" content="#ffffff">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2032%2032%27%3E%3Ccircle%20cx%3D%2716%27%20cy%3D%2716%27%20r%3D%2715%27%20fill%3D%27%232540FF%27%20fill-opacity%3D%27.16%27%2F%3E%3Ccircle%20cx%3D%2716%27%20cy%3D%2716%27%20r%3D%2710.5%27%20fill%3D%27%232540FF%27%20fill-opacity%3D%27.36%27%2F%3E%3Ccircle%20cx%3D%2716%27%20cy%3D%2716%27%20r%3D%276.2%27%20fill%3D%27%232540FF%27%2F%3E%3C%2Fsvg%3E">
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"SoftwareApplication","name":"tinyux","applicationCategory":"DeveloperApplication","operatingSystem":"Web","softwareVersion":"0.2.0","license":"https://opensource.org/licenses/MIT","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"url":"https://tanzir71.github.io/tinyuxjs/","codeRepository":"https://github.com/tanzir71/tinyuxjs"}
+  </script>
+  <link rel="stylesheet" href="./landing.css">
 </head>
 <body>
   <a href="#content" class="sr-only skip">Skip to content</a>
-  <header>
-    <div class="container header-inner">
-      <a class="brand" href="./index.html">
-        <div class="logo"><span>TU</span></div>
-        <span class="brand-name">tinyux</span>
-      </a>
-      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="primary-navigation" aria-label="Open navigation menu" data-menu-toggle>
-        <span></span>
-        <span></span>
-        <span></span>
-      </button>
+
+  <header class="site-header">
+    <div class="wrap header-inner">
+      <a class="brand" href="./index.html" aria-label="tinyux home"><svg class="logo-mark" viewBox="0 0 32 32" width="30" height="30" aria-hidden="true" focusable="false"><circle cx="16" cy="16" r="14.5" fill="#2540FF" fill-opacity=".13"/><circle cx="16" cy="16" r="10" fill="#2540FF" fill-opacity=".3"/><circle cx="16" cy="16" r="5.6" fill="#2540FF"/></svg>tinyux</a>
+      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="primary-navigation" aria-label="Open navigation menu" data-menu-toggle><span></span><span></span><span></span></button>
       <nav id="primary-navigation" class="site-nav" aria-label="Primary">
-        <a class="nav-link" href="#features">Signals</a>
-        <a class="nav-link" href="#setup">Setup</a>
-        <a class="nav-link" href="./docs.html">Docs</a>
-        <a class="nav-link" href="./compare.html">Compare</a>
-        <a class="nav-link" href="./demo/product.html">Demo</a>
-        <a class="btn btn-primary" href="https://github.com/tanzir71/tinyuxjs" target="_blank" rel="noopener">GitHub</a>
+        <a href="#whats-new">What's new</a>
+        <a href="#features">Signals</a>
+        <a href="#surveys">Surveys</a>
+        <a href="#setup">Setup</a>
+        <a href="./docs.html">Docs</a>
+        <a href="./compare.html">Compare</a>
+        <a href="./demo/product.html">Demo</a>
+        <a class="nav-gh" href="https://github.com/tanzir71/tinyuxjs" target="_blank" rel="noopener">
+          <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          GitHub
+        </a>
       </nav>
     </div>
   </header>
 
   <main id="content">
     <section class="hero">
-      <div class="container hero-inner">
+      <div class="wrap">
         <div class="hero-grid">
-          <div>
-            <span class="eyebrow">v0.1 - free - open source - no vendor cloud</span>
+          <div class="hero-copy">
+            <a class="release" href="#whats-new"><b>v0.2</b>What's new: consent, SPA views, rage clicks</a>
             <h1>UX telemetry, heatmaps, and micro-surveys in one script tag.</h1>
-            <p class="lead">
-              Track the moments that explain friction: clicks, scroll depth, section views, focus loss,
-              exit intent, heartbeats, optional aggregate heatmap points, and contextual survey responses.
-              tinyux posts batched events to <em>your</em> collector, not a replay vendor.
-            </p>
+            <p class="lead">Record the moments that explain friction, like clicks, scroll depth, exit intent, and rage clicks, then ask one question right where it happens. Free and open source: events go to <em>your</em> collector, not a vendor cloud.</p>
             <div class="cta-row">
               <a class="btn btn-primary" href="./demo/product.html">Try the live demo</a>
               <a class="btn" href="#setup">Set it up</a>
             </div>
-            <div class="stats">
-              <div class="stat"><div class="num">1 file</div><div class="lbl">0 deps</div></div>
-              <div class="stat"><div class="num">4</div><div class="lbl">survey types</div></div>
-              <div class="stat"><div class="num">$0</div><div class="lbl">MIT friendly</div></div>
-              <div class="stat"><div class="num">0</div><div class="lbl">replay sessions</div></div>
+            <div class="install">
+              <code id="install-cmd">curl -LO https://tanzir71.github.io/tinyuxjs/tinyux.js</code>
+              <button class="copy" type="button" data-copy-target="install-cmd">Copy</button>
             </div>
           </div>
-          <div>
-            <div class="snippet-card">
-              <div class="snippet-head">
-                <span class="snippet-title">product-page.html</span>
-                <button class="copy-btn" data-copy-target="snippet" type="button">COPY</button>
+
+          <div class="stage" aria-label="Example: tinyux running on a pricing page">
+            <div class="browser">
+              <div class="browser-bar"><span class="dots"><i></i><i></i><i></i></span><span class="url">acme.app/pricing</span><span class="heat-legend"><i></i>aggregate clicks</span></div>
+              <div class="acme">
+                <div class="acme-in" aria-hidden="true">
+                  <div class="acme-nav"><b>ACME</b><span><span>Product</span><span>Pricing</span><span>Docs</span></span></div>
+                  <p class="acme-h">Simple plans for teams that ship weekly.</p>
+                  <div class="acme-cards">
+                    <div class="acme-card"><small>Starter</small><strong>$19</strong><p>For tiny teams watching the first funnel.</p><span class="cta">Start trial</span></div>
+                    <div class="acme-card pop"><small>Team</small><strong>$49</strong><p>For teams that need better support signals.</p><span class="cta">Upgrade to Team</span></div>
+                    <div class="acme-card"><small>Scale</small><strong>$99</strong><p>For product teams with multiple flows.</p><span class="cta">Talk to us</span></div>
+                  </div>
+                  <span class="acme-foot">Compare plans</span>
+                </div>
+                <svg class="heat" viewBox="0 0 560 340" preserveAspectRatio="none" aria-hidden="true"><g fill="#2540ff"><circle cx="259" cy="147" r="2.1" opacity="0.31"/><circle cx="273" cy="147" r="2.3" opacity="0.34"/><circle cx="287" cy="147" r="2.3" opacity="0.34"/><circle cx="301" cy="147" r="2.1" opacity="0.31"/><circle cx="259" cy="161" r="2.3" opacity="0.34"/><circle cx="273" cy="161" r="2.6" opacity="0.38"/><circle cx="287" cy="161" r="2.6" opacity="0.38"/><circle cx="301" cy="161" r="2.3" opacity="0.34"/><circle cx="245" cy="175" r="2.1" opacity="0.30"/><circle cx="259" cy="175" r="2.4" opacity="0.36"/><circle cx="273" cy="175" r="2.7" opacity="0.40"/><circle cx="287" cy="175" r="2.7" opacity="0.40"/><circle cx="301" cy="175" r="2.4" opacity="0.36"/><circle cx="315" cy="175" r="2.1" opacity="0.30"/><circle cx="245" cy="189" r="2.1" opacity="0.30"/><circle cx="259" cy="189" r="2.5" opacity="0.36"/><circle cx="273" cy="189" r="2.7" opacity="0.40"/><circle cx="287" cy="189" r="2.7" opacity="0.40"/><circle cx="301" cy="189" r="2.5" opacity="0.36"/><circle cx="315" cy="189" r="2.1" opacity="0.30"/><circle cx="245" cy="203" r="2.3" opacity="0.33"/><circle cx="259" cy="203" r="2.6" opacity="0.39"/><circle cx="273" cy="203" r="2.9" opacity="0.44"/><circle cx="287" cy="203" r="2.9" opacity="0.44"/><circle cx="301" cy="203" r="2.6" opacity="0.39"/><circle cx="315" cy="203" r="2.3" opacity="0.33"/><circle cx="231" cy="217" r="2.1" opacity="0.30"/><circle cx="245" cy="217" r="2.6" opacity="0.38"/><circle cx="259" cy="217" r="3.1" opacity="0.47"/><circle cx="273" cy="217" r="3.4" opacity="0.53"/><circle cx="287" cy="217" r="3.4" opacity="0.53"/><circle cx="301" cy="217" r="3.1" opacity="0.47"/><circle cx="315" cy="217" r="2.6" opacity="0.38"/><circle cx="329" cy="217" r="2.1" opacity="0.30"/><circle cx="77" cy="231" r="2.1" opacity="0.31"/><circle cx="91" cy="231" r="2.4" opacity="0.35"/><circle cx="105" cy="231" r="2.5" opacity="0.37"/><circle cx="119" cy="231" r="2.4" opacity="0.35"/><circle cx="133" cy="231" r="2.1" opacity="0.30"/><circle cx="231" cy="231" r="2.4" opacity="0.35"/><circle cx="245" cy="231" r="3.1" opacity="0.47"/><circle cx="259" cy="231" r="3.8" opacity="0.59"/><circle cx="273" cy="231" r="4.2" opacity="0.67"/><circle cx="287" cy="231" r="4.2" opacity="0.67"/><circle cx="301" cy="231" r="3.8" opacity="0.59"/><circle cx="315" cy="231" r="3.1" opacity="0.47"/><circle cx="329" cy="231" r="2.4" opacity="0.35"/><circle cx="441" cy="231" r="2.1" opacity="0.30"/><circle cx="455" cy="231" r="2.2" opacity="0.32"/><circle cx="469" cy="231" r="2.1" opacity="0.30"/><circle cx="77" cy="245" r="2.5" opacity="0.36"/><circle cx="91" cy="245" r="2.9" opacity="0.43"/><circle cx="105" cy="245" r="3.0" opacity="0.46"/><circle cx="119" cy="245" r="2.8" opacity="0.42"/><circle cx="133" cy="245" r="2.4" opacity="0.35"/><circle cx="217" cy="245" r="2.1" opacity="0.30"/><circle cx="231" cy="245" r="2.7" opacity="0.41"/><circle cx="245" cy="245" r="3.6" opacity="0.56"/><circle cx="259" cy="245" r="4.5" opacity="0.72"/><circle cx="273" cy="245" r="5.1" opacity="0.82"/><circle cx="287" cy="245" r="5.1" opacity="0.82"/><circle cx="301" cy="245" r="4.5" opacity="0.72"/><circle cx="315" cy="245" r="3.6" opacity="0.56"/><circle cx="329" cy="245" r="2.7" opacity="0.41"/><circle cx="343" cy="245" r="2.1" opacity="0.30"/><circle cx="427" cy="245" r="2.1" opacity="0.30"/><circle cx="441" cy="245" r="2.5" opacity="0.36"/><circle cx="455" cy="245" r="2.6" opacity="0.39"/><circle cx="469" cy="245" r="2.5" opacity="0.37"/><circle cx="483" cy="245" r="2.2" opacity="0.31"/><circle cx="63" cy="259" r="2.1" opacity="0.31"/><circle cx="77" cy="259" r="2.7" opacity="0.40"/><circle cx="91" cy="259" r="3.1" opacity="0.47"/><circle cx="105" cy="259" r="3.3" opacity="0.50"/><circle cx="119" cy="259" r="3.1" opacity="0.46"/><circle cx="133" cy="259" r="2.6" opacity="0.38"/><circle cx="147" cy="259" r="2.1" opacity="0.30"/><circle cx="217" cy="259" r="2.2" opacity="0.31"/><circle cx="231" cy="259" r="2.9" opacity="0.44"/><circle cx="245" cy="259" r="3.9" opacity="0.62"/><circle cx="259" cy="259" r="5.0" opacity="0.80"/><circle cx="273" cy="259" r="5.6" opacity="0.90"/><circle cx="287" cy="259" r="5.6" opacity="0.90"/><circle cx="301" cy="259" r="5.0" opacity="0.80"/><circle cx="315" cy="259" r="3.9" opacity="0.62"/><circle cx="329" cy="259" r="2.9" opacity="0.44"/><circle cx="343" cy="259" r="2.2" opacity="0.31"/><circle cx="427" cy="259" r="2.3" opacity="0.33"/><circle cx="441" cy="259" r="2.7" opacity="0.40"/><circle cx="455" cy="259" r="2.9" opacity="0.43"/><circle cx="469" cy="259" r="2.7" opacity="0.40"/><circle cx="483" cy="259" r="2.3" opacity="0.34"/><circle cx="63" cy="273" r="2.1" opacity="0.30"/><circle cx="77" cy="273" r="2.6" opacity="0.38"/><circle cx="91" cy="273" r="3.0" opacity="0.46"/><circle cx="105" cy="273" r="3.2" opacity="0.48"/><circle cx="119" cy="273" r="3.0" opacity="0.45"/><circle cx="133" cy="273" r="2.5" opacity="0.37"/><circle cx="217" cy="273" r="2.1" opacity="0.31"/><circle cx="231" cy="273" r="2.9" opacity="0.44"/><circle cx="245" cy="273" r="4.0" opacity="0.62"/><circle cx="259" cy="273" r="5.1" opacity="0.81"/><circle cx="273" cy="273" r="5.6" opacity="0.90"/><circle cx="287" cy="273" r="5.6" opacity="0.90"/><circle cx="301" cy="273" r="5.1" opacity="0.81"/><circle cx="315" cy="273" r="4.0" opacity="0.62"/><circle cx="329" cy="273" r="2.9" opacity="0.44"/><circle cx="343" cy="273" r="2.1" opacity="0.31"/><circle cx="427" cy="273" r="2.2" opacity="0.32"/><circle cx="441" cy="273" r="2.6" opacity="0.38"/><circle cx="455" cy="273" r="2.8" opacity="0.41"/><circle cx="469" cy="273" r="2.6" opacity="0.39"/><circle cx="483" cy="273" r="2.3" opacity="0.33"/><circle cx="77" cy="287" r="2.3" opacity="0.33"/><circle cx="91" cy="287" r="2.6" opacity="0.39"/><circle cx="105" cy="287" r="2.7" opacity="0.41"/><circle cx="119" cy="287" r="2.6" opacity="0.38"/><circle cx="133" cy="287" r="2.2" opacity="0.32"/><circle cx="231" cy="287" r="2.7" opacity="0.41"/><circle cx="245" cy="287" r="3.7" opacity="0.58"/><circle cx="259" cy="287" r="4.9" opacity="0.77"/><circle cx="273" cy="287" r="5.6" opacity="0.90"/><circle cx="287" cy="287" r="5.6" opacity="0.90"/><circle cx="301" cy="287" r="4.9" opacity="0.77"/><circle cx="315" cy="287" r="3.7" opacity="0.58"/><circle cx="329" cy="287" r="2.7" opacity="0.41"/><circle cx="441" cy="287" r="2.3" opacity="0.33"/><circle cx="455" cy="287" r="2.4" opacity="0.35"/><circle cx="469" cy="287" r="2.3" opacity="0.33"/><circle cx="91" cy="301" r="2.1" opacity="0.31"/><circle cx="105" cy="301" r="2.2" opacity="0.32"/><circle cx="119" cy="301" r="2.1" opacity="0.30"/><circle cx="231" cy="301" r="2.5" opacity="0.37"/><circle cx="245" cy="301" r="3.4" opacity="0.53"/><circle cx="259" cy="301" r="4.5" opacity="0.72"/><circle cx="273" cy="301" r="5.3" opacity="0.85"/><circle cx="287" cy="301" r="5.3" opacity="0.85"/><circle cx="301" cy="301" r="4.5" opacity="0.72"/><circle cx="315" cy="301" r="3.4" opacity="0.53"/><circle cx="329" cy="301" r="2.5" opacity="0.37"/><circle cx="231" cy="315" r="2.2" opacity="0.32"/><circle cx="245" cy="315" r="3.1" opacity="0.46"/><circle cx="259" cy="315" r="4.1" opacity="0.64"/><circle cx="273" cy="315" r="4.8" opacity="0.77"/><circle cx="287" cy="315" r="4.8" opacity="0.77"/><circle cx="301" cy="315" r="4.1" opacity="0.64"/><circle cx="315" cy="315" r="3.1" opacity="0.46"/><circle cx="329" cy="315" r="2.2" opacity="0.32"/><circle cx="245" cy="329" r="2.6" opacity="0.39"/><circle cx="259" cy="329" r="3.4" opacity="0.53"/><circle cx="273" cy="329" r="4.0" opacity="0.63"/><circle cx="287" cy="329" r="4.0" opacity="0.63"/><circle cx="301" cy="329" r="3.4" opacity="0.53"/><circle cx="315" cy="329" r="2.6" opacity="0.39"/></g></svg>
               </div>
-              <div class="snippet-body" id="snippet">&lt;script src="/js/tinyux.js"
-  <span class="a">data-app-id</span>=<span class="v">"acme-app"</span>
-  <span class="a">data-api-url</span>=<span class="v">"https://your-site.com/collect.php"</span>
-  <span class="a">data-config</span>=<span class="v">'{"exitIntent":{"enabled":true},"heatmaps":{"enabled":true}}'</span>&gt;
+            </div>
+            <div class="tux" role="img" aria-label="tinyux corner survey asking: Did this section answer your question?">
+              <div class="tux-head"><span>Pricing clarity</span><span aria-hidden="true">×</span></div>
+              <div class="tux-q">Did this section answer your question?</div>
+              <div class="tux-row"><span class="tux-btn yes">Yes</span><span class="tux-btn">No</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="stats">
+          <div class="stat"><b>1 file</b><span>0 dependencies, 13.6 KB gzipped</span></div>
+          <div class="stat"><b>5</b><span>survey types</span></div>
+          <div class="stat"><b>$0</b><span>MIT licensed</span></div>
+          <div class="stat"><b>0</b><span>replay sessions recorded</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section whats-new" id="whats-new">
+      <div class="wrap">
+        <div class="section-head">
+          <h2>What's new in v0.2</h2>
+          <p class="sub">Same script tag, same API, same payload. v0.2 makes delivery sturdier, the collector more private, and surveys more capable, and adds signals you can switch on when you need them.</p>
+        </div>
+        <div class="changes">
+          <div class="change-group">
+            <h3>Delivery you can count on</h3>
+            <ul class="change-list">
+              <li><span class="chg fixed">Fixed</span><p>A flush now drains the whole buffer, so busy pages no longer leave events behind.</p></li>
+              <li><span class="chg new">New</span><p>Every event and survey answer carries an id, and the collector ignores retried duplicates.</p></li>
+              <li><span class="chg fixed">Fixed</span><p>No <code>unload</code> handlers: pages stay in the back/forward cache, and a restored page counts as a view.</p></li>
+              <li><span class="chg fixed">Fixed</span><p>Background tabs stop sending heartbeats, and <code>destroy()</code> removes every listener tinyux added.</p></li>
+            </ul>
+          </div>
+          <div class="change-group">
+            <h3>A more private collector</h3>
+            <ul class="change-list">
+              <li><span class="chg new">New</span><p>The database lives in a <code>tinyux-data/</code> folder that blocks web access.</p></li>
+              <li><span class="chg changed">Changed</span><p>The log keeps counts, never IP addresses, and requests are same-origin unless you list other sites.</p></li>
+              <li><span class="chg new">New</span><p>v0.1 databases upgrade in place. <code>--prune</code> deletes old rows and <code>--check</code> flags risky setups.</p></li>
+            </ul>
+          </div>
+          <div class="change-group">
+            <h3>Surveys that fit your product</h3>
+            <ul class="change-list">
+              <li><span class="chg new">New</span><p>NPS surveys from 0 to 10, plus a follow-up question that only appears for the answers you choose.</p></li>
+              <li><span class="chg changed">Changed</span><p>Modals use the native <code>&lt;dialog&gt;</code>, so keyboard focus stays inside and returns afterwards. Corner prompts never steal focus.</p></li>
+              <li><span class="chg new">New</span><p>Light, dark, or automatic themes, CSS variables for your brand, translatable button labels, and a CSP nonce.</p></li>
+            </ul>
+          </div>
+          <div class="change-group">
+            <h3>Signals and controls you opt into</h3>
+            <ul class="change-list">
+              <li><span class="chg new">New</span><p><code>spa: true</code> records a page view on every client-side route change.</p></li>
+              <li><span class="chg new">New</span><p><code>frustration: true</code> records rage clicks and dead clicks with coarse coordinates.</p></li>
+              <li><span class="chg new">New</span><p>Consent mode, Global Privacy Control, cookieless storage, and session sampling.</p></li>
+              <li><span class="chg changed">Changed</span><p>Anonymous ids rotate after 13 months, and the old mouse sampling option is gone.</p></li>
+            </ul>
+          </div>
+        </div>
+        <div class="upgrade">
+          <div class="term">
+            <div class="code-head"><span>new options, all off by default</span><button class="copy" type="button" data-copy-target="v02-config">Copy</button></div>
+<pre id="v02-config">&lt;script src="/js/tinyux.min.js"
+  <span class="t-a">data-app-id</span>=<span class="t-v">"acme-app"</span>
+  <span class="t-a">data-api-url</span>=<span class="t-v">"/collect.php"</span>
+  <span class="t-a">data-config</span>=<span class="t-v">'{
+    "spa": true,
+    "frustration": true,
+    "consent": "pending",
+    "respectGPC": true,
+    "storage": "session",
+    "ui": {"theme": "auto"}
+  }'</span>&gt;
 &lt;/script&gt;
 
-<span class="c">// Clicks, heatmap points, surveys
-// -> batched with sendBeacon/fetch
-// -> stored in your SQLite database.</span></div>
+<span class="t-c">// later, from your consent banner</span>
+tinyux.consent(<span class="t-k">true</span>)</pre>
+          </div>
+          <div class="panel upgrade-notes">
+            <h3>Upgrading from v0.1</h3>
+            <p class="body">Replace <code>tinyux.js</code> and <code>collect.php</code>. Nothing else is required.</p>
+            <ul class="kv">
+              <li><code>tinyux.db</code><span>Upgraded in place on the first request. Don't re-run <code>schema.sql</code> on it.</span></li>
+              <li><code>$ALLOWED_ORIGINS</code><span>List your app's origin if the collector runs on another domain.</span></li>
+              <li><code>mouseSampling</code><span>Removed. Delete it from your config if you set it.</span></li>
+            </ul>
+            <p class="path-note">Still one file: 13.6 KB gzipped with every option included, covered by 50 automated tests. Read the <a href="./docs.html#upgrade">upgrade guide</a> or the full <a href="./CHANGELOG.md">changelog</a>.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section alt" id="system">
+      <div class="wrap">
+        <div class="section-head">
+          <h2>The whole loop, from tag to table</h2>
+          <p class="sub">tinyux keeps the data path intentionally boring: browser events, optional survey prompts, one collector endpoint, and tables you own.</p>
+        </div>
+        <ol class="loop" role="list" style="list-style:none;margin:0;padding:0">
+          <li class="step"><span class="step-n">01</span><span class="verb">embed</span><h3>One static file</h3><p class="body">No framework, package manager, extension, or vendor account required.</p><div class="step-detail">app id + endpoint<br>auto-init</div></li>
+          <li class="step"><span class="step-n">02</span><span class="verb">observe</span><h3>Behavioral signals</h3><p class="body">Page views, clicks, aggregate heatmap points, scroll depth, focus changes, section views, heartbeats, and opt-in rage and dead clicks.</p><div class="step-detail">click / heat / focus</div></li>
+          <li class="step"><span class="step-n">03</span><span class="verb">ask</span><h3>Micro-surveys</h3><p class="body">Rating, NPS, yes/no, choices, and optional text prompts with follow-ups and cooldown rules.</p><div class="step-detail">"Why now?"</div></li>
+          <li class="step"><span class="step-n">04</span><span class="verb">report</span><h3>Batched delivery</h3><p class="body">sendBeacon and keepalive fetch, local retry for failed sends, and ids so retries never double count.</p><div class="step-detail">events[] + surveys[]</div></li>
+          <li class="step"><span class="step-n">05</span><span class="verb">own</span><h3>Your database</h3><p class="body">PHP/SQLite collector stores clients, sessions, events, surveys, and failures in a folder the web can't reach.</p><div class="step-detail">tinyux-data/tinyux.db</div></li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="section" id="features">
+      <div class="wrap">
+        <div class="section-head">
+          <h2>Signals small enough to trust</h2>
+          <p class="sub">tinyux records metadata about interaction context. It can collect aggregate click/tap heatmap points, but it does not replay a user's screen, record typed content, or ship private product data to a third-party workspace.</p>
+        </div>
+        <div class="signals">
+          <div class="sig"><code>page_view</code><div><h3>Page views</h3><p>Initial URL, referrer, viewport, scroll depth, focus time, and client/session IDs. With <code>spa: true</code>, client-side route changes too.</p></div></div>
+          <div class="sig"><code>interaction</code><div><h3>Interactions</h3><p>Bind selectors or add attributes to key CTAs, forms, and controls.</p></div></div>
+          <div class="sig"><code>section_view</code><div><h3>Section views</h3><p>IntersectionObserver-powered section visibility, with cooldown and once-per-session options.</p></div></div>
+          <div class="sig"><code>focus · blur</code><div><h3>Focus and blur</h3><p>Know whether a user left the page during a task or returned to continue.</p></div></div>
+          <div class="sig opt"><code>heatmap_point</code><div><h3>Aggregate heatmaps</h3><p>Optional click/tap density points with coarse coordinates and sanitized element metadata.</p></div></div>
+          <div class="sig"><code>identify</code><div><h3>User association</h3><p>Attach your own user, account, plan, or role IDs when your app already knows them.</p></div></div>
+          <div class="sig"><code>ui.mode</code><div><h3>Corner prompts</h3><p>Use blocking modal surveys or subtle non-blocking prompts in any corner.</p></div></div>
+          <div class="sig opt"><code>exit_intent</code><div><h3>Exit intent</h3><p>Detect top-edge pointer movement and ask one last contextual question.</p></div></div>
+          <div class="sig"><code>heartbeat</code><div><h3>Heartbeats</h3><p>Periodic pulses make abandoned sessions and long-running tasks visible server-side.</p></div></div>
+          <div class="sig opt"><code>input_meta</code><div><h3>Input metadata</h3><p>Optional lengths/types only. Values are never captured by default.</p></div></div>
+          <div class="sig"><code>survey_shown · survey_submitted</code><div><h3>Survey lifecycle</h3><p>Shown, closed, skipped, and submitted events tie answers to page context, so you can see who dismissed a prompt.</p></div></div>
+          <div class="sig"><code>track()</code><div><h3>Custom events</h3><p>Queue your own event types with any JSON metadata, for checkout steps, feature use, or Web Vitals.</p></div></div>
+          <div class="sig opt"><code>rage_click</code><div><h3>Rage clicks</h3><p>Three or more fast clicks in one spot, recorded once per burst with coarse coordinates.</p></div></div>
+          <div class="sig opt"><code>dead_click</code><div><h3>Dead clicks</h3><p>A click on a button or link that changes nothing on the page within a second.</p></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section alt" id="surveys">
+      <div class="wrap">
+        <div class="section-head">
+          <h2>Ask at the moment of friction</h2>
+          <p class="sub">Ask right after a confusing click, a pricing section view, or an exit intent moment. Five survey types, four triggers, two placements, and cooldowns that keep prompts rare enough that people still answer them.</p>
+        </div>
+        <div class="survey-grid">
+          <div class="types">
+            <div class="type"><div class="type-top"><h3>Rating</h3><code>rating</code></div><p class="body">Numeric buttons, default scale of 5.</p><div class="mini" aria-hidden="true"><div class="mini-q">How easy was checkout?</div><div class="mini-row"><span>1</span><span>2</span><span>3</span><span class="on">4</span><span>5</span></div></div></div>
+            <div class="type"><div class="type-top"><h3>Yes / no</h3><code>yesno</code></div><p class="body">The fastest answer you can ask for.</p><div class="mini" aria-hidden="true"><div class="mini-q">Was this section clear?</div><div class="mini-row"><span class="on">Yes</span><span>No</span></div></div></div>
+            <div class="type"><div class="type-top"><h3>Choice</h3><code>choice</code></div><p class="body">Up to ten options from a <code>choices</code> array.</p><div class="mini" aria-hidden="true"><div class="mini-q">What stopped you today?</div><div class="mini-row"><span>Pricing</span><span class="on">Missing feature</span><span>Just browsing</span></div></div></div>
+            <div class="type"><div class="type-top"><h3>Text</h3><code>text</code></div><p class="body">Use sparingly: people can type personal data.</p><div class="mini" aria-hidden="true"><div class="mini-q">What were you looking for?</div><div class="mini-text">Optional</div></div></div>
+            <div class="type wide"><div class="type-top"><h3>NPS with a follow-up</h3><code>nps · followUp</code></div><p class="body">A 0 to 10 scale. Add <code>followUp</code> to ask one more question only when the answer matches, for example scores of 6 or lower.</p><div class="mini" aria-hidden="true"><div class="mini-q">How likely are you to recommend us to a colleague?</div><div class="mini-row nps"><span>0</span><span>1</span><span>2</span><span>3</span><span class="on">4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span></div><div class="mini-scale"><span>Not likely</span><span>Very likely</span></div><div class="mini-follow"><div class="mini-q">What should we fix first?</div><div class="mini-text">The export is hard to find</div></div></div></div>
+          </div>
+          <div class="controls">
+            <div class="panel">
+              <h3>Triggers</h3>
+              <p class="body">Declare them in HTML, or call <code>ux.showSurvey()</code> from your own code.</p>
+              <ul class="kv">
+                <li><code>click</code><span>Ask after a specific button or link.</span></li>
+                <li><code>section-scroll</code><span>Ask once a section is 50% visible, once per session.</span></li>
+                <li><code>time</code><span>Ask after <code>data-tinyux-after-ms</code>, 5000 ms by default.</span></li>
+                <li><code>exit-intent</code><span>Ask when the pointer heads for the top edge.</span></li>
+              </ul>
+            </div>
+            <div class="panel">
+              <h3>Placement and guardrails</h3>
+              <div class="placement">
+                <div class="screen" aria-hidden="true"><i class="c"></i><i></i><i></i><i></i><i></i></div>
+                <p>A blocking center modal by default, built on the native <code>&lt;dialog&gt;</code>, or a non-blocking corner prompt with <code>ui.mode: 'corner'</code> in any of four corners.</p>
+              </div>
+              <ul class="kv">
+                <li><code>maxPerSession: 2</code><span>Global cap on prompts per session.</span></li>
+                <li><code>minIntervalMinutes: 5</code><span>Quiet time between any two prompts.</span></li>
+                <li><code>oncePerSession</code><span>Per-survey, plus <code>cooldownMinutes</code> and <code>maxPerDay</code>.</span></li>
+                <li><code>ui.theme: 'auto'</code><span>Light, dark, or the visitor's system setting. Restyle with <code>--tinyux-*</code> CSS variables.</span></li>
+                <li><code>ui.labels</code><span>Rename or translate every button and message.</span></li>
+              </ul>
             </div>
           </div>
         </div>
       </div>
     </section>
 
-    <section class="section" id="system">
-      <div class="container">
+    <section class="section" id="setup">
+      <div class="wrap">
         <div class="section-head">
-          <span class="idx">SYS - 01</span>
-          <h2>The whole loop, on one sheet</h2>
-          <p class="sub">tinyux keeps the data path intentionally boring: browser events, optional survey prompts, one collector endpoint, and tables you own.</p>
-        </div>
-        <div class="diagram-wrap">
-          <svg viewBox="0 0 1200 430" role="img" aria-labelledby="diagram-title diagram-desc" xmlns="http://www.w3.org/2000/svg">
-            <title id="diagram-title">tinyux data flow</title>
-            <desc id="diagram-desc">Embed script, observe UX signals, ask contextual surveys, send batched payloads, inspect data on your server.</desc>
-            <defs>
-              <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-                <path d="M 0 0 L 10 5 L 0 10 z" fill="#0a0a0a"></path>
-              </marker>
-            </defs>
-            <rect width="1200" height="430" fill="#fbfaf6"></rect>
-            <g font-family="JetBrains Mono, SF Mono, monospace" font-size="11" letter-spacing="1.4" fill="#6b6b66">
-              <text x="52" y="56">TINYUX / SIGNAL PIPELINE</text>
-            </g>
-            <g transform="translate(70 118)">
-              <rect width="170" height="150" fill="#f4f3ee" stroke="#0a0a0a" stroke-width="2"></rect>
-              <rect width="170" height="30" fill="#0a0a0a"></rect>
-              <text x="16" y="20" fill="#f4f3ee" font-family="JetBrains Mono, monospace" font-size="10" letter-spacing="1.4">01 / EMBED</text>
-              <text x="18" y="74" fill="#0a0a0a" font-family="Helvetica, Arial, sans-serif" font-size="22" font-weight="650">One tag</text>
-              <text x="18" y="103" fill="#6b6b66" font-family="JetBrains Mono, monospace" font-size="10" letter-spacing="1">APP ID + ENDPOINT</text>
-              <text x="18" y="126" fill="#2540ff" font-family="JetBrains Mono, monospace" font-size="10" letter-spacing="1">AUTO INIT</text>
-            </g>
-            <path d="M252 193 H336" stroke="#0a0a0a" stroke-width="2" marker-end="url(#arr)"></path>
-            <g transform="translate(350 118)">
-              <rect width="170" height="150" fill="#f4f3ee" stroke="#0a0a0a" stroke-width="2"></rect>
-              <rect width="170" height="30" fill="#0a0a0a"></rect>
-              <text x="16" y="20" fill="#f4f3ee" font-family="JetBrains Mono, monospace" font-size="10" letter-spacing="1.4">02 / OBSERVE</text>
-              <circle cx="45" cy="82" r="20" fill="#2540ff"></circle>
-              <circle cx="85" cy="82" r="20" fill="#cfcdc4" stroke="#0a0a0a"></circle>
-              <circle cx="125" cy="82" r="20" fill="#f4f3ee" stroke="#0a0a0a"></circle>
-              <text x="18" y="126" fill="#6b6b66" font-family="JetBrains Mono, monospace" font-size="10" letter-spacing="1">CLICK / HEAT / FOCUS</text>
-            </g>
-            <path d="M532 193 H616" stroke="#0a0a0a" stroke-width="2" marker-end="url(#arr)"></path>
-            <g transform="translate(630 118)">
-              <rect width="170" height="150" fill="#f4f3ee" stroke="#0a0a0a" stroke-width="2"></rect>
-              <rect width="170" height="30" fill="#0a0a0a"></rect>
-              <text x="16" y="20" fill="#f4f3ee" font-family="JetBrains Mono, monospace" font-size="10" letter-spacing="1.4">03 / ASK</text>
-              <rect x="25" y="58" width="120" height="58" fill="#fbfaf6" stroke="#0a0a0a"></rect>
-              <rect x="25" y="116" width="120" height="24" fill="#2540ff"></rect>
-              <text x="39" y="93" fill="#0a0a0a" font-family="Helvetica, Arial, sans-serif" font-size="17" font-weight="650">Why now?</text>
-              <text x="48" y="132" fill="#fff" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="1">SURVEY</text>
-            </g>
-            <path d="M812 193 H896" stroke="#0a0a0a" stroke-width="2" marker-end="url(#arr)"></path>
-            <g transform="translate(910 118)">
-              <rect width="220" height="150" fill="#f4f3ee" stroke="#0a0a0a" stroke-width="2"></rect>
-              <rect width="220" height="30" fill="#0a0a0a"></rect>
-              <text x="16" y="20" fill="#f4f3ee" font-family="JetBrains Mono, monospace" font-size="10" letter-spacing="1.4">04 / POST</text>
-              <rect x="28" y="58" width="164" height="28" fill="#2540ff"></rect>
-              <rect x="28" y="92" width="164" height="28" fill="#cfcdc4"></rect>
-              <rect x="28" y="126" width="164" height="10" fill="#0a0a0a"></rect>
-              <text x="34" y="79" fill="#fff" font-family="JetBrains Mono, monospace" font-size="10" letter-spacing="1">EVENTS[]</text>
-              <text x="34" y="113" fill="#0a0a0a" font-family="JetBrains Mono, monospace" font-size="10" letter-spacing="1">SURVEYS[]</text>
-            </g>
-          </svg>
-        </div>
-        <div class="diagram-steps">
-          <div class="dstep"><div class="n">01 / embed</div><div class="t">One static file</div><p>No framework, package manager, extension, or vendor account required.</p></div>
-          <div class="dstep"><div class="n">02 / observe</div><div class="t">Behavioral signals</div><p>Page views, clicks, aggregate heatmap points, scroll depth, focus changes, section views, and heartbeats.</p></div>
-          <div class="dstep"><div class="n">03 / ask</div><div class="t">Micro-surveys</div><p>Rating, yes/no, choices, and optional text prompts with cooldown rules.</p></div>
-          <div class="dstep"><div class="n">04 / report</div><div class="t">Batched delivery</div><p>sendBeacon and keepalive fetch, plus local retry for failed sends.</p></div>
-          <div class="dstep"><div class="n">05 / own</div><div class="t">Your database</div><p>PHP/SQLite collector stores clients, sessions, events, surveys, and failures.</p></div>
-        </div>
-      </div>
-    </section>
-
-    <section id="setup" class="section">
-      <div class="container">
-        <div class="section-head">
-          <span class="idx">SYS - 02</span>
           <h2>Set up in the next five minutes</h2>
-          <p class="sub">Two files and one table schema. Use the AI-agent path if you want a coding assistant to place the script and wire the collector.</p>
+          <p class="sub">Two files, and the collector creates its own tables. Use the AI-agent path if you want a coding assistant to place the script and wire the collector.</p>
         </div>
         <div class="paths">
           <div class="path">
-            <span class="path-tag rec">Recommended</span>
+            <span class="tag">One command</span>
+            <h3>Grab the files</h3>
+            <p class="body">Download the client and the collector. The collector creates its SQLite schema on the first request.</p>
+            <div class="block"><div class="block-head"><span>terminal</span><button class="copy" type="button" data-copy-target="prompt-curl">Copy</button></div><pre id="prompt-curl"><span class="t-c"># client library</span>
+curl -LO https://tanzir71.github.io/tinyuxjs/tinyux.js
+
+<span class="t-c"># collector, then check where data will live</span>
+curl -LO https://tanzir71.github.io/tinyuxjs/collect.php
+php collect.php --check</pre></div>
+            <p class="path-note">Put <code>collect.php</code> and <code>tinyux.js</code> where PHP can serve them. The database goes in a protected <code>tinyux-data/</code> folder; <code>schema.sql</code> is there if you prefer to create it yourself.</p>
+          </div>
+          <div class="path rec">
+            <span class="tag">Recommended</span>
             <h3>Ask your AI agent</h3>
-            <p>Paste this into Codex, Claude, Cursor, or Copilot. The contract is written for agents.</p>
-            <pre class="pre-block" id="prompt-agent">Add tinyux UX telemetry to my project:
+            <p class="body">Paste this into Codex, Claude, Cursor, or Copilot. The contract is written for agents.</p>
+            <div class="block"><div class="block-head"><span>prompt</span><button class="copy" type="button" data-copy-target="prompt-agent">Copy</button></div><pre id="prompt-agent">Add tinyux UX telemetry to my project:
 1. Fetch https://tanzir71.github.io/tinyuxjs/tinyux.js into my static assets.
 2. Add the script tag to key product pages with data-api-url pointing at /collect.php.
 3. Implement /collect using https://tanzir71.github.io/tinyuxjs/llms.txt.
-4. Add one click survey and one section-scroll survey.<button class="pre-copy" data-copy-target="prompt-agent" type="button">COPY</button></pre>
+4. Add one click survey and one section-scroll survey.</pre></div>
             <p class="path-note">The machine-readable guide lives at <a href="./llms.txt">/llms.txt</a>.</p>
           </div>
           <div class="path">
-            <span class="path-tag">One command</span>
-            <h3>Grab the files</h3>
-            <p>Download the client and collector pieces, then initialize SQLite with the schema.</p>
-            <pre class="pre-block" id="prompt-curl"><span class="c"># client library</span>
-curl -LO https://tanzir71.github.io/tinyuxjs/tinyux.js
-
-<span class="c"># collector schema</span>
-curl -LO https://tanzir71.github.io/tinyuxjs/schema.sql
-sqlite3 tinyux.db &lt; schema.sql<button class="pre-copy" data-copy-target="prompt-curl" type="button">COPY</button></pre>
-            <p class="path-note">Put `collect.php`, `tinyux.js`, and `tinyux.db` where PHP can read/write them.</p>
-          </div>
-          <div class="path">
-            <span class="path-tag">Manual</span>
+            <span class="tag">Manual</span>
             <h3>Copy the tag</h3>
-            <p>Already have the file hosted? Drop the tag and add triggers where context matters.</p>
-            <pre class="pre-block" id="prompt-manual">&lt;script src="/js/tinyux.js"
-  data-app-id="acme-app"
-  data-api-url="/collect.php"
-  data-config='{"surveys":{"maxPerSession":2}}'&gt;
-&lt;/script&gt;<button class="pre-copy" data-copy-target="prompt-manual" type="button">COPY</button></pre>
+            <p class="body">Already have the file hosted? Drop the tag and add triggers where context matters.</p>
+            <div class="block"><div class="block-head"><span>html</span><button class="copy" type="button" data-copy-target="prompt-manual">Copy</button></div><pre id="prompt-manual">&lt;script src="/js/tinyux.js"
+  <span class="t-a">data-app-id</span>=<span class="t-v">"acme-app"</span>
+  <span class="t-a">data-api-url</span>=<span class="t-v">"/collect.php"</span>
+  <span class="t-a">data-config</span>=<span class="t-v">'{"surveys":{"maxPerSession":2}}'</span>&gt;
+&lt;/script&gt;</pre></div>
             <p class="path-note">See <a href="./docs.html#triggers">declarative triggers</a> for click, section, time, and exit-intent surveys.</p>
           </div>
         </div>
       </div>
     </section>
 
-    <section id="features" class="section">
-      <div class="container">
+    <section class="section alt" id="data">
+      <div class="wrap">
         <div class="section-head">
-          <span class="idx">SYS - 03</span>
-          <h2>Signals small enough to trust</h2>
-          <p class="sub">tinyux records metadata about interaction context. It can collect aggregate click/tap heatmap points, but it does not replay a user's screen, record typed content, or ship private product data to a third-party workspace.</p>
+          <h2>Lands in tables you own</h2>
+          <p class="sub">The included collector accepts JSON batches and writes them to SQLite: plain rows and JSON columns you can query with <code>sqlite3</code>, export, or delete on your own schedule with <code>--prune</code>.</p>
         </div>
-        <div class="grid grid-2 grid-4">
-          <div class="cell"><h3>Page views</h3><p>Initial URL, referrer, viewport, scroll depth, focus time, and client/session IDs.</p><span class="k">page_view</span></div>
-          <div class="cell"><h3>Interactions</h3><p>Bind selectors or add attributes to key CTAs, forms, and controls.</p><span class="k">interaction</span></div>
-          <div class="cell"><h3>Section views</h3><p>IntersectionObserver-powered section visibility, with cooldown and once-per-session options.</p><span class="k">section_view</span></div>
-          <div class="cell"><h3>Focus and blur</h3><p>Know whether a user left the page during a task or returned to continue.</p><span class="k">focus - blur</span></div>
-          <div class="cell"><h3>Aggregate heatmaps</h3><p>Optional click/tap density points with coarse coordinates and sanitized element metadata.</p><span class="k">heatmap_point</span></div>
-          <div class="cell"><h3>User association</h3><p>Attach your own user, account, plan, or role IDs when your app already knows them.</p><span class="k">identify</span></div>
-          <div class="cell"><h3>Corner prompts</h3><p>Use blocking modal surveys or subtle non-blocking prompts in any corner.</p><span class="k">ui.mode</span></div>
-          <div class="cell"><h3>Exit intent</h3><p>Detect top-edge pointer movement and ask one last contextual question.</p><span class="k">exit_intent</span></div>
-          <div class="cell"><h3>Heartbeats</h3><p>Periodic pulses make abandoned sessions and long-running tasks visible server-side.</p><span class="k">heartbeat</span></div>
-          <div class="cell"><h3>Input metadata</h3><p>Optional lengths/types only. Values are never captured by default.</p><span class="k">input_meta</span></div>
-          <div class="cell"><h3>Survey lifecycle</h3><p>Shown, closed, skipped, and submitted events tie answers to page context.</p><span class="k">survey_shown - survey_submitted</span></div>
+        <div class="data-grid">
+          <div class="term">
+            <div class="code-head"><span>POST /collect.php</span><span>application/json</span></div>
+<pre><span class="t-c">{</span>
+  <span class="t-a">"app_id"</span>: <span class="t-s">"acme-app"</span>,
+  <span class="t-a">"client_id"</span>: <span class="t-s">"uuid"</span>, <span class="t-a">"session_id"</span>: <span class="t-s">"uuid"</span>,
+  <span class="t-a">"user"</span>: { <span class="t-a">"id"</span>: <span class="t-s">"user_123"</span>, <span class="t-a">"traits"</span>: { <span class="t-a">"plan"</span>: <span class="t-s">"team"</span> } },
+  <span class="t-a">"events"</span>: [
+    { <span class="t-a">"id"</span>: <span class="t-s">"9a0d77c4-…"</span>, <span class="t-a">"type"</span>: <span class="t-s">"heatmap_point"</span>,
+      <span class="t-a">"meta"</span>: { <span class="t-a">"x_pct"</span>: <span class="t-k">52</span>, <span class="t-a">"y_pct"</span>: <span class="t-k">34</span>, <span class="t-a">"path"</span>: <span class="t-s">"/pricing"</span> } }
+  ],
+  <span class="t-a">"surveys"</span>: [
+    { <span class="t-a">"id"</span>: <span class="t-s">"c41e09b2-…"</span>, <span class="t-a">"survey_id"</span>: <span class="t-s">"pricing-clarity"</span>,
+      <span class="t-a">"response"</span>: { <span class="t-a">"value"</span>: <span class="t-k">true</span> } }
+  ]
+<span class="t-c">}</span></pre>
+            <div class="log" aria-label="Example delivery log">
+              <div class="log-row"><span>12:04:01</span><b>page_view</b><em>/pricing</em></div>
+              <div class="log-row"><span>12:04:09</span><b>section_view</b><em>#pricing, 0.52 visible</em></div>
+              <div class="log-row"><span>12:04:12</span><b>survey_submitted</b><em>pricing-clarity = yes</em></div>
+              <div class="log-row"><span>12:04:30</span><b>rage_click</b><em>#export, 4 clicks</em></div>
+              <div class="log-row ok"><span>12:04:31</span><b>sent</b><em>sendBeacon, 204 No Content</em></div>
+            </div>
+          </div>
+          <div class="data-side">
+            <div class="tables">
+              <div class="tbl"><code>events</code><p>Every signal, with id, type, timestamp, and JSON meta. Retried duplicates are ignored.</p></div>
+              <div class="tbl"><code>surveys</code><p>Answers plus the page context they were given in.</p></div>
+              <div class="tbl"><code>clients · sessions</code><p>Anonymous IDs, plus the identity you attach.</p></div>
+              <div class="tbl"><code>failed_payloads</code><p>Kept for the optional <code>--retry</code> cron worker. <code>--prune</code> handles retention.</p></div>
+            </div>
+            <div class="term sql">
+              <div class="code-head"><span>heatmap.sql</span><button class="copy" type="button" data-copy-target="heatmap-sql">Copy</button></div>
+<pre id="heatmap-sql"><span class="t-k">SELECT</span> event_meta, <span class="t-k">COUNT</span>(*) <span class="t-k">AS</span> points
+<span class="t-k">FROM</span> events
+<span class="t-k">WHERE</span> app_id = <span class="t-s">'acme-app'</span>
+  <span class="t-k">AND</span> event_type = <span class="t-s">'heatmap_point'</span>
+<span class="t-k">GROUP BY</span> event_meta
+<span class="t-k">ORDER BY</span> points <span class="t-k">DESC</span>;</pre>
+            </div>
+          </div>
         </div>
       </div>
     </section>
 
-    <section id="why" class="section">
-      <div class="container">
+    <section class="section" id="compliance">
+      <div class="wrap">
         <div class="section-head">
-          <span class="idx">SYS - 04</span>
-          <h2>Why use tinyux instead of a behavior suite?</h2>
-          <p class="sub">Hotjar, FullStory, LogRocket, and PostHog are far larger systems. tinyux is for the narrower job: collect useful UX context without buying a platform.</p>
-        </div>
-        <div class="grid grid-3">
-          <div class="cell"><h3>Self-hosted by default</h3><p>Your events and survey responses land in your own SQLite database. No replay vendor owns the raw trail.</p></div>
-          <div class="cell"><h3>Friction at the source</h3><p>Ask right after a confusing click, a pricing section view, or an exit intent moment.</p></div>
-          <div class="cell"><h3>Small enough to audit</h3><p>One readable client file and one PHP collector. No black-box recorder and no account setup.</p></div>
-        </div>
-        <div class="grid grid-2 grid-4" style="margin-top:24px;">
-          <div class="cell"><h3>vs Hotjar</h3><p>Optional aggregate heatmaps, but no replay, screenshots, or behavior suite.</p><a class="link" href="./hotjar-alternative.html">Compare</a></div>
-          <div class="cell"><h3>vs FullStory</h3><p>No digital experience cloud or session reconstruction.</p><a class="link" href="./fullstory-alternative.html">Compare</a></div>
-          <div class="cell"><h3>vs LogRocket</h3><p>No console/network replay stream. Better for tiny feedback loops.</p><a class="link" href="./logrocket-alternative.html">Compare</a></div>
-          <div class="cell"><h3>vs PostHog</h3><p>No product OS. Just events, survey answers, and your endpoint.</p><a class="link" href="./posthog-alternative.html">Compare</a></div>
-        </div>
-      </div>
-    </section>
-
-    <section id="compliance" class="section">
-      <div class="container">
-        <div class="section-head">
-          <span class="idx">SYS - 05</span>
           <h2>Compliance-friendly by design</h2>
           <p class="sub">tinyux does not make your product compliant by itself. It gives privacy-sensitive teams a smaller, self-hosted telemetry surface for GDPR / UK GDPR, CCPA / CPRA, SOC 2, and internal data-governance workflows.</p>
         </div>
-        <div class="grid grid-3">
-          <div class="cell"><h3>Data minimization</h3><p>No replay, screenshots, DOM snapshots, keystroke contents, form values, console logs, or network logs by default. Heatmaps are aggregate click and tap points only.</p></div>
-          <div class="cell"><h3>Processor control</h3><p>Events, survey answers, identities, and request metadata land on your endpoint and database, so retention, deletion, access, and export stay under your infrastructure controls.</p></div>
-          <div class="cell"><h3>Consent-aware setup</h3><p>Keep tinyux behind your consent gate, pass known user or account IDs explicitly, and leave optional request metadata disabled unless your policy allows it.</p></div>
+        <div class="privacy-grid">
+          <div><h3>Data minimization</h3><p class="body">No replay, screenshots, DOM snapshots, keystroke contents, form values, console logs, or network logs by default. Heatmaps are aggregate click and tap points only.</p></div>
+          <div><h3>Processor control</h3><p class="body">Events, survey answers, identities, and request metadata land on your endpoint and database, so retention, deletion, access, and export stay under your infrastructure controls. <code>--prune</code> enforces retention, and the log never records IP addresses.</p></div>
+          <div><h3>Consent-aware setup</h3><p class="body">Keep tinyux behind your consent gate, pass known user or account IDs explicitly, and leave optional request metadata disabled unless your policy allows it. With <code>consent: 'pending'</code> nothing is stored or sent until your banner calls <code>tinyux.consent(true)</code>; Global Privacy Control, cookieless storage, and 13-month id rotation are one setting each.</p></div>
+        </div>
+        <div class="never">
+          <h3>Never captured by default</h3>
+          <ul>
+            <li>Screen contents</li><li>Screenshots</li><li>DOM snapshots</li><li>Keystroke contents</li><li>Clipboard</li><li>Form values</li><li>Camera</li><li>Microphone</li><li>Console logs</li><li>Network logs</li><li>Mouse trails</li><li>IP addresses in logs</li>
+          </ul>
         </div>
       </div>
     </section>
 
-    <section id="limits" class="section">
-      <div class="container">
+    <section class="section alt" id="why">
+      <div class="wrap">
         <div class="section-head">
-          <span class="idx">SYS - 06</span>
+          <h2>Why use tinyux instead of a behavior suite?</h2>
+          <p class="sub">Hotjar, FullStory, LogRocket, and PostHog are far larger systems. tinyux is for the narrower job: collect useful UX context without buying a platform.</p>
+        </div>
+        <div class="reasons">
+          <div class="reason"><h3>Self-hosted by default</h3><p class="body">Your events and survey responses land in your own SQLite database. No replay vendor owns the raw trail.</p></div>
+          <div class="reason"><h3>Friction at the source</h3><p class="body">Ask right after a confusing click, a pricing section view, or an exit intent moment.</p></div>
+          <div class="reason"><h3>Small enough to audit</h3><p class="body">One readable client file and one PHP collector. No black-box recorder and no account setup.</p></div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <caption class="sr-only">Product shape comparison</caption>
+            <thead><tr><th scope="col"></th><th scope="col" class="col-us">tinyux</th><th scope="col">Hotjar / Contentsquare</th><th scope="col">FullStory</th><th scope="col">LogRocket</th><th scope="col">PostHog</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">Session replay</th><td class="col-us">No DOM or video-style playback</td><td>Yes</td><td>Yes</td><td>Yes, developer-focused</td><td>Yes</td></tr>
+              <tr><th scope="row">Heatmaps</th><td class="col-us">Optional aggregate click/tap points</td><td>Yes</td><td>Behavior visualization</td><td>Not the focus</td><td>Not primarily a heatmap tool</td></tr>
+              <tr><th scope="row">Surveys</th><td class="col-us">Rating, NPS, yes/no, choice, text, with follow-ups</td><td>Yes</td><td>Depends on package</td><td>Not the core use case</td><td>Yes</td></tr>
+              <tr><th scope="row">Hosting</th><td class="col-us">Your server and SQLite database</td><td>Vendor platform</td><td>Vendor platform</td><td>Vendor platform</td><td>Cloud or self-hosted</td></tr>
+              <tr><th scope="row">Setup size</th><td class="col-us">One JS file plus one endpoint</td><td>Project and tracking script</td><td>Workspace and instrumentation</td><td>SDK plus replay config</td><td>Project and event taxonomy</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="vs">
+          <a href="./hotjar-alternative.html"><h3>vs Hotjar</h3><p>Optional aggregate heatmaps, but no replay, screenshots, or behavior suite.</p><span>Compare</span></a>
+          <a href="./fullstory-alternative.html"><h3>vs FullStory</h3><p>No digital experience cloud or session reconstruction.</p><span>Compare</span></a>
+          <a href="./logrocket-alternative.html"><h3>vs LogRocket</h3><p>No console/network replay stream. Better for tiny feedback loops.</p><span>Compare</span></a>
+          <a href="./posthog-alternative.html"><h3>vs PostHog</h3><p>No product OS. Just events, survey answers, and your endpoint.</p><span>Compare</span></a>
+        </div>
+        <p class="path-note" style="margin-top:20px">A product-shape comparison, not a procurement document. Vendor features change; <a href="./compare.html">see the full matrix</a> and verify details with each vendor.</p>
+      </div>
+    </section>
+
+    <section class="section" id="limits">
+      <div class="wrap limits">
+        <div>
           <h2>What it deliberately does not do</h2>
           <p class="sub">Honest limits keep tinyux useful. If you need full product analytics, choose a real analytics platform. If you need session replay, choose a replay tool.</p>
         </div>
-        <div class="grid grid-2">
-          <div class="cell"><h3>No replay theater</h3><p>No DOM playback, video-style recordings, screenshots, console logs, network capture, or keystroke contents. Heatmaps are aggregate click/tap coordinates only.</p></div>
-          <div class="cell"><h3>No false certainty</h3><p>Client-side telemetry is directional. Use it to find friction, prompt follow-up, and prioritize fixes, not to claim perfect behavioral truth.</p></div>
+        <div class="limit-list">
+          <div class="limit"><h3>No replay theater</h3><p class="body">No DOM playback, video-style recordings, screenshots, console logs, network capture, or keystroke contents. Heatmaps are aggregate click/tap coordinates only.</p></div>
+          <div class="limit"><h3>No false certainty</h3><p class="body">Client-side telemetry is directional. Use it to find friction, prompt follow-up, and prioritize fixes, not to claim perfect behavioral truth.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section alt" id="faq">
+      <div class="wrap faq">
+        <div>
+          <h2>Questions teams ask first</h2>
+          <p class="sub">More detail in the <a class="text-link" href="./docs.html">implementation guide</a>.</p>
+        </div>
+        <div>
+          <details open><summary>Is this a Hotjar or FullStory replacement?</summary><p>No. tinyux is for targeted telemetry, contextual feedback, and optional aggregate click/tap heatmaps. It is not a replay, screenshot, or visual behavior suite.</p></details>
+          <details><summary>Does it work in SPAs?</summary><p>Yes. Set <code>spa: true</code> and tinyux records a <code>page_view</code> on every client-side route change. The mutation observer also picks up declarative triggers on new elements.</p></details>
+          <details><summary>What happens when the network drops?</summary><p>Failed payloads are kept in storage with exponential backoff and retried on later flushes or the next page load. Each event has an id, so the collector ignores anything delivered twice.</p></details>
+          <details><summary>Do I need a consent banner?</summary><p>That depends on where you operate and how you configure tinyux. If you need consent, set <code>consent: 'pending'</code>: tinyux stores and sends nothing until your banner calls <code>tinyux.consent(true)</code>.</p></details>
+          <details><summary>How do I upgrade from v0.1?</summary><p>Replace <code>tinyux.js</code> and <code>collect.php</code>. The collector upgrades your database on its first request. See the <a class="text-link" href="./docs.html#upgrade">upgrade guide</a>.</p></details>
+          <details><summary>Can I require an API key?</summary><p>Yes for normal fetch sends. <code>sendBeacon</code> cannot set custom headers, so strict API-key deployments may disable beacon reliance or validate origin/session instead.</p></details>
+          <details><summary>Is text survey input safe?</summary><p>Text surveys can collect personal data because users type free-form content. Use rating, yes/no, and choice surveys when possible.</p></details>
         </div>
       </div>
     </section>
 
     <section class="support">
-      <div class="container support-inner">
+      <div class="wrap support-inner">
         <div>
-          <span class="eyebrow">support - open source</span>
           <h2>Small tools survive when people use them.</h2>
           <p>tinyux is MIT-licensed and built for teams that need an honest feedback layer without a procurement loop. Issues, stars, and coffee all help.</p>
         </div>
-        <a class="btn" href="https://buymeacoffee.com/tanzir" target="_blank" rel="noopener">Support the project</a>
+        <div class="cta-row">
+          <a class="btn btn-primary" href="https://buymeacoffee.com/tanzir" target="_blank" rel="noopener">Support the project</a>
+          <a class="btn" href="https://github.com/tanzir71/tinyuxjs" target="_blank" rel="noopener">Star on GitHub</a>
+        </div>
       </div>
     </section>
   </main>
 
   <footer>
-    <div class="container footer-inner">
-      <div class="footer-note">tinyux - built by <a href="https://tanziro.com" target="_blank" rel="noopener">tanziro.com</a></div>
-      <div class="footer-links">
-        <a href="./docs.html">docs</a>
-        <a href="./compare.html">compare</a>
-        <a href="./demo/product.html">demo</a>
-        <a href="./hotjar-alternative.html">vs hotjar</a>
-        <a href="./fullstory-alternative.html">vs fullstory</a>
-        <a href="./logrocket-alternative.html">vs logrocket</a>
-        <a href="./posthog-alternative.html">vs posthog</a>
-        <a href="https://github.com/tanzir71/tinyuxjs" target="_blank" rel="noopener">github</a>
+    <div class="wrap">
+      <div class="foot">
+        <div>
+          <a class="brand" href="./index.html" aria-label="tinyux home"><svg class="logo-mark" viewBox="0 0 32 32" width="30" height="30" aria-hidden="true" focusable="false"><circle cx="16" cy="16" r="14.5" fill="#2540FF" fill-opacity=".13"/><circle cx="16" cy="16" r="10" fill="#2540FF" fill-opacity=".3"/><circle cx="16" cy="16" r="5.6" fill="#2540FF"/></svg>tinyux</a>
+          <p class="foot-note">Self-hosted UX telemetry and micro-surveys. Built by <a href="https://tanziro.com" target="_blank" rel="noopener">tanziro.com</a>.</p>
+        </div>
+        <div><h4>Product</h4><ul><li><a href="./demo/product.html">Demo</a></li><li><a href="./docs.html">Docs</a></li><li><a href="./compare.html">Compare</a></li><li><a href="./llms.txt">llms.txt</a></li></ul></div>
+        <div><h4>Alternatives</h4><ul><li><a href="./hotjar-alternative.html">vs Hotjar</a></li><li><a href="./fullstory-alternative.html">vs FullStory</a></li><li><a href="./logrocket-alternative.html">vs LogRocket</a></li><li><a href="./posthog-alternative.html">vs PostHog</a></li></ul></div>
+        <div><h4>Project</h4><ul><li><a href="https://github.com/tanzir71/tinyuxjs" target="_blank" rel="noopener">GitHub</a></li><li><a href="https://buymeacoffee.com/tanzir" target="_blank" rel="noopener">Support</a></li><li><a href="./README.md">README</a></li><li><a href="./CHANGELOG.md">Changelog</a></li></ul></div>
       </div>
+      <div class="legal"><span>MIT License.</span><span>v0.2.0</span></div>
     </div>
   </footer>
+
   <script src="./site.js"></script>
 </body>
 </html>

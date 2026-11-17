@@ -1,3 +1,6 @@
+-- tinyux schema v2 (kept identical to the constants in collect.php).
+-- collect.php creates and migrates this automatically; run it by hand only if you prefer:
+--   sqlite3 tinyux-data/tinyux.db < schema.sql
 PRAGMA foreign_keys = ON;
 
 CREATE TABLE IF NOT EXISTS ux_apps (
@@ -31,6 +34,7 @@ CREATE TABLE IF NOT EXISTS events (
   app_id TEXT NOT NULL,
   client_id INTEGER NOT NULL,
   session_id INTEGER,
+  event_uid TEXT,
   event_type TEXT NOT NULL,
   event_ts INTEGER NOT NULL,
   event_meta TEXT,
@@ -44,6 +48,7 @@ CREATE TABLE IF NOT EXISTS surveys (
   app_id TEXT NOT NULL,
   client_id INTEGER NOT NULL,
   session_id INTEGER,
+  survey_uid TEXT,
   survey_id TEXT NOT NULL,
   survey_type TEXT,
   response TEXT,
@@ -64,3 +69,14 @@ CREATE TABLE IF NOT EXISTS failed_payloads (
 CREATE INDEX IF NOT EXISTS idx_events_app_ts ON events(app_id, event_ts);
 CREATE INDEX IF NOT EXISTS idx_events_app_client_type ON events(app_id, client_id, event_type);
 CREATE INDEX IF NOT EXISTS idx_surveys_app_survey_ts ON surveys(app_id, survey_id, submitted_at);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_events_uid ON events(app_id, event_uid);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_surveys_uid ON surveys(app_id, survey_uid);
+
+PRAGMA user_version = 2;
+
+-- Handy reports (no dashboard needed):
+-- Survey answers per day:
+--   SELECT survey_id, date(submitted_at) AS day, COUNT(*) AS answers FROM surveys GROUP BY 1, 2 ORDER BY 2 DESC;
+-- Heatmap density in 5% cells for one page:
+--   SELECT CAST(json_extract(event_meta, '$.x_pct') / 5 AS INT) * 5 AS x, CAST(json_extract(event_meta, '$.y_pct') / 5 AS INT) * 5 AS y, COUNT(*) AS points
+--   FROM events WHERE event_type IN ('heatmap_point', 'rage_click', 'dead_click') AND json_extract(event_meta, '$.path') = '/pricing' GROUP BY 1, 2 ORDER BY points DESC;

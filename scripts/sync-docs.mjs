@@ -12,6 +12,7 @@ const files = [
   'fullstory-alternative.html',
   'logrocket-alternative.html',
   'posthog-alternative.html',
+  'landing.css',
   'site.css',
   'site.js',
   'tinyux.js',
@@ -19,6 +20,7 @@ const files = [
   'collect.php',
   'schema.sql',
   'README.md',
+  'CHANGELOG.md',
   'llms.txt',
   'robots.txt',
   'sitemap.xml'
@@ -29,8 +31,14 @@ for (const file of files) {
   fs.copyFileSync(path.join(root, file), path.join(out, file))
 }
 
-const demoOut = path.join(out, 'demo')
-fs.mkdirSync(demoOut, { recursive: true })
-fs.copyFileSync(path.join(root, 'demo', 'product.html'), path.join(demoOut, 'product.html'))
+const nested = [
+  path.join('demo', 'product.html'),
+  path.join('assets', 'logo.svg'),
+  path.join('assets', 'favicon.svg')
+]
+for (const file of nested) {
+  fs.mkdirSync(path.join(out, path.dirname(file)), { recursive: true })
+  fs.copyFileSync(path.join(root, file), path.join(out, file))
+}
 
-console.log(`synced ${files.length + 1} files to docs/`)
+console.log(`synced ${files.length + nested.length} files to docs/`)

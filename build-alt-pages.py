@@ -6,7 +6,7 @@ from pathlib import Path
 
 BASE = "https://tanzir71.github.io/tinyuxjs"
 ROOT = Path(__file__).resolve().parent
-NINJA_FAVICON = "data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%20100%20100%27%3E%3Ctext%20y%3D%27.9em%27%20font-size%3D%2790%27%3E%F0%9F%A5%B7%3C%2Ftext%3E%3C%2Fsvg%3E"
+FAVICON = "data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2032%2032%27%3E%3Ccircle%20cx%3D%2716%27%20cy%3D%2716%27%20r%3D%2715%27%20fill%3D%27%232540FF%27%20fill-opacity%3D%27.16%27%2F%3E%3Ccircle%20cx%3D%2716%27%20cy%3D%2716%27%20r%3D%2710.5%27%20fill%3D%27%232540FF%27%20fill-opacity%3D%27.36%27%2F%3E%3Ccircle%20cx%3D%2716%27%20cy%3D%2716%27%20r%3D%276.2%27%20fill%3D%27%232540FF%27%2F%3E%3C%2Fsvg%3E"
 
 VENDORS = [
     {
@@ -22,7 +22,7 @@ VENDORS = [
         "rows": [
             ("Heatmaps", "Optional aggregate click/tap points", "Yes, managed visual heatmaps"),
             ("Session replay", "No", "Yes"),
-            ("Surveys", "Rating, yes/no, choice, text", "Yes"),
+            ("Surveys", "Rating, NPS, yes/no, choice, text", "Yes"),
             ("Data hosting", "Your endpoint and SQLite database", "Vendor platform"),
             ("Setup", "One script tag plus collector", "Vendor project and tracking script"),
             ("Best fit", "Small self-hosted feedback loops", "Visual behavior analytics and website optimization"),
@@ -109,14 +109,19 @@ def render(v):
   <meta name="description" content="{escape(v["desc"])}">
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="{BASE}/{v["slug"]}.html">
-  <link rel="icon" type="image/svg+xml" href="{NINJA_FAVICON}">
+  <link rel="icon" type="image/svg+xml" href="{FAVICON}">
   <link rel="stylesheet" href="./site.css">
 </head>
 <body>
   <header>
     <div class="container header-inner">
-      <a class="brand" href="./index.html"><div class="logo"><span>TU</span></div><span class="brand-name">tinyux</span></a>
-      <nav>
+      <a class="brand" href="./index.html"><svg class="logo-mark" viewBox="0 0 32 32" width="32" height="32" aria-hidden="true" focusable="false"><circle cx="16" cy="16" r="14.5" fill="#2540FF" fill-opacity=".13"/><circle cx="16" cy="16" r="10" fill="#2540FF" fill-opacity=".3"/><circle cx="16" cy="16" r="5.6" fill="#2540FF"/></svg><span class="brand-name">tinyux</span></a>
+      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="primary-navigation" aria-label="Open navigation menu" data-menu-toggle>
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+      <nav id="primary-navigation" class="site-nav" aria-label="Primary">
         <a class="nav-link" href="./index.html#features">Signals</a>
         <a class="nav-link" href="./docs.html">Docs</a>
         <a class="nav-link" href="./compare.html">Compare</a>
@@ -176,6 +181,7 @@ def render(v):
       </div>
     </div>
   </footer>
+  <script src="./site.js"></script>
 </body>
 </html>
 """

@@ -1,7 +1,7 @@
 # tinyux
 
 > Self-hosted UX telemetry, optional aggregate heatmaps, and contextual micro-surveys.
-> One static JS file + one collector endpoint. MIT license. v0.1.0.
+> One static JS file + one collector endpoint. MIT license. v0.2.0.
 
 This file is the implementation contract for AI agents integrating tinyux.
 
@@ -25,13 +25,8 @@ This file is the implementation contract for AI agents integrating tinyux.
   data-config='{"surveys":{"maxPerSession":2}}'></script>
 ```
 
-3. Create the SQLite DB:
-
-```bash
-sqlite3 tinyux.db < schema.sql
-```
-
-4. Deploy `collect.php`, `tinyux.js`, and `tinyux.db` together. The DB must be writable by PHP.
+3. Deploy `collect.php` next to `tinyux.js`. It creates its SQLite DB in `tinyux-data/` on the first request (PHP needs write access to that folder) and blocks web access to it with `.htaccess`. On nginx, block the folder or set `TINYUX_DB_PATH` outside the web root. Run `php collect.php --check` to verify. Do not re-run `schema.sql` on an existing database.
+4. If the collector runs on a different origin than the pages, add those origins to `$ALLOWED_ORIGINS` in `collect.php`.
 5. Add declarative triggers:
 
 ```html
@@ -59,7 +54,9 @@ ux.registerSurvey({
 
 ## Collector contract
 
-The client POSTs JSON batches. Accept `Content-Type: application/json`; also accept bodies sent by `navigator.sendBeacon`.
+The client POSTs JSON batches. Accept `Content-Type: application/json`; also accept `text/plain` bodies sent by `navigator.sendBeacon` on page hide. Parse the body as JSON regardless of content type.
+
+Every event and survey answer has a UUID `id`. Store it and ignore duplicates: retries can deliver the same batch twice. The reference collector uses unique indexes on `(app_id, event_uid)` and `(app_id, survey_uid)` with `INSERT OR IGNORE`.
 
 Request body:
 
@@ -83,7 +80,7 @@ Request body:
     "interaction_count": 2,
     "click_count": 2,
     "scroll_pct_max": 80,
-    "v": "0.1.0",
+    "v": "0.2.0",
     "score": 10,
     "user": {
       "id": "user_123",
@@ -92,39 +89,61 @@ Request body:
     }
   },
   "events": [
-    {"id": "e-...", "type": "interaction", "ts": 1781230001, "meta": {}},
-    {"id": "e-...", "type": "heatmap_point", "ts": 1781230001, "meta": {"x_pct": 52, "y_pct": 34, "viewport": "1366x768", "path": "/pricing", "input": "click"}}
+    {"id": "3f6b2c1e-...", "type": "interaction", "ts": 1781230001, "meta": {}},
+    {"id": "9a0d77c4-...", "type": "heatmap_point", "ts": 1781230001, "meta": {"x_pct": 52, "y_pct": 34, "viewport": "1366x768", "path": "/pricing", "input": "click"}}
   ],
   "surveys": [
-    {"survey_id": "pricing-clarity", "type": "yesno", "response": {"value": true}, "ts": 1781230002, "context": {}}
+    {"id": "c41e09b2-...", "survey_id": "pricing-clarity", "type": "yesno", "response": {"value": true}, "ts": 1781230002, "context": {}}
   ]
 }
 ```
 
-Respond with any 2xx status to acknowledge. Non-2xx or network failures are retried from localStorage with exponential backoff.
+Respond with any 2xx status to acknowledge. Non-2xx or network failures are retried from storage with exponential backoff. `meta.gpc` is `true` when `respectGPC` is on and the browser sent Global Privacy Control.
+
+Event types: `page_view` (`spa: true` adds `path`, `from`, `spa`; bfcache restores add `restored`), `interaction`, `section_view`, `focus`, `blur`, `heartbeat`, `exit_intent`, `heatmap_point`, `rage_click` (adds `clicks`), `dead_click`, `survey_shown`, `survey_submitted`, `survey_closed` (adds `reason`), and any custom `track()` type. `rage_click` and `dead_click` meta has the same coarse `x_pct`, `y_pct`, `viewport`, `path`, and sanitized element fields as `heatmap_point`.
+
+Survey responses are `{"value": ...}`; with a matching `followUp` they are `{"value": ..., "comment": "..."}`.
 
 ## JavaScript API
 
 - `tinyux.init(config)` - create a new instance.
 - `tinyux.getInstance()` - active singleton.
 - `tinyux.autoInit()` - read current script attributes and initialize.
-- `tinyux.destroy()` - stop timers/bindings and clear the singleton.
+- `tinyux.destroy()` - remove every listener, observer, and timer, then clear the singleton.
+- `tinyux.consent(granted)` - consent shortcut for the active instance.
+- `tinyux.version` - library version string.
 - `instance.track(type, meta)` - queue a custom event.
 - `instance.bind(selector, eventName, opts)` - delegated interaction binding.
 - `instance.registerSurvey(config)` - register survey by `id` or `survey_id`.
 - `instance.showSurvey(idOrConfig)` - show a survey immediately.
 - `instance.flush()` - force send.
-- `instance.stop()` - stop timers and bindings.
+- `instance.stop()` - stop everything without clearing the singleton.
+- `instance.consent(granted)` - `true` persists ids and starts sending; `false` discards buffered data, clears tinyux storage keys, and stops.
+- `instance.hasConsent()` / `instance.isActive()` - consent state, and whether this instance is tracking.
 - `instance.identify(id, traits)` - associate later payloads with an explicit user/account identity from the host app.
 - `instance.clearIdentity()` - remove explicit identity from later payloads.
 - `instance.getIdentity()` - read the current explicit identity.
 - `instance.on(event, handler)` - subscribe to lifecycle events.
 
-Events: `sent`, `send_error`, `interaction`, `survey_shown`, `survey_submitted`, `survey_closed`, `exit_intent`.
+Events: `sent`, `send_error`, `interaction`, `page_view`, `survey_shown`, `survey_submitted`, `survey_closed`, `exit_intent`, `rage_click`, `dead_click`, `consent`.
+
+## Config added in v0.2 (all off or unchanged by default)
+
+- `spa: true` - page views on client-side route changes.
+- `frustration: true` or `{enabled, rageClicks: 3, rageWindowMs: 700, rageRadiusPx: 24, deadClickMs: 1000}`.
+- `consent: 'granted' | 'pending'` - pending holds events in memory, writes no storage, shows no surveys.
+- `storage: 'local' | 'session' | 'none'` - `none` is cookieless.
+- `clientIdTtlDays: 395` - anonymous id rotation.
+- `respectGPC: false | true | 'all'`.
+- `sampleRate: 1` - share of sessions tracked.
+- `ui.theme: 'light' | 'dark' | 'auto'`, `ui.labels: {...}`, `ui.nonce: '...'`.
+- `heatmaps: true` and `exitIntent: true` shorthands.
+- Removed: `mouseSampling`.
 
 ## Survey types
 
-- `rating`: numeric buttons, default scale 5.
+- `rating`: numeric buttons, default scale 5 (`min`, `scale`).
+- `nps`: 0 to 10 buttons with low/high hints.
 - `yesno`: Yes/No buttons.
 - `choice`: choices array.
 - `text`: textarea. Use sparingly because users can type personal data.
@@ -133,6 +152,8 @@ Survey UI:
 - Default: blocking center modal.
 - Corner: set `ui: { mode: 'corner', position: 'bottom-right' }`.
 - Positions: `bottom-right`, `bottom-left`, `top-right`, `top-left`.
+- Follow-ups: `followUp: { when: '<=6' | [values] | value, question: '...' }` asks one free-text question when the first answer matches.
+- Modals use native `<dialog>` where available; focus returns to the previously focused element. Corner prompts never take focus.
 
 ## Identity
 
@@ -164,4 +185,4 @@ Heatmap events are stored as normal `events` rows with `event_type = 'heatmap_po
 
 ## Privacy
 
-By default tinyux does not capture screen contents, screenshots, DOM snapshots, keystroke contents, clipboard contents, camera, microphone, console logs, network logs, or form values. Dataset metadata is filtered by denylist; use `datasetAllowlist` for strict deployments.
+By default tinyux does not capture screen contents, screenshots, DOM snapshots, keystroke contents, clipboard contents, camera, microphone, console logs, network logs, mouse trails, or form values. Dataset metadata is filtered by denylist; use `datasetAllowlist` for strict deployments. The reference collector never writes IP addresses to its log; `php collect.php --prune --days=395` enforces retention.
