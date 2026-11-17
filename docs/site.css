@@ -144,6 +144,14 @@ footer { padding: 56px 0 48px; border-top: 1px solid var(--line); }
 .foot a:hover { color: var(--signal); }
 .foot-note { margin-top: 14px; max-width: 300px; font-size: 14.5px; line-height: 1.55; color: var(--mute); }
 .foot-note a { color: var(--ink); text-decoration: underline; text-decoration-color: var(--signal); text-underline-offset: 3px; }
+.donate { display: flex; align-items: center; gap: 16px; margin-top: 44px; padding: 14px 14px 14px 14px; border: 1px solid var(--line); border-radius: var(--r-lg); background: var(--canvas); color: var(--ink-2); text-decoration: none; transition: border-color 140ms ease, background-color 140ms ease; }
+.donate:hover { border-color: var(--signal); background: var(--signal-50); }
+.donate-icon { display: grid; place-items: center; flex: none; width: 44px; height: 44px; border: 1px solid var(--line); border-radius: 12px; background: var(--paper); color: var(--ink); }
+.donate-text { flex: 1 1 auto; font-size: 15.5px; line-height: 1.5; }
+.donate-text strong { color: var(--ink); font-weight: 600; }
+.donate-cta { display: inline-flex; flex: none; align-items: center; height: 40px; padding: 0 16px; border-radius: var(--r-sm); background: var(--signal); color: #fff; font-size: 15px; font-weight: 600; white-space: nowrap; transition: background-color 140ms ease; }
+.donate:hover .donate-cta { background: var(--signal-deep); }
+.donate + .legal { margin-top: 28px; }
 .legal { display: flex; justify-content: space-between; gap: 16px; margin-top: 48px; padding-top: 20px; border-top: 1px solid var(--line); font-size: 13.5px; color: var(--mute); }
 
 /* Browser frame (landing hero, demo) */
@@ -311,6 +319,9 @@ footer { padding: 56px 0 48px; border-top: 1px solid var(--line); }
   .foot { grid-template-columns: 1fr 1fr; }
   .foot > div:first-child { grid-column: 1 / -1; }
   .legal { flex-direction: column; }
+  .donate { flex-wrap: wrap; align-items: flex-start; }
+  .donate-text { flex-basis: calc(100% - 60px); }
+  .donate-cta { width: 100%; justify-content: center; }
   .vs, .reasons { grid-template-columns: 1fr; }
   .reasons { gap: 28px; }
   .page-hero { padding: 44px 0 40px; }

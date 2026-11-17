@@ -506,6 +506,7 @@ await test('every page shares the site header, footer, stylesheet, heat-point lo
     assert.match(html, /<link rel="stylesheet" href="(\.\.\/|\.\/)site\.css">/, `${file} missing site.css`)
     assert.match(html, /<header class="site-header">/, `${file} missing site header`)
     assert.match(html, /<div class="foot">/, `${file} missing site footer`)
+    assert.match(html, /<a class="donate" href="https:\/\/buymeacoffee\.com\/tanzir"[^>]*>[\s\S]*?is fueling open-source code, local utilities, and late-night builds\./, `${file} missing the donate call to action`)
     assert.match(html, /rel="icon" type="image\/svg\+xml" href="data:image\/svg\+xml,[^"]*%232540FF/, `${file} missing heat-point favicon`)
     assert.match(html, /<svg class="logo-mark"[^>]*><circle cx="16" cy="16" r="14.5"/, `${file} missing heat-point logo mark`)
     assert.doesNotMatch(html, /class="container/, `${file} still uses the old layout classes`)
